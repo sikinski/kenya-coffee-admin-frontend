@@ -18,10 +18,21 @@ export default defineNuxtConfig({
     ],
 
     // Hide warnings in build
-    vite: {
-        css: {
-            devSourcemap: false,
-        },
-        logLevel: 'error',
+    // vite: {
+    //     css: {
+    //         devSourcemap: false,
+    //     },
+    //     logLevel: 'error',
+    // },
+
+    build: {
+        loaders: {
+            scss: {
+                sassOptions: {
+                    quietDeps: true
+                }
+            }
+        }
     }
+
 })
