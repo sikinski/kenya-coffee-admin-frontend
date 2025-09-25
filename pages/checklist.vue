@@ -1,0 +1,147 @@
+<template>
+    <div class="checklist-page page-padding">
+        <div class="content">
+            <div class="h1-wrapper">
+                <ui-go-back />
+                <h1 class="h1">Чеклист.</h1>
+            </div>
+            <div class="container">
+                <p class="title">Сегодня.</p>
+
+                <ui-custom-checkbox v-for="(item, index) in todayList" :label="item.text" v-model="item.done"
+                    :key="index" @click="updateTask(item.id, { done: !item.done })" />
+            </div>
+
+            <div class="day-wrapper" v-for="(day, index) in last30Days" :key="index"
+                :class="{ 'day-wrapper_opened': day.showInners }" @click="getTasks(day)">
+                <p class="title" @click="day.showInners = !day.showInners">{{ getShortDate(day.date) }}</p>
+                <img src="@/assets/images/icons/arrow-down.svg" @click="day.showInners = !day.showInners" alt=""
+                    class="icon arrow-down transition" />
+
+                <div class="inner" v-if="day.showInners" v-motion-fade>
+                    <template v-if="day.tasks?.length">
+                        <div class="item" v-for="(item, index) in day.tasks" :key="index"
+                            :class="{ 'item_done': item.done }">
+                            <div class="item-header" v-if="!index">
+                                <p class="author">{{ item.username }}</p>
+                                <p class="done-count">
+                                    {{day.tasks.filter(el => el.done).length}}
+                                    /
+                                    {{ day.tasks.length }}
+                                </p>
+                            </div>
+
+                            {{ index + 1 }}. {{ item.text }}
+                        </div>
+                    </template>
+
+                    <template v-else>
+                        <div class="empty">Не найдено</div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { onMounted } from 'vue'
+
+const { $api } = useNuxtApp()
+const todayList = ref([])
+const last30Days = ref([]);
+const MAX_SHOWN_DATES_COUNT = 30
+
+const getTodayTasks = async () => {
+    const date = new Date().toISOString().split("T")[0] // "2025-08-22"
+    todayList.value = await $api.get(`/tasks?date=${date}`).then(res => res.data.tasks)
+}
+
+const getTasks = async (day) => {
+    console.log(day);
+
+    const date = day.date.toISOString().split("T")[0]
+    console.log(date);
+
+    day.tasks = await $api.get(`/tasks?date=${date}`).then(res => res.data.tasks)
+}
+
+const updateTask = async (task_id, body) => {
+    await $api.put(`/tasks/${task_id}`, body).then(async () => {
+        await getTodayTasks()
+    })
+}
+
+const getLastDays = async () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // обнуляем время, чтобы работать с "днями"
+
+    for (let i = 1; i <= MAX_SHOWN_DATES_COUNT; i++) { // начинаем с 1, чтобы не включать сегодня
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        last30Days.value.push({ date: d, showInners: false });
+    }
+
+}
+
+onMounted(async () => {
+    await getTodayTasks()
+    await getLastDays()
+})
+</script>
+
+<style lang="sass">
+@use '@/assets/styles/adaptive' as *
+.checklist-page
+    .container
+        margin-top: 10px
+        .title
+            font-size: 18px
+            border-bottom: 1px solid var(--main-dark)
+            padding: 10px 0
+    .day-wrapper
+        margin-top: 20px
+        display: grid
+        grid-template-columns: 1fr auto
+        padding: 10px 0
+        border-bottom: 1px solid var(--main-dark)
+        &_opened
+            .arrow-down
+                transform: rotate(180deg)
+        .title
+            font-size: 1rem
+        .arrow-down
+            width: 14px
+            height: 14px
+        .inner
+            grid-column: 1/3
+            margin: 10px 0
+            margin-top: 20px
+            display: flex
+            flex-direction: column
+            gap: 10px
+            .item
+                // padding: 0 20px
+                font-weight: 500
+                color: var(--text-color) 
+                font-size: 14px
+                text-align: center
+                .item-header
+                    display: flex
+                    justify-content: space-between
+                    align-items: center
+                    font-weight: 600
+                    margin-bottom: 10px
+                    border-top: 1px solid var(--text-color)
+                    border-bottom: 1px solid var(--text-color)
+                    padding: 10px 0
+                &_done
+                    text-decoration: line-through
+                    font-weight: 300
+            .empty
+                color: var(--text-color)
+                font-size: 14px
+                    
+        &:first-child
+            border-top: 1px solid var(--main-dark)
+</style>

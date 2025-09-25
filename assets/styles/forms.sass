@@ -1,0 +1,278 @@
+@use './adaptive' as *
+// ------------ FORM ------------ 
+.form
+    display: flex
+    flex-direction: column
+    gap: 60px
+    .form-section
+        .section-title
+            display: flex
+            align-items: center
+            gap: 10px
+            font-size: 1.5rem
+            text-transform: uppercase
+            font-weight: 300
+            border-bottom: 1px solid var(--text-color)
+            margin-bottom: 20px
+            padding-bottom: 10px
+            .info-btn
+                width: 25px
+                height: 25px
+                mask: url(@/assets/images/icons/add-info.svg) no-repeat center
+                display: block
+                background-color: var(--opacity-color)
+                transition: .3s ease
+                mask-size: contain
+                cursor: pointer
+                &:hover
+                    background-color: var(--dark-color)
+    .form-footer
+        display: grid
+        grid-template-columns: 1fr auto
+        grid-gap: 10px
+        .message
+            grid-column: 1/3
+            font-size: 1rem
+            margin-bottom: 10px
+            text-transform: uppercase
+        .save-btn
+            padding: 16px
+
+
+// ------------ INPUT, TEXTAREA ------------ 
+.input-wrapper, .textarea-wrapper
+    position: relative
+    overflow-x: hidden
+    overflow-y: auto
+    padding-top: 10px
+    background-color: var(--bg-color)
+    border-radius: 2px
+    z-index: 1
+    .input, .textarea
+        display: block
+        width: 100% !important
+        height: 100% !important
+        color: #000
+        border: none
+        padding: 25px 23px
+        padding-right: 0
+        background-color: rgba(0,0,0,0)
+        &::placeholder
+            color: var(--text-color)
+            opacity: 1
+    label
+        position: absolute
+        left: 25px
+        width: 100%
+        height: 100%
+        pointer-events: none
+
+    .content-name
+        position: absolute
+        bottom: 0px
+        left: 0px
+        padding-bottom: 5px
+        transition: all 0.3s ease
+        font-size: 1rem
+        text-transform: uppercase
+        font-weight: 400
+        color: var(--text-color)
+    .input:focus:not(.file-input:focus) + .label-name .content-name, .valid-input
+        transform: translateY(-70%) !important
+        font-size: 0.875rem
+        left: 0px
+        
+    .icon
+        display: block
+        position: absolute
+        right: 25px
+        bottom: 25px
+        z-index: -1
+        width: 25px
+        height: 25px
+    .error-icon
+        mask: url(@/assets/images/icons/attention.svg) no-repeat center
+        background-color: var(--error-color)
+        mask-size: contain
+.input-wrapper
+    label
+        bottom: 25px
+.textarea-wrapper
+    padding-top: 10px
+    height: 180px
+    label
+        bottom: 0
+        transform: translateY(calc( -100% + 55px))
+    textarea
+        margin: 0
+
+// ------------ CUSTOM ELEMENTS ------------ 
+.spans-input
+    background-color: var(--bg-color)
+    padding: 20px
+    label
+        font-size: 1rem
+        text-transform: uppercase
+        color: var(--opacity-color)
+    .spans
+        display: flex
+        flex-wrap: wrap
+        gap: 4px
+        margin-top: 20px
+        span
+            background-color: #fff
+            color: var(--dark-color)
+            padding: 5px 10px
+            transition: .3s ease
+            font-size: 18px
+            cursor: pointer
+            &:hover
+                background-color: var(--opacity-color)
+                color: #fff
+        .active
+            background-color: var(--dark-color)
+            color: #fff
+
+// ------------ CUSTOM SELECT ------------ 
+.custom-select
+    .selected
+        background-color: var(--bg-color)
+        font-weight: 400
+        padding: 25px 23px
+        &::after
+            width: 20px
+            height: 20px
+            right: 20px
+    .opacity
+        color: var(--opacity-color)
+        text-transform: uppercase
+    .options
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+        background-color: var(--bg-color)
+        z-index: 2
+        .option
+            padding: 10px 23px
+        
+
+// ------------ VUE-QUILL ------------
+.text-wrapper
+    padding: 0
+.editor
+    display: flex
+    flex-direction: column
+    width: 100%
+    min-height: 180px
+    .input
+        padding-top: 0 !important
+        flex: 1
+        display: flex
+        flex-direction: column
+    .ql-editor
+        padding: 10px 0
+        flex: 1
+        height: 100%
+        &::before
+            font-size: 14px
+            font-style: normal
+            color: var(--text-color)
+            opacity: .7
+    .ql-formats
+        button
+            width: 25px
+            svg
+                width: 100%
+    .ql-snow
+        border: none
+
+
+// ------------ ADAPTIVE ------------
+
+@media only screen and (max-width: $bp-pc)
+    .form
+        .form-section
+            .section-title
+                font-size: 1.25rem
+    .input-wrapper, .textarea-wrapper
+        .input, .textarea
+            padding: 20px
+            font-size: 1rem
+        label
+            left: 20px
+        .icon
+            right: 20px
+            bottom: 20px
+        .content-name
+            font-size: 14px
+        .input:focus:not(.file-input:focus) + .label-name .content-name, .valid-input
+            font-size: 13px
+    .input-wrapper
+        label
+            bottom: 20px
+    .textarea-wrapper
+        height: 150px
+        label
+            transform: translateY(calc( -100% + 50px))
+
+    .spans-input
+        label
+            font-size: 14px
+        .spans
+            margin-top: 15px
+            span
+                font-size: 1rem
+
+    .custom-select
+        .selected
+            padding: 20px 20px
+            &::after
+                width: 17px
+        .opacity
+            font-size: 14px
+        .options
+            .option
+                padding: 10px  20px
+
+@media only screen and (max-width: $bp-tablet)
+    .form
+        gap: 40px
+        .form-section
+            .section-title
+                font-size: 1rem
+                font-weight: 400
+                .info-btn
+                    width: 20px
+                    height: 20px
+    .input-wrapper, .textarea-wrapper
+        .input, .textarea
+            padding: 16px
+        label
+            left: 16px
+            bottom: 16px
+        .icon
+            right: 16px
+            bottom: 16px
+    .textarea-wrapper
+        label
+            transform: translateY(calc( -100% + 65px))
+    .spans-input
+        padding: 16px
+        .spans
+            margin-top: 10px
+    .custom-select
+        .selected
+            padding: 16px
+            font-size: 14px
+            &::after
+                width: 15px
+                right: 16px
+        .opacity
+            font-size: 12px
+        .options
+            .option
+                padding: 10px 16px
+                font-size: 14px
+    .grid-2
+        display: flex
+        flex-direction: column
+        gap: 5px
+// TODO FOR MOBILE
