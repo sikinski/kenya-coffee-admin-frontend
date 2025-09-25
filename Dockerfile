@@ -3,7 +3,7 @@ FROM node:20
 WORKDIR /frontend
 
 # # Установим конкретную версию pnpm
-# RUN npm install -g pnpm@10.6.5
+RUN npm install -g pnpm
 
 # Копируем lock-файлы
 COPY ./package.json ./
