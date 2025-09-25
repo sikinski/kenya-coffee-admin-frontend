@@ -16,4 +16,12 @@ export default defineNuxtConfig({
         { path: '~/components/ui', prefix: 'ui' },
         '~/components',
     ],
+
+    // Hide warnings in build
+    vite: {
+        css: {
+            devSourcemap: false,
+        },
+        logLevel: 'error',
+    }
 })
