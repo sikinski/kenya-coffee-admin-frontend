@@ -99,6 +99,7 @@ onMounted(async () => {
             font-size: 18px
             border-bottom: 1px solid var(--border-color)
             padding: 10px 0
+            font-weight: 600
     .day-wrapper
         display: grid
         grid-template-columns: 1fr auto
@@ -188,6 +189,8 @@ onMounted(async () => {
             margin-bottom: 50px
         .day-wrapper
             padding: 30px 0
+            .inner
+                width: 50%
             .arrow-down
                 width: 18px 
                 height: 18px
