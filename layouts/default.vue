@@ -167,7 +167,7 @@ $HEADERSHEIGHT-desktop: 100px
         height: 100%
         width: $MENU-desktop-WIDTH
         background-color: var(--main-bg)
-        border-right: 1px solid var(--creme-color)
+        border-right: 1px solid var(--border-color)
         padding: 40px 0
         .nav
             gap: 0

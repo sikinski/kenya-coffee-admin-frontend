@@ -6,9 +6,8 @@
             <p class="today-person">Сегодня на смене: {{ user_name }} <img src="@/assets/images/icons/pencil.svg"
                     @click="useLogout" alt="" class="change-icon"></p>
 
-            <div class="container mt">
-                <v-nav />
-            </div>
+
+            <v-nav class="container mt" />
 
             <div class="logs">
                 Здесь будут логи ( кто что делал в админке и в какое время )
@@ -44,7 +43,7 @@ const user_name = useCookie('user_name').value
             grid-template-columns: 40px 1fr 
             gap: 15px
             align-items: center
-            border-bottom: 1px solid var(--text-color)
+            border-bottom: 1px solid var(--border-color)
             padding: 40px 20px
             .icon
                 width: 40px
@@ -52,10 +51,16 @@ const user_name = useCookie('user_name').value
             .name
                 font-weight: 600
             &:nth-child(even)
-                border-left:  1px solid var(--text-color)
+                border-left:  1px solid var(--border-color)
             &:nth-child(3), &:nth-child(4)
                 border-bottom: none
-
+    .logs
+        margin-top: 50px
+        text-align: center
+        min-height: 200px
+        display: flex
+        justify-content: center
+        align-items: center
 @media only screen and (min-width: $bp-tablet)
     .home-page
         .h1
