@@ -16,6 +16,11 @@
             <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
             <p class="name">Сменщики</p>
         </nuxt-link>
+
+        <nuxt-link class="wrapper" to="/analysis">
+            <img src="@/assets/images/icons/analysis.svg" alt="" class="icon" />
+            <p class="name">Аналитика (new)</p>
+        </nuxt-link>
     </div>
 </template>
 
