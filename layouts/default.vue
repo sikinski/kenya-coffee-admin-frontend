@@ -141,10 +141,11 @@ $HEADERSHEIGHT-desktop: 100px
     .header
         margin-left: calc($MENU-talbet-WIDTH + 40px)
         margin-right: 40px
+        padding: 10px 0
         .menu-btn
             display: none
         .logo-wrapper
-            width: 50px
+            width: 60px
 
     .nav-menu
         position: fixed

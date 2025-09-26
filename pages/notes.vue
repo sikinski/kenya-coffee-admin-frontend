@@ -123,6 +123,15 @@ const editorOptions = {
         margin-top: 20px
         .input-wrapper
             background-color: #fff
+            border: 1px solid var(--creme-color)
+            .ql-toolbar
+                border-bottom: 1px solid var(--creme-color)
+        .ql-editor
+            font-size: 16px
+            font-family: sans-serif
+            &::before
+                font-size: inherit
+                font-family: sans-serif
         .save-btn
             background-color: var(--text-color)
             color: var(--main-bg)
@@ -141,9 +150,13 @@ const editorOptions = {
             padding: 14px 12px
             box-shadow: 0 2px 6px rgba(0,0,0,0.08)
             font-size: 1rem
+            font-weight: 500
             border-radius: 4px
             .text
                 padding-right: 34px
+                font-family: sans-serif
+                & > *
+                    font-family: sans-serif
             .close-icon
                 cursor: pointer
                 width: 14px
@@ -167,4 +180,96 @@ const editorOptions = {
                 justify-content: space-between
                 align-items: center
                 margin-top: 15px
+
+@media only screen and (min-width: $bp-tablet)
+    .notes-page
+        .add-new
+            margin-top: 40px
+            padding: 12px 16px
+            font-size: 18px
+            font-weight: 600
+        .form
+            gap: 10px
+            margin-top: 40px
+            .input-wrapper
+                font-size: 18px
+            .ql-editor
+                font-size: 18px
+                &::before
+                    font-size: inherit
+            .save-btn
+                font-size: 18px
+                font-weight: 600
+                padding: 12px
+        .items
+            margin-top: 40px
+            gap: 14px
+            .item
+                padding: 26px
+                font-size: 18px
+                .close-icon
+                    top: 26px
+                    right: 26px
+                    width: 16px
+                .date, .updated-date, .author
+                    font-size: 1rem
+@media only screen and (min-width: $bp-tablet-landscape-up)
+    .notes-page
+        .content
+            display: grid
+            grid-template-areas: 'h1 btn' 'er er' 'form form' 'items items'
+            grid-template-columns: 1fr 25%
+        .h1-wrapper
+            grid-area: h1
+        .add-new
+            grid-area: btn
+        .error
+            grid-area: er
+        .form
+            grid-area: form
+        .add-new
+            margin-top: 20px
+            padding: 10px 14px
+            font-size: 16px
+            font-weight: 600
+            align-self: center
+        .form
+            gap: 10px
+            margin-top: 40px
+            .input-wrapper
+                font-size: 16px
+            .ql-editor
+                font-size: 16px
+                &::before
+                    font-size: inherit
+            .save-btn
+                font-size: 18px
+                font-weight: 600
+                padding: 12px
+        .items
+            margin-top: 20px
+            gap: 10px
+            grid-area: items
+            .item
+                padding: 22px
+                font-size: 16px
+                .close-icon
+                    top: 22px
+                    right: 22px
+                    width: 16px
+                .date, .updated-date, .author
+                    font-size: 1rem
+@media only screen and (min-width: $bp-pc)
+    .notes-page
+        .form
+            .ql-editor
+                font-size: 18px
+                &::before
+                    font-size: inherit
+        .add-new
+            padding: 16px
+            font-size: 18px
+        .items
+            .item
+                font-size: 18px
 </style>
