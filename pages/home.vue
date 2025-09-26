@@ -40,19 +40,19 @@ const user_name = useCookie('user_name').value
         // grid-gap: 10px
         .wrapper
             display: grid
-            grid-template-columns: 40px 1fr 
+            grid-template-columns: 30px 1fr 
             gap: 15px
             align-items: center
             border-bottom: 1px solid var(--border-color)
-            padding: 40px 20px
+            padding: 30px 10px
             .icon
-                width: 40px
-                height: 40px
+                width: 30px
+                height: 30px
             .name
                 font-weight: 600
             &:nth-child(even)
                 border-left:  1px solid var(--border-color)
-            &:nth-child(3), &:nth-child(4)
+            &:nth-child(5), &:nth-child(6)
                 border-bottom: none
     .logs
         margin-top: 50px

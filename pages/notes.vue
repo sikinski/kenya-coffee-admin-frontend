@@ -223,7 +223,7 @@ const editorOptions = {
             grid-area: h1
         .add-new
             grid-area: btn
-        .error
+        .error, .empty
             grid-area: er
         .form
             grid-area: form

@@ -21,6 +21,11 @@
             <img src="@/assets/images/icons/analysis.svg" alt="" class="icon" />
             <p class="name">Аналитика (new)</p>
         </nuxt-link>
+
+        <nuxt-link class="wrapper" to="/procurement">
+            <img src="@/assets/images/icons/products.svg" alt="" class="icon" />
+            <p class="name">Закупки</p>
+        </nuxt-link>
     </div>
 </template>
 
