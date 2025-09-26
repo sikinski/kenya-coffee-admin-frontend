@@ -142,6 +142,7 @@ $HEADERSHEIGHT-desktop: 100px
         padding: 20px
         .nav
             gap: 14px
+            padding-bottom: 0
             .wrapper
                 display: grid
                 grid-template-columns: 23px 1fr

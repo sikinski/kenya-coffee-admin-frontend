@@ -80,9 +80,20 @@ const user_name = useCookie('user_name').value
                 padding: 40px
                 .name
                     font-size: 20px
+@media only screen and (min-width: $bp-tablet-landscape-up)
+    .home-page
+        .h1
+            font-size: 2rem
+        .container
+            display: none
+
 @media only screen and (min-width: $bp-pc)
     .home-page
-        .container
-            .wrapper
+        padding: 40px 0
+        .h1
+            text-align: left
+            font-size: 2.5rem
+        .today-person
+            justify-content: flex-start
 
 </style>
