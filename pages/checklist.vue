@@ -13,12 +13,12 @@
             </div>
 
             <div class="day-wrapper" v-for="(day, index) in last30Days" :key="index"
-                :class="{ 'day-wrapper_opened': day.showInners }" @click="getTasks(day)">
-                <p class="title" @click="day.showInners = !day.showInners">{{ getShortDate(day.date) }}</p>
-                <img src="@/assets/images/icons/arrow-down.svg" @click="day.showInners = !day.showInners" alt=""
-                    class="icon arrow-down transition" />
+                :class="{ 'day-wrapper_opened': day.showInners }"
+                @click="{ day.showInners = !day.showInners; getTasks(day) }">
+                <p class="title">{{ getShortDate(day.date) }}</p>
+                <img src="@/assets/images/icons/arrow-down.svg" alt="" class="icon arrow-down transition" />
 
-                <div class="inner" v-if="day.showInners" v-motion-fade>
+                <div class="inner" v-if="day.showInners" v-motion-fade @click.stop>
                     <template v-if="day.tasks?.length">
                         <div class="item" v-for="(item, index) in day.tasks" :key="index"
                             :class="{ 'item_done': item.done }">
@@ -97,14 +97,14 @@ onMounted(async () => {
         margin-top: 10px
         .title
             font-size: 18px
-            border-bottom: 1px solid var(--main-dark)
+            border-bottom: 1px solid var(--border-color)
             padding: 10px 0
     .day-wrapper
-        margin-top: 20px
         display: grid
         grid-template-columns: 1fr auto
         padding: 10px 0
-        border-bottom: 1px solid var(--main-dark)
+        padding-top: 20px
+        border-bottom: 1px solid var(--border-color)
         &_opened
             .arrow-down
                 transform: rotate(180deg)
@@ -113,6 +113,7 @@ onMounted(async () => {
         .arrow-down
             width: 14px
             height: 14px
+            align-self: center
         .inner
             grid-column: 1/3
             margin: 10px 0
@@ -132,16 +133,62 @@ onMounted(async () => {
                     align-items: center
                     font-weight: 600
                     margin-bottom: 10px
-                    border-top: 1px solid var(--text-color)
-                    border-bottom: 1px solid var(--text-color)
+                    border-top: 1px solid var(--border-color)
+                    border-bottom: 1px solid var(--border-color)
                     padding: 10px 0
                 &_done
                     text-decoration: line-through
                     font-weight: 300
             .empty
                 color: var(--text-color)
-                font-size: 14px
                     
         &:first-child
             border-top: 1px solid var(--main-dark)
+
+@media only screen and (min-width: $bp-tablet)
+    .checklist-page
+        padding: 40px 0
+        .container
+            margin-top: 20px
+            .title
+                font-size: 22px
+                padding: 14px 0
+                margin-bottom: 20px
+        .day-wrapper
+            margin: 0
+            padding: 20px
+            padding-top: 40px
+            .title
+                font-size: 19px
+            .arrow-down
+                width: 18px
+                height: 18px
+            .inner
+                margin: 20px 0
+                margin-top: 40px
+                .item
+                    font-size: 1rem
+                // ?
+@media only screen and (min-width: $bp-tablet-landscape-up)
+    .checklist-page
+        padding: 20px 0
+        .container
+            .title
+                font-size: 18px
+                padding: 10px 0
+        .day-wrapper
+            padding: 20px 0
+            .arrow-down
+                width: 14px
+                height: 14px
+@media only screen and (min-width: $bp-pc)
+    .checklist-page
+        padding: 40px 0
+        .container
+            margin-bottom: 50px
+        .day-wrapper
+            padding: 30px 0
+            .arrow-down
+                width: 18px 
+                height: 18px
 </style>

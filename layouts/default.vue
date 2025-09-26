@@ -6,7 +6,7 @@
                     <img src="@/assets/images/coffee-cup.png" alt="">
                 </nuxt-link>
 
-                <p class="time">{{ getCurrentTimeInGMT5() }}</p>
+                <!-- <p class="time">{{ getCurrentTimeInGMT5() }}</p> -->
 
                 <button class="menu-btn" @click="showMenu = !showMenu"><img src="@/assets/images/icons/burger.svg"
                         alt=""></button>
@@ -31,6 +31,17 @@ const showMenu = ref(false)
 if (width.value > 900) {
     showMenu.value = true
 }
+
+watch(showMenu, () => {
+    const isMobile = width.value < 900
+    console.log(isMobile);
+
+    if (isMobile && showMenu.value) {
+        document.documentElement.style.overflowY = 'hidden'
+    } else {
+        document.documentElement.style.overflowY = 'auto'
+    }
+})
 
 function getCurrentTimeInGMT5() {
     const date = new Date();
@@ -129,8 +140,12 @@ $HEADERSHEIGHT-desktop: 100px
     $MENU-talbet-WIDTH: 200px
     .header
         margin-left: calc($MENU-talbet-WIDTH + 40px)
+        margin-right: 40px
         .menu-btn
             display: none
+        .logo-wrapper
+            width: 50px
+
     .nav-menu
         position: fixed
         left: 0
@@ -154,6 +169,7 @@ $HEADERSHEIGHT-desktop: 100px
                 font-size: 16px
     main
         margin-left: calc($MENU-talbet-WIDTH + 40px)
+        margin-right: 40px
 
 @media only screen and (min-width: $bp-pc)
     $MENU-desktop-WIDTH: 300px
@@ -161,6 +177,8 @@ $HEADERSHEIGHT-desktop: 100px
         margin-left: calc($MENU-desktop-WIDTH + 40px)
         .menu-btn
             display: none
+        .logo-wrapper
+            width: 60px
     .nav-menu
         position: fixed
         left: 0
