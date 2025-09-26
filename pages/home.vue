@@ -7,24 +7,12 @@
                     @click="useLogout" alt="" class="change-icon"></p>
 
             <div class="container mt">
-                <nuxt-link class="wrapper" to="/checklist">
-                    <img src="@/assets/images/icons/checklist.svg" alt="" class="icon" />
-                    <p class="name">Чеклист</p>
-                </nuxt-link>
-                <nuxt-link class="wrapper" to="/notes">
-                    <img src="@/assets/images/icons/notes.svg" alt="" class="icon" />
-                    <p class="name">Заметки</p>
-                </nuxt-link>
-                <nuxt-link class="wrapper" to="/reporting">
-                    <img src="@/assets/images/icons/reporting.svg" alt="" class="icon" />
-                    <p class="name">Отчетность</p>
-                </nuxt-link>
-                <nuxt-link class="wrapper" to="/users">
-                    <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
-                    <p class="name">Сменщики</p>
-                </nuxt-link>
+                <v-nav />
             </div>
 
+            <div class="logs">
+                Здесь будут логи ( кто что делал в админке и в какое время )
+            </div>
         </div>
     </div>
 </template>
@@ -53,10 +41,11 @@ const user_name = useCookie('user_name').value
         // grid-gap: 10px
         .wrapper
             display: grid
-            grid-template-columns: 1fr 1fr 
+            grid-template-columns: 40px 1fr 
+            gap: 15px
             align-items: center
             border-bottom: 1px solid var(--text-color)
-            padding: 30px 20px
+            padding: 40px 20px
             .icon
                 width: 40px
                 height: 40px
@@ -64,4 +53,31 @@ const user_name = useCookie('user_name').value
                 font-weight: 600
             &:nth-child(even)
                 border-left:  1px solid var(--text-color)
+            &:nth-child(3), &:nth-child(4)
+                border-bottom: none
+
+@media only screen and (min-width: $bp-tablet)
+    .home-page
+        .h1
+            text-align: center
+            font-size: 2.25rem
+        .today-person
+            display: flex
+            justify-content: center
+            font-size: 18px
+            .icon
+                height: 20px
+        .container
+            .wrapper
+                display: flex
+                flex-direction: column
+                gap: 30px
+                padding: 40px
+                .name
+                    font-size: 20px
+@media only screen and (min-width: $bp-pc)
+    .home-page
+        .container
+            .wrapper
+
 </style>

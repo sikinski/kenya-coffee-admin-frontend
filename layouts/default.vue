@@ -8,17 +8,29 @@
 
                 <p class="time">{{ getCurrentTimeInGMT5() }}</p>
 
-                <!-- <button class="menu"><img src="@/assets/images/icons/burger.svg" alt=""></button> -->
+                <button class="menu-btn" @click="showMenu = !showMenu"><img src="@/assets/images/icons/burger.svg"
+                        alt=""></button>
             </div>
         </header>
 
         <main>
             <slot />
         </main>
+
+        <div class="nav-menu" v-if="showMenu" v-motion-slide-visible-top>
+            <v-nav />
+        </div>
     </div>
 </template>
 
 <script setup>
+import { useWindowSize } from '@vueuse/core'
+const { width } = useWindowSize();
+const showMenu = ref(false)
+
+if (width.value > 900) {
+    showMenu.value = true
+}
 
 function getCurrentTimeInGMT5() {
     const date = new Date();
@@ -53,6 +65,9 @@ useHead({
 
 <style lang="sass">
 @use '@/assets/styles/adaptive' as *
+$HEADERSHEIGHT-mobile: 80px
+$HEADERSHEIGHT-tablet: 100px
+$HEADERSHEIGHT-desktop: 100px
 .header
     padding: 15px 0
     .content
@@ -63,9 +78,114 @@ useHead({
         width: 50px
     .time
         font-size: 18px
-    .menu
+    .menu-btn
         border: none
         width: 50px
         img
             width: 80%
+.nav-menu
+    position: absolute
+    top: $HEADERSHEIGHT-mobile
+    left: 0
+    background-color: var(--creme-color)
+    width: 100%
+    height: calc(100vh - $HEADERSHEIGHT-mobile)
+    padding: 13px
+    z-index: 10
+    .nav
+        display: flex
+        flex-direction: column
+        gap: 10px
+        height: 100%
+        justify-content: center
+        padding-bottom: $HEADERSHEIGHT-mobile
+        .icon
+            display: none
+        .name
+            text-align: center
+            font-size: 18px
+            font-weight: 500
+
+@media only screen and (min-width: $bp-tablet)
+    .header
+        padding: 22px 0
+        .logo-wrapper
+            width: 60px
+        .time
+            font-size: 22px
+        .menu-btn
+            width: 60px
+    .nav-menu
+        top: $HEADERSHEIGHT-tablet
+        height: calc(100vh - $HEADERSHEIGHT-tablet)
+        .nav
+            padding-bottom: $HEADERSHEIGHT-tablet
+            gap: 24px
+            .name
+                font-size: 24px
+                font-weight: 500
+
+@media only screen and (min-width: $bp-tablet-landscape-up)
+    $MENU-talbet-WIDTH: 200px
+    .header
+        margin-left: calc($MENU-talbet-WIDTH + 40px)
+        .menu-btn
+            display: none
+    .nav-menu
+        position: fixed
+        left: 0
+        top: 0
+        height: 100%
+        width: $MENU-talbet-WIDTH
+        background-color: var(--main-bg)
+        border-right: 1px solid var(--creme-color)
+        padding: 20px
+        .nav
+            gap: 14px
+            .wrapper
+                display: grid
+                grid-template-columns: 23px 1fr
+                grid-gap: 20px
+            .icon
+                display: block
+            .name
+                text-align: left
+                font-size: 16px
+    main
+        margin-left: calc($MENU-talbet-WIDTH + 40px)
+
+@media only screen and (min-width: $bp-pc)
+    $MENU-desktop-WIDTH: 300px
+    .header
+        margin-left: calc($MENU-desktop-WIDTH + 40px)
+        .menu-btn
+            display: none
+    .nav-menu
+        position: fixed
+        left: 0
+        top: 0
+        height: 100%
+        width: $MENU-desktop-WIDTH
+        background-color: var(--main-bg)
+        border-right: 1px solid var(--creme-color)
+        padding: 40px 0
+        .nav
+            gap: 0
+            .wrapper
+                grid-template-columns: 27px 1fr
+                transition: .3s ease
+                padding: 20px 40px
+                &:hover
+                    background-color: var(--creme-color)
+            .icon
+                width: 30px
+                height: 30px
+            .name
+                font-size: 21px
+                transition: .3s ease
+            .wrapper:hover
+                .name
+                    color: #000
+    main
+        margin-left: calc($MENU-desktop-WIDTH + 40px)
 </style>

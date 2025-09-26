@@ -1,0 +1,27 @@
+<template>
+    <div class="nav">
+        <nuxt-link class="wrapper" to="/checklist">
+            <img src="@/assets/images/icons/checklist.svg" alt="" class="icon" />
+            <p class="name">Чеклист</p>
+        </nuxt-link>
+        <nuxt-link class="wrapper" to="/notes">
+            <img src="@/assets/images/icons/notes.svg" alt="" class="icon" />
+            <p class="name">Заметки</p>
+        </nuxt-link>
+        <nuxt-link class="wrapper" to="/reporting">
+            <img src="@/assets/images/icons/reporting.svg" alt="" class="icon" />
+            <p class="name">Отчетность</p>
+        </nuxt-link>
+        <nuxt-link class="wrapper" to="/users">
+            <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
+            <p class="name">Сменщики</p>
+        </nuxt-link>
+    </div>
+</template>
+
+<script setup>
+</script>
+
+<style lang="sass">
+@use '@/assets/styles/adaptive' as *
+</style>
