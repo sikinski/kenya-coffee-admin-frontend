@@ -1,6 +1,6 @@
 FROM node:20
 
-WORKDIR /frontend
+WORKDIR /admin_frontend
 
 # # Установим конкретную версию pnpm
 RUN npm install -g pnpm

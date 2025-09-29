@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  frontend:
-    container_name: frontend
+  admin_frontend:
+    container_name: admin_frontend
     build: .
     ports:
       - "3001:3000"
