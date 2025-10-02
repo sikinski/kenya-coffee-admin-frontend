@@ -464,6 +464,7 @@ const editorOptions = {
             margin-top: 40px
             .input-wrapper
                 font-size: 16px
+                
             .ql-editor
                 font-size: 16px
                 &::before
@@ -504,6 +505,12 @@ const editorOptions = {
                 border: none
                 padding: 0
                 padding-right: 50%
+                .input-wrapper
+                    font-size: 1rem
+                    .input
+                        font-size: 1rem
+                    .content-name
+                        font-size: 1rem
                 .close-icon
                     right: 50%
                     transform: translateX(50%)
