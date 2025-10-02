@@ -81,9 +81,9 @@
                         <img @click="deleteNote(note.id)" src="@/assets/images/icons/close.svg" alt=""
                             class="close-icon">
 
-                        <span class="topic" :style="{ background: getTopicById(note.topicId).color }">#{{
-                            getTopicById(note.topicId).name
-                            }}</span>
+                        <span class="topic" :style="{ background: getTopicById(note.topicId)?.color }">#{{
+                            getTopicById(note.topicId)?.name
+                        }}</span>
                         <div class="text" v-html="note.text"></div>
 
                         <div class="footer">
