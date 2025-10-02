@@ -144,6 +144,8 @@ const getNotes = async () => {
     if (filters.value.topics?.length) {
         filterString += `topics=${filters.value.topics.join(',')}`
     }
+    console.log(filterString);
+
     notes.value = await $api.get(`/notes?${filterString}`).then(res => res.data).catch(() => [])
 }
 const getTopicById = (id) => {
@@ -177,6 +179,7 @@ const addNewNote = async () => {
 const deleteNote = async (note_id) => {
     serverError.value = ''
     await $api.delete(`/notes/${note_id}`).then(async () => {
+        filters.value.topics = []
         await getNotes()
     }).catch(err => {
         serverError.value = err.response.data.error || err.response.data.message || ''
@@ -191,9 +194,11 @@ const deleteTopic = async (topic) => {
     topicError.value = ''
     await $api.delete(`/note-topics/${topic.id}`).then(async () => {
         await getNoteTopics()
+        filters.value.topics = []
     }).catch(err => {
         topicError.value = err.response.data.error
     })
+
 }
 
 const toggleFilterTopics = (topic) => {
