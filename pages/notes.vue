@@ -81,9 +81,10 @@
                         <img @click="deleteNote(note.id)" src="@/assets/images/icons/close.svg" alt=""
                             class="close-icon">
 
-                        <span class="topic" :style="{ background: getTopicById(note.topicId)?.color }">#{{
-                            getTopicById(note.topicId)?.name
-                        }}</span>
+                        <span class="topic" v-if="getTopicById(note.topicId)"
+                            :style="{ background: getTopicById(note.topicId).color }">#{{
+                                getTopicById(note.topicId).name
+                            }}</span>
                         <div class="text" v-html="note.text"></div>
 
                         <div class="footer">
@@ -139,7 +140,11 @@ const getNoteTopics = async () => {
     noteTopics.value = await $api.get('/note-topics').then(res => res.data || []).catch(() => [])
 }
 const getNotes = async () => {
-    notes.value = await $api.get('/notes').then(res => res.data).catch(() => [])
+    let filterString = ''
+    if (filters.value.topics?.length) {
+        filterString += `topics=${filters.value.topics.join(',')}`
+    }
+    notes.value = await $api.get(`/notes?${filterString}`).then(res => res.data).catch(() => [])
 }
 const getTopicById = (id) => {
     return noteTopics.value.find(topic => topic.id === id) || null
@@ -198,6 +203,10 @@ const toggleFilterTopics = (topic) => {
         filters.value.topics.push(topic.id)
     }
 }
+
+watch(filters, async () => {
+    await getNotes()
+}, { deep: true })
 
 onMounted(async () => {
     await getNoteTopics()
