@@ -1,4 +1,5 @@
 export function getShortDateTime(isoDate) {
+
     const date = new Date(isoDate);
     const now = new Date();
 
