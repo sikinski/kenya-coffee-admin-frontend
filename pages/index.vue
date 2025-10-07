@@ -90,7 +90,7 @@ definePageMeta({
 })
 
 useHead({
-    title: 'Авторизация — Кофелегия',
+    title: 'Авторизация — Кенья',
 })
 </script>
 
