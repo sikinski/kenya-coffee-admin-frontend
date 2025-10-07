@@ -182,7 +182,7 @@ async function checkPosition() {
 }
 
 useHead({
-    title: 'Продукты (бренды) — H CLUB',
+    title: 'Аналитика — Keния',
 })
 // 
 </script>

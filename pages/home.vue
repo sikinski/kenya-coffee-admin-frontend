@@ -18,6 +18,10 @@
 
 <script setup>
 const user_name = useCookie('user_name').value
+
+useHead({
+    title: 'Главная — Keния',
+})
 </script>
 
 <style lang="sass">

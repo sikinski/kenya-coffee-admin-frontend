@@ -88,6 +88,10 @@ onMounted(async () => {
     await getTodayTasks()
     await getLastDays()
 })
+
+useHead({
+    title: 'Чеклист — Keния',
+})
 </script>
 
 <style lang="sass">

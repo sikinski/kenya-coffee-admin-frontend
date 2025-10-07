@@ -166,6 +166,10 @@ onMounted(async () => {
     console.log(todayReport.value);
 
 })
+
+useHead({
+    title: 'Отчетность — Кения',
+})
 </script>
 
 <style lang="sass">

@@ -226,6 +226,10 @@ const editorOptions = {
         toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'bullet' }, { 'list': 'ordered' }]]
     },
 }
+
+useHead({
+    title: 'Заметки — Кения',
+})
 </script>
 
 <style lang="sass">

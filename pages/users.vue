@@ -30,6 +30,10 @@ const getUsers = async () => {
 onMounted(async () => {
     await getUsers()
 })
+
+useHead({
+    title: 'Пользователи — Кения',
+})
 </script>
 
 <style lang="sass">
