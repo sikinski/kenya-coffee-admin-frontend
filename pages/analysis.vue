@@ -71,8 +71,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
 
     </div>
@@ -86,6 +84,8 @@ const { $api } = useNuxtApp()
 const stopPaginate = ref(false)
 const throttledCheckPosition = throttle(checkPosition, 250);
 const scrollContainer = ref(null)
+
+
 
 // =============== MAIN DATA ===============
 const data = ref({

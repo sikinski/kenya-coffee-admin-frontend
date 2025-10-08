@@ -132,8 +132,9 @@ $HEADERSHEIGHT-desktop: 100px
         .nav
             padding-bottom: $HEADERSHEIGHT-tablet
             gap: 24px
+                
             .name
-                font-size: 24px
+                font-size: 22px
                 font-weight: 500
 
 @media only screen and (min-width: $bp-tablet-landscape-up)
@@ -154,17 +155,25 @@ $HEADERSHEIGHT-desktop: 100px
         height: 100%
         width: $MENU-talbet-WIDTH
         background-color: var(--main-bg)
-        border-right: 1px solid var(--creme-color)
-        padding: 20px
+        border-right: 1px solid var(--border-color)
+        padding: 20px 0
         .nav
-            gap: 14px
+            gap: 0
             padding-bottom: 0
             .wrapper
                 display: grid
                 grid-template-columns: 23px 1fr
-                grid-gap: 20px
+                grid-gap: 15px
+                padding: 20px 30px
+                align-items: center
+            .router-link-active
+                background-color: var(--creme-color)
+                .name
+                    color: #000
             .icon
                 display: block
+                width: 22px
+                height: 22px
             .name
                 text-align: left
                 font-size: 16px
@@ -181,13 +190,7 @@ $HEADERSHEIGHT-desktop: 100px
         .logo-wrapper
             width: 60px
     .nav-menu
-        position: fixed
-        left: 0
-        top: 0
-        height: 100%
         width: $MENU-desktop-WIDTH
-        background-color: var(--main-bg)
-        border-right: 1px solid var(--border-color)
         padding: 40px 0
         .nav
             gap: 0
