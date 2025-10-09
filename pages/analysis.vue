@@ -13,7 +13,7 @@
                     <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
                         :class="{ 'device_active': receiptFilters.devices.includes(device.id) }">
                         <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon">
-                        <p class="text">{{ device.shop.name }}</p>
+                        <p class="text">{{ device.shop.address?.data?.street || device.shop.name }}</p>
 
                         <p class="activation-date">created at {{ getShortDate(device.shop.createdAt) }}</p>
                     </div>
@@ -23,25 +23,23 @@
             <div class="grid-4">
                 <div class="wrapper">
                     <p class="title">График 1</p>
+                    Числа (130 дней работает кофейня, 2880 чеков, 388000 общая выручка)
+                </div>
 
+                <div class="wrapper">
+                    <p class="title">График 2</p>
+                    Показываем, сколько продаж за месяц в виде графика (линейный вертикальный график)
+                </div>
+
+                <div class="wrapper">
+                    <p class="title">График 3</p>
+                    Круговая диаграмма с анализом аудитории (пол, возраст, время продажи)
 
                 </div>
 
                 <div class="wrapper">
-                    <p class="title">хз</p>
-
-                </div>
-
-                <div class="wrapper">
-                    <p class="title">Числа</p>
-
-
-                </div>
-
-                <div class="wrapper">
-                    <p class="title">Диаграма 1</p>
-
-
+                    <p class="title">График 4</p>
+                    Самые продаваемые товары (Капучино...........36%)
                 </div>
             </div>
 
