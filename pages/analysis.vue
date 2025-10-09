@@ -12,11 +12,10 @@
                 <div class="devices">
                     <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
                         :class="{ 'device_active': receiptFilters.devices.includes(device.id) }">
-                        <img src="@/assets/images/icons/terminal.svg" alt="" class="icon">
-                        <span class="id">{{ device.id }}</span>
-                        <p class="text">Добавить адрес</p>
+                        <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon">
+                        <p class="text">{{ device.shop.name }}</p>
 
-                        <p class="activation-date">{{ getShortDate(device.activationDate) }}</p>
+                        <p class="activation-date">created at {{ getShortDate(device.shop.createdAt) }}</p>
                     </div>
                 </div>
             </div>
@@ -116,6 +115,11 @@ const getDevices = async () => {
         data.value.devices.items = res.data.rows || []
     }).catch(e => {
         data.value.devices.error = e.response || e
+    })
+    console.log(data.value.devices.items);
+
+    data.value.devices.items.forEach(async (device) => {
+        device.shop = await $api.get(`/aqsi/shops/${device.shop.id}`).then(res => res.data)
     })
 }
 const getReceipts = async () => {
@@ -242,7 +246,7 @@ useHead({
             grid-template-columns: 1fr auto
             grid-gap: 10px 
             font-size: 14px
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+            // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
             border-radius: 8px
             .date
                 color: var(--border-color)
