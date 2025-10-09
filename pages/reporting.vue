@@ -298,14 +298,23 @@ useHead({
             height: 15px
         .day-wrapper
             padding: 20px 0
+            cursor: pointer
             .title
                 font-size: 19px
 
 @media only screen and (min-width: $bp-pc)
     .reporting-page
         padding: 40px 0
+        .content
+            position: relative
+            max-height: calc(100vh - 170px)
+            overflow: auto
+            .h1-wrapper
+                grid-column: 1/3
+                position: fixed
         .container
-            margin-top: 20px
+            position: fixed
+            top: 20%
             .title
                 font-size: 18px
                 padding: 14px 0
@@ -322,6 +331,7 @@ useHead({
                     font-size: 20px
         .day-wrapper
             padding: 30px 0
+            margin-left: 50%
             .inner
                 width: 50%
                 .wrapper
@@ -331,4 +341,5 @@ useHead({
             .arrow-down
                 width: 18px 
                 height: 18px
+                align-self: start
 </style>

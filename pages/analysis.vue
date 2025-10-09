@@ -213,6 +213,7 @@ useHead({
                 opacity: .6
                 border-radius: 4px
                 transition: .3s ease
+                cursor: pointer
                 &_active
                     opacity: 1
             .icon

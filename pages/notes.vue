@@ -266,9 +266,9 @@ useHead({
         margin-top: 20px
         .input-wrapper
             background-color: #fff
-            border: 1px solid var(--creme-color)
+            border: 1px solid var(--border-color)
             .ql-toolbar
-                border-bottom: 1px solid var(--creme-color)
+                border-bottom: 1px solid var(--border-color)
         .ql-editor
             font-size: 14px
             font-family: sans-serif
