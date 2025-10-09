@@ -120,7 +120,19 @@ const topicError = ref('')
 const noteTopics = ref([])
 const notes = ref([])
 
-const palette = ['#e5c3c6', '#e1e9b7', '#f96161', '#bcd2d0', '#d0b783', '#b5a7c5', '#d4af37', '#a1afde', '#fbb07b', '#a8e3c2']
+const palette = [
+    '#f89d82', // кремово-терракотовый
+    '#e1e5df', // мягкий бежевый
+    '#a1afde', // нежний голубой
+    '#a8e3c2', // пастельный мятный
+    '#d9b783', // мягкий песочный
+    '#b5a7c5', // нежный лавандовый
+    '#f16161', // мягкий красный
+    '#add8e6', // лёгкий голубой
+    '#ffe4c4', // кремовый
+    '#c8d2b4'  // пастельный оливковый
+]
+
 
 const noteForm = ref({
     text: '',

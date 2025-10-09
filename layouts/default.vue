@@ -3,7 +3,7 @@
         <header class="header">
             <div class="content">
                 <nuxt-link to="/" class="logo-wrapper">
-                    <img src="@/assets/images/coffee-cup.png" alt="">
+                    <img src="/logo.jpg" alt="">
                 </nuxt-link>
 
                 <!-- <p class="time">{{ getCurrentTimeInGMT5() }}</p> -->
@@ -188,7 +188,7 @@ $HEADERSHEIGHT-desktop: 100px
         .menu-btn
             display: none
         .logo-wrapper
-            width: 60px
+            width: 70px
     .nav-menu
         width: $MENU-desktop-WIDTH
         padding: 40px 0

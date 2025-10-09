@@ -219,7 +219,7 @@ useHead({
                 width: 28px
                 height: 30px
             .activation-date
-                color: var(--border-color)
+                // color: var(--border-color)
                 width: 100%
                 text-align: right
     .grid-4
@@ -276,7 +276,7 @@ useHead({
                 .product
                     padding: 6px 0
                     font-size: 14px
-                    border-top: 1px solid var(--creme-color)
+                    border-top: 1px solid var(--border-color)
                     display: grid
                     grid-template-columns: auto 1fr 100px
                     grid-gap: 14px
@@ -377,6 +377,7 @@ useHead({
                 .cashier
                     font-size: 16px
                 .final-sum
+                    margin: 0
                     margin-top: 5px
                     align-self: flex-end
                     justify-self: end
