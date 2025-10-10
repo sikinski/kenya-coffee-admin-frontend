@@ -43,18 +43,15 @@
 //         return localDate.toLocaleString('ru-RU', options).replace(',', '');
 //     }
 // }
-
 export function getShortDateTime(isoDate) {
     if (!isoDate) return '';
+
     const date = new Date(isoDate);
+    const ms = date.getTime() + 7 * 60 * 60 * 1000; // добавляем 7 часов
+    const shifted = new Date(ms);
 
-    // Добавляем 5 часов (Челябинск UTC+5)
-    const chelyabinskDate = new Date(date.getTime() + 5 * 60 * 60 * 1000);
+    const hours = String(shifted.getUTCHours()).padStart(2, '0');
+    const minutes = String(shifted.getUTCMinutes()).padStart(2, '0');
 
-    const day = String(chelyabinskDate.getDate()).padStart(2, '0');
-    const month = chelyabinskDate.toLocaleString('ru-RU', { month: 'short' });
-    const hours = String(chelyabinskDate.getHours()).padStart(2, '0');
-    const minutes = String(chelyabinskDate.getMinutes()).padStart(2, '0');
-
-    return `${day} ${month} ${hours}:${minutes}`;
+    return `${hours}:${minutes}`;
 }
