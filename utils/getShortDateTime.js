@@ -44,14 +44,5 @@
 //     }
 // }
 export function getShortDateTime(isoDate) {
-    if (!isoDate) return '';
-
-    const date = new Date(isoDate);
-    const ms = date.getTime() + 7 * 60 * 60 * 1000; // добавляем 7 часов
-    const shifted = new Date(ms);
-
-    const hours = String(shifted.getUTCHours()).padStart(2, '0');
-    const minutes = String(shifted.getUTCMinutes()).padStart(2, '0');
-
-    return `${hours}:${minutes}`;
+    return isoDate
 }
