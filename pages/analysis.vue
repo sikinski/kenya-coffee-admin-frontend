@@ -45,7 +45,7 @@
 
             <div class="receipts">
                 <div class="receipt" v-for="reciept in data.receipts.items" :key="reciept.raw.id">
-                    <span class="date">{{ reciept.processedAtRaw }}</span>
+                    <span class="date">{{ getShortDateTime(reciept.processedAtRaw) }}</span>
 
 
                     <p class="cashier">{{ reciept.raw.cashier.name }} <img src="@/assets/images/icons/nice-icon.svg"
@@ -186,7 +186,7 @@ async function checkPosition() {
 useHead({
     title: 'Аналитика — Keния',
 })
-// 
+
 </script>
 
 <style lang="sass">
