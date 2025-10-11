@@ -53,7 +53,7 @@
                         <img @click.prevent="showNoteTopicForm = false" src="@/assets/images/icons/close.svg" alt=""
                             class="close-icon">
                         <div class="input-wrapper">
-                            <input type="text" class="input" name="name" v-model="topicForm.name" />
+                            <input type="text" class="input" name="topic_name" v-model="topicForm.name" />
                             <label for="name" class="label-name">
                                 <span class="content-name" :class="{ 'valid-input': topicForm.name }">Название темы
                                     *</span>

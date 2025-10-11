@@ -3,7 +3,7 @@
         <h1 class="h1">Новый день</h1>
         <div class="window form mt">
             <div class="input-wrapper">
-                <input type="text" class="input" name="name" v-model="authForm.username" />
+                <input type="text" class="input" name="login" v-model="authForm.username" />
                 <label for="name" class="label-name">
                     <span class="content-name" :class="{ 'valid-input': authForm.username }">Username *</span>
                 </label>
@@ -11,7 +11,7 @@
             </div>
 
             <div class="input-wrapper">
-                <input type="password" class="input" name="name" v-model="authForm.password" />
+                <input type="password" class="input" name="password" v-model="authForm.password" />
                 <label for="name" class="label-name">
                     <span class="content-name" :class="{ 'valid-input': authForm.password }">Password *</span>
                 </label>
