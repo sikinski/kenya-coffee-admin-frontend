@@ -75,7 +75,7 @@ const username = async () => {
         }
     }).catch((e) => {
 
-        errorText.value = e.response.data.error
+        errorText.value = e?.response?.data?.error
     })
 }
 
