@@ -154,9 +154,13 @@ const initWs = () => {
     const url = useRuntimeConfig().public.ws_address
 
     const ws = new WebSocket(`${url}/receipts`)
+    console.log(ws);
+
 
     ws.onmessage = (event) => {
         const msg = JSON.parse(event.data)
+        console.log(msg);
+
         if (msg.type === 'new_receipts') {
             console.log('=========== НОВЫЕ ЧЕКИ ===========');
 
