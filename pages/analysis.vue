@@ -44,7 +44,8 @@
             </div>
 
             <div class="receipts">
-                <div class="receipt" v-for="reciept in data.receipts.items" :key="reciept.raw.id">
+                <div class="receipt" v-for="reciept in data.receipts.items" :key="reciept.raw.id"
+                    :class="{ 'receipt_is_new': reciept.is_new }">
                     <span class="date">{{ getShortDateTime(reciept.processedAtRaw) }}</span>
 
 
@@ -149,6 +150,28 @@ const toggleDeviceInFilters = (device) => {
     }
 }
 
+const initWs = () => {
+    const url = useRuntimeConfig().public.ws_address
+
+    const ws = new WebSocket(`${url}/receipts`)
+
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data)
+        if (msg.type === 'new_receipts') {
+            console.log('=========== НОВЫЕ ЧЕКИ ===========');
+
+            let newReceipts = msg.payload.map(receipt => ({
+                ...receipt,
+                isNew: true
+            }));
+
+            data.value.receipts.items.unshift(...newReceipts)
+
+        }
+    }
+
+}
+
 onMounted(async () => {
     await getDevices()
     await getReceipts()
@@ -159,6 +182,8 @@ onMounted(async () => {
     if (scrollContainer.value) {
         scrollContainer.value.addEventListener('scroll', throttledCheckPosition);
     }
+
+    initWs()
 })
 
 onUnmounted(() => {
@@ -236,6 +261,7 @@ useHead({
         max-height: 100vh
         overflow: auto
         padding-bottom: 60px
+        padding: 16px 10px
         .receipt
             background-color: var(--block-bg)
             padding: 12px 20px
@@ -246,6 +272,8 @@ useHead({
             font-size: 14px
             // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
             border-radius: 8px
+            &_is_new
+                animation: new-element 3s ease-out
             .date
                 color: var(--border-color)
                 font-weight: 600
