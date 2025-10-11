@@ -8,8 +8,8 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            backend_address: process.env.BACKEND_ADDRESS,
-            ws_address: process.env.WS_ASSRESS
+            backend_address: process.env.WS_ADDRESS,
+            ws_address: process.env.WS_ADDRESS
         }
     },
 
