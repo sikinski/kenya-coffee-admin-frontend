@@ -3,8 +3,6 @@ version: "3.8"
 services:
   admin_frontend:
     container_name: admin_frontend
-    volumes:
-      ./:/admin_frontend:cached
     build: .
     ports:
       - "3001:3000"
