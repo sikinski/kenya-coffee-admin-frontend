@@ -23,5 +23,5 @@ EXPOSE 3001
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3001
 
-# Запускаем сервер с увеличенным лимитом памяти
+# Запускаем сервер
 CMD ["node", ".output/server/index.mjs"]
