@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     css: ['@/assets/styles/index.sass'],
 
-    modules: ['@vueuse/motion/nuxt'],
+    modules: ['@vueuse/motion/nuxt', "nuxt-echarts"],
 
     runtimeConfig: {
         public: {
@@ -13,8 +13,16 @@ export default defineNuxtConfig({
         }
     },
 
+    echarts: {
+        // Options
+        renderer: ['svg', 'canvas'],
+        charts: ['BarChart', 'LineChart', 'PieChart'],
+        components: ['DatasetComponent', 'GridComponent', 'TooltipComponent', 'TitleComponent', 'LegendComponent'],
+    },
+
     components: [
         { path: '~/components/ui', prefix: 'ui' },
+        { path: '~/components/charts', prefix: 'charts' },
         '~/components',
     ],
 

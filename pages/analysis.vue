@@ -20,27 +20,9 @@
                 </div>
             </div>
 
-            <div class="grid-4">
-                <div class="wrapper">
-                    <p class="title">График 1</p>
-                    Числа (130 дней работает кофейня, 2880 чеков, 388000 общая выручка)
-                </div>
-
-                <div class="wrapper">
-                    <p class="title">График 2</p>
-                    Показываем, сколько продаж за месяц в виде графика (линейный вертикальный график)
-                </div>
-
-                <div class="wrapper">
-                    <p class="title">График 3</p>
-                    Круговая диаграмма с анализом аудитории (пол, возраст, время продажи)
-
-                </div>
-
-                <div class="wrapper">
-                    <p class="title">График 4</p>
-                    Самые продаваемые товары (Капучино...........36%)
-                </div>
+            <div class="wrapper">
+                <p class="title">Графики.</p>
+                <graphs />
             </div>
 
             <div class="receipts">
@@ -266,6 +248,7 @@ useHead({
         overflow: auto
         padding-bottom: 60px
         padding: 16px 10px
+        margin-top: 20px
         .receipt
             background-color: var(--block-bg)
             padding: 12px 20px
@@ -401,6 +384,7 @@ useHead({
             gap: 10px
             width: 70%
             // margin: 0 auto
+            margin-top: 60px
             .receipt
                 padding: 26px 32px
                 font-size: 16px
