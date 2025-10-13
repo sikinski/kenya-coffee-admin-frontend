@@ -20,6 +20,38 @@
                 </div>
             </div>
 
+            <div class="wrapper numbers-wrapper">
+                <p class="title">Числа</p>
+
+                <div class="numbers">
+                    <div class="num-wrapper">
+                        <p class="num num-prefix">244 888 <span class="prefix">р.</span></p>
+                        <p class="text">пришло за месяц</p>
+                    </div>
+                    <div class="num-wrapper">
+                        <p class="num num-prefix">256<span class="prefix">р.</span></p>
+                        <p class="text">средний чек</p>
+                    </div>
+                    <div class="num-wrapper">
+                        <p class="num">355</p>
+                        <p class="text">довольных клиентов</p>
+                    </div>
+                    <div class="num-wrapper">
+                        <p class="num">898</p>
+                        <p class="text">позиций продано</p>
+                    </div>
+
+                    <div class="num-wrapper">
+                        <p class="num num-prefix">17-18<span class="prefix">ч.</span></p>
+                        <p class="text">час пик</p>
+                    </div>
+                    <div class="num-wrapper">
+                        <p class="num">999</p>
+                        <p class="text">что еще?</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="wrapper">
                 <p class="title">Графики.</p>
                 <graphs />
@@ -285,7 +317,7 @@ useHead({
                     // font-family: sans-serif
                     font-size: 16px
                     font-weight: 600
-                    color: #228B22
+                    color: var(--green-color)
             .products
                 grid-area: products
                 display: flex
@@ -305,6 +337,28 @@ useHead({
                         font-size: 12px
                         font-weight: 500
                         font-family: sans-serif
+    .numbers-wrapper
+        .numbers
+            display: grid
+            grid-template-columns: 1fr 1fr
+            grid-gap: 20px
+            margin-top: 20px
+            .num-wrapper
+                display: flex
+                flex-direction: column
+                // align-items: center
+                .num
+                    font-family: "Mozilla Text"
+                    font-size: 28px
+                    font-weight: 800
+                    color: var(--green-color)
+                    // &-prefix
+                    //     margin-left: 16px
+                    .prefix
+                        font-size: 20px
+                        margin-left: 5px
+                .text
+                    font-size: 14px
 @media only screen and (min-width: $bp-tablet)
     .analysis
         .wrapper
@@ -316,6 +370,23 @@ useHead({
                 .device
                     grid-gap: 8px 12px
                     padding: 16px
+        .numbers-wrapper
+            .numbers
+                grid-template-columns: 1fr 1fr 1fr
+                grid-gap: 30px 20px
+                margin-top: 20px
+                .num-wrapper
+                    .num
+                        font-size: 34px
+                        font-weight: 800
+                        color: var(--green-color)
+                        // &-prefix
+                        //     margin-left: 16px
+                        .prefix
+                            font-size: 20px
+                            margin-left: 5px
+                    .text
+                        font-size: 18px
         .receipts
             gap: 10px
             .receipt
@@ -337,6 +408,7 @@ useHead({
                         padding: 10px 0
                         font-size: 18px
                         grid-template-columns: auto 1fr 100px
+        
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .analysis
         .wrapper
@@ -349,6 +421,23 @@ useHead({
                     grid-gap: 8px 10px
                     padding: 14px
                     font-size: 14px
+        .numbers-wrapper
+            .numbers
+                grid-template-columns: 1fr 1fr 1fr
+                grid-gap: 30px 20px
+                margin-top: 20px
+                .num-wrapper
+                    .num
+                        font-size: 28px
+                        font-weight: 800
+                        color: var(--green-color)
+                        // &-prefix
+                        //     margin-left: 16px
+                        .prefix
+                            font-size: 20px
+                            margin-left: 5px
+                    .text
+                        font-size: 16px
         .receipts
             gap: 10px
             .receipt
@@ -379,6 +468,23 @@ useHead({
                     grid-gap: 8px 10px
                     padding: 14px
                     font-size: 16px
+        .numbers-wrapper
+            .numbers
+                grid-template-columns: 1fr 1fr 1fr 
+                grid-gap: 20px 20px
+                margin-top: 20px
+                .num-wrapper
+                    .num
+                        font-size: 36px
+                        font-weight: 800
+                        color: var(--green-color)
+                        // &-prefix
+                        //     margin-left: 16px
+                        .prefix
+                            font-size: 20px
+                            margin-left: 5px
+                    .text
+                        font-size: 16px
         .receipts
             gap: 10px
             width: 70%

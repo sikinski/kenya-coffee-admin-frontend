@@ -9,6 +9,8 @@
             <charts-sales-chart />
         </div>
 
+
+
         <div class="products-graph graph-wrapper">
             <div class="nav-btns">
                 <button class="nav-btn nav-btn_active">Кофе</button>
@@ -17,6 +19,8 @@
             </div>
             <charts-products-chart />
         </div>
+
+
 
     </div>
 </template>
@@ -29,10 +33,8 @@
 
 .graphs
     display: grid
-    grid-template-columns: 1fr 1fr
-    grid-gap: 40px
-    .sales-graph
-        height: 300px
+    grid-template-columns: 1fr
+    grid-gap: 20px
     .graph-wrapper
         .nav-btns
             display: flex
@@ -48,5 +50,18 @@
                     background-color: var(--creme-color)
                     border-color: var(--creme-color)
         .canvas
-            height: 100%
+            height: 270px
+@media only screen and (min-width: $bp-tablet)
+    .graphs
+        grid-gap: 40px
+        .graph-wrapper
+            .canvas
+                height: 300px
+@media only screen and (min-width: $bp-pc)
+    .graphs
+        grid-template-columns: 1fr 1fr
+        grid-gap: 20px
+        .graph-wrapper
+            .canvas
+                height: 370px
 </style>
