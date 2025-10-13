@@ -1,47 +1,20 @@
+import moment from 'moment-timezone'
+
 export function getShortDateTime(isoDate) {
+    const tz = 'Asia/Yekaterinburg'
+    const date = moment.tz(isoDate, tz)
+    const now = moment.tz(tz)
 
-    let date = new Date(isoDate);
-    date.setTime(date.getTime() + 2 * 60 * 60 * 1000);
-
-    const now = new Date();
-
-    // Челябинск UTC+5
-    const tz = 'Asia/Yekaterinburg';
-
-    // Преобразуем к Челябинскому времени
-    const localDate = new Date(date.toLocaleString('en-US', { timeZone: tz }));
-    const localNow = new Date(now.toLocaleString('en-US', { timeZone: tz }));
-
-    const isSameDay =
-        localDate.getDate() === localNow.getDate() &&
-        localDate.getMonth() === localNow.getMonth() &&
-        localDate.getFullYear() === localNow.getFullYear();
-
-    const yesterday = new Date(localNow);
-    yesterday.setDate(localNow.getDate() - 1);
-    const isYesterday =
-        localDate.getDate() === yesterday.getDate() &&
-        localDate.getMonth() === yesterday.getMonth() &&
-        localDate.getFullYear() === yesterday.getFullYear();
-
-    const options = {
-        day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-    };
-
-    // Добавляем год, если он не текущий
-    if (localDate.getFullYear() !== localNow.getFullYear()) {
-        options.year = 'numeric';
-    }
-
-    if (isSameDay) {
-        return localDate.toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz });
-    } else if (isYesterday) {
-        return `Вчера, ${localDate.toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz })}`;
+    if (date.isSame(now, 'day')) {
+        // Сегодня: только время
+        return date.format('HH:mm')
+    } else if (date.isSame(now.clone().subtract(1, 'day'), 'day')) {
+        // Вчера
+        return `Вчера, ${date.format('HH:mm')}`
     } else {
-        return localDate.toLocaleString('ru-RU', options).replace(',', '');
+        // Любой другой день
+        // Формат: 10 сен 14:35 или с годом, если не текущий
+        const format = date.year() === now.year() ? 'D MMM HH:mm' : 'D MMM YYYY HH:mm'
+        return date.format(format)
     }
 }

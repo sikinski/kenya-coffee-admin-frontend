@@ -65,8 +65,6 @@ const stopPaginate = ref(false)
 const throttledCheckPosition = throttle(checkPosition, 250);
 const scrollContainer = ref(null)
 
-
-
 // =============== MAIN DATA ===============
 const data = ref({
     devices: {
