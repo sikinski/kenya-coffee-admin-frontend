@@ -7,7 +7,7 @@ WORKDIR /admin_frontend
 
 # Копируем lock-файлы
 COPY ./package.json ./
-COPY ./pnpm-lock.yaml ./
+# COPY ./pnpm-lock.yaml ./
 
 # Устанавливаем зависимости строго по lock-файлу
 RUN pnpm install
