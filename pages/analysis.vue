@@ -7,7 +7,7 @@
             </div>
 
             <div class="wrapper terminal-wrapper">
-                <p class="title">Устройства</p>
+                <p class="title">Устройства.</p>
 
                 <div class="devices">
                     <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
@@ -21,7 +21,7 @@
             </div>
 
             <div class="wrapper numbers-wrapper">
-                <p class="title">Числа</p>
+                <p class="title">Числа.</p>
 
                 <div class="numbers">
                     <div class="num-wrapper">
@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <div class="wrapper">
+            <div class="wrapper charts-wrapper">
                 <p class="title">Графики.</p>
                 <graphs />
             </div>
@@ -252,13 +252,13 @@ useHead({
                 flex-wrap: wrap
                 gap: 4px 7px
                 padding: 12px 8px 
-                background-color: var(--creme-color)
-                opacity: .6
+                background-color: rgba(#ca9279, .5)
                 border-radius: 4px
                 transition: .3s ease
                 cursor: pointer
                 &_active
                     opacity: 1
+                    background-color: rgba(#ca9279, 1)
             .icon
                 width: 28px
                 height: 30px
@@ -280,7 +280,7 @@ useHead({
         padding: 16px 10px
         margin-top: 20px
         .receipt
-            background-color: var(--block-bg)
+            background-color: rgba(#bfa89b, .2)
             padding: 12px 20px
             display: grid
             grid-template-areas: 'date sum' 'products products' 'address address' 'cashier cashier'
@@ -458,12 +458,28 @@ useHead({
                         grid-template-columns: auto 1fr 100px
 @media only screen and (min-width: $bp-pc)
     .analysis
+        .page-content
+            display: grid
+            grid-template-columns: 2fr 5fr
+            grid-template-areas: 'h1 h1' 'devices numbers' 'charts charts' 'receipts receipts'
+            grid-gap: 0px 70px
+        .h1-wrapper
+            grid-area: h1
+        .terminal-wrapper
+            grid-area: devices
+        .numbers-wrapper
+            grid-area: numbers
+        .charts-wrapper
+            grid-area: charts
+        .receipts
+            grid-area: receipts
         .wrapper
             margin: 20px 0
             .title
                 font-size: 16px
             .devices
-                grid-template-columns: repeat(4, 1fr)
+                display: flex
+                flex-direction: column
                 .device
                     grid-gap: 8px 10px
                     padding: 14px

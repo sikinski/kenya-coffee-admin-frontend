@@ -1,5 +1,9 @@
 <template>
     <div class="nav">
+        <nuxt-link class="wrapper" to="/analysis">
+            <img src="@/assets/images/icons/analysis.svg" alt="" class="icon" />
+            <p class="name">Аналитика</p>
+        </nuxt-link>
         <nuxt-link class="wrapper" to="/checklist">
             <img src="@/assets/images/icons/checklist.svg" alt="" class="icon" />
             <p class="name">Чеклист</p>
@@ -16,11 +20,6 @@
             <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
             <p class="name">Сменщики</p>
         </nuxt-link> -->
-
-        <nuxt-link class="wrapper" to="/analysis">
-            <img src="@/assets/images/icons/analysis.svg" alt="" class="icon" />
-            <p class="name">Аналитика</p>
-        </nuxt-link>
 
         <!-- <nuxt-link class="wrapper" to="/procurement">
             <img src="@/assets/images/icons/products.svg" alt="" class="icon" />

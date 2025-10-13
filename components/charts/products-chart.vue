@@ -21,7 +21,7 @@ const sales = [120, 80, 60, 150, 40, 100] // произвольные цифры
 
 const productsConfig = ref({
     title: {
-        text: 'Продажи по продуктам',
+        text: 'Продажи по продуктам (ТЕСТ)',
         left: 'center',
     },
     tooltip: {
@@ -48,11 +48,11 @@ const productsConfig = ref({
             type: 'bar',
             data: sales,
             itemStyle: {
-                color: '#f89d82',
+                color: '#ca9279',
             },
             emphasis: {
                 itemStyle: {
-                    color: '#81c784'
+                    color: '#e84520' // super-highlight
                 }
             },
             animationDuration: 1000, // анимация роста

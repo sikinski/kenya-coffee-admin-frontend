@@ -40,14 +40,14 @@ const salesConfig = {
             symbolSize: 8,
             data: [120, 200, 150, 80, 70, 110, 130],
             lineStyle: {
-                color: '#f89d82',
+                color: '#ca9279',
                 width: 3
             },
             areaStyle: {
-                color: 'rgba(248, 157, 130, 0.2)'
+                color: 'rgba(202,146,121, 0.3)'
             },
             itemStyle: {
-                color: '#e8451f'
+                color: '#ca9279'
             },
             emphasis: {
                 focus: 'series'
