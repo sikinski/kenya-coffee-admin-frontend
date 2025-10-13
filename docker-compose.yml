@@ -3,6 +3,9 @@ version: "3.8"
 services:
   admin_frontend:
     container_name: admin_frontend
+    volumes:
+      - ./:/admin_frontend       # монтируем текущую директорию внутрь контейнера
+      - /admin_frontend/node_modules # отдельный volume для node_modules, чтобы слой образа остался
     build: .
     ports:
       - "3001:3000"
