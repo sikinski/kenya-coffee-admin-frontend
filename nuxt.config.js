@@ -26,13 +26,6 @@ export default defineNuxtConfig({
         '~/components',
     ],
 
-    // Hide warnings in build
-    // vite: {
-    //     css: {
-    //         devSourcemap: false,
-    //     },
-    //     logLevel: 'error',
-    // },
 
     build: {
         loaders: {
@@ -56,6 +49,4 @@ export default defineNuxtConfig({
             ],
         },
     },
-
-
 })
