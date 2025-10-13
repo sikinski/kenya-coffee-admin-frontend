@@ -1,26 +1,22 @@
+# 1. Базовый образ
 FROM node:20
 
+# 2. Рабочая директория
 WORKDIR /admin_frontend
 
-# # # Установим конкретную версию pnpm
-# RUN npm install -g pnpm
+# 3. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
+COPY package.json package-lock.json* ./
+
+# 4. Устанавливаем зависимости
 RUN npm install
 
-# Копируем lock-файлы
-COPY ./package.json ./
-# COPY ./pnpm-lock.yaml ./
-
-# Устанавливаем зависимости строго по lock-файлу
-# RUN pnpm install
-RUN npm install
-
-# Копируем остальные файлы
+# 5. Копируем остальной код
 COPY . .
 
-# Собираем Nuxt-приложение
+# 6. Сборка Nuxt
 RUN npm run build
 
-# Открываем порт
+# 7. Порт приложения
 EXPOSE 3001
 
 # Настраиваем переменные окружения
