@@ -26,17 +26,17 @@
             </div>
 
             <div class="receipts">
-                <div class="receipt" v-for="reciept in data.receipts.items" :key="reciept.raw.id"
-                    :class="{ 'receipt_is_new': reciept.is_new }">
-                    <span class="date">{{ getShortDateTime(reciept.processedAtRaw) }}</span>
+                <div class="receipt" v-for="receipt in data.receipts.items" :key="receipt.raw.id"
+                    :class="{ 'receipt_is_new': receipt.is_new }">
+                    <span class="date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
 
 
-                    <p class="cashier">{{ reciept.raw.cashier.name }} <img src="@/assets/images/icons/nice-icon.svg"
+                    <p class="cashier">{{ receipt.raw.cashier.name }} <img src="@/assets/images/icons/nice-icon.svg"
                             alt="" class="icon"></p>
-                    <p class="coffee-address">{{ reciept.raw.content.settlementAddress }}</p>
+                    <p class="coffee-address">{{ receipt.raw.content.settlementAddress }}</p>
 
                     <div class="products">
-                        <div class="product" v-for="product in reciept.raw.content.positions" :key="product.id">
+                        <div class="product" v-for="product in receipt.raw.content.positions" :key="product.id">
                             <span class="count">x{{ product.quantity }}</span>
                             <p class="name">{{ product.text }}</p>
                             <p class="price"><span class="discount"
@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="final-sum">
-                        <p class="sum">{{ reciept.raw.amount }} руб.</p>
+                        <p class="sum">{{ receipt.raw.amount }} руб.</p>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@ const initWs = () => {
 
             let newReceipts = msg.payload.map(receipt => ({
                 ...receipt,
-                isNew: true
+                is_new: true
             }));
 
             data.value.receipts.items.unshift(...newReceipts)
@@ -261,6 +261,7 @@ useHead({
             border-radius: 8px
             &_is_new
                 animation: new-element 3s ease-out
+                
             .date
                 color: var(--border-color)
                 font-weight: 600
