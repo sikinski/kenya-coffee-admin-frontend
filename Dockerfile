@@ -16,6 +16,7 @@ RUN rm -rf node_modules pnpm-lock.yaml* package-lock.json*
 
 
 # 5. Устанавливаем зависимости
+RUN npx pnpm install
 RUN pnpm install
 
 # 6. Копируем остальной код
