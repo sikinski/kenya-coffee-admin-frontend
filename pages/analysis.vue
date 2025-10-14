@@ -136,7 +136,7 @@ const receiptsPage = ref(1)
 const receiptsPageSize = 20
 
 const commonFilters = ref({
-    dates: { from: '', to: '', custom: '' } // custom may be week, month, quarter
+    dates: { from: '', to: '', custom: 'month' } // custom may be week, month, quarter
 })
 
 const receiptFilters = ref({
