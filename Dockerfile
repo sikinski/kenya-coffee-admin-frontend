@@ -4,20 +4,20 @@ FROM node:20
 # 2. Рабочая директория
 WORKDIR /admin_frontend
 
-# 3. Установим pnpm глобально
-RUN npm install -g pnpm
+# # 3. Установим pnpm глобально
+# RUN npm install -g pnpm
 
 # 4. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json package-lock.json* ./
 
 # 5. Устанавливаем зависимости
-RUN pnpm install
+RUN npm install
 
 # 6. Копируем остальной код
 COPY . .
 
 # 7. Сборка Nuxt
-RUN pnpm run build
+RUN npm run build
 
 # 8. Порт приложения
 EXPOSE 3001
