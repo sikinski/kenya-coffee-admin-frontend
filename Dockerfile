@@ -4,15 +4,16 @@ FROM node:20
 # 2. Рабочая директория
 WORKDIR /admin_frontend
 
-# 3. Установим pnpm 
+# 3. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
+COPY package.json* pnpm-lock.yaml* ./
+
+# 4. Установим pnpm 
 RUN npx pnpm install
 
 # Чистим старые node_modules и lock-файлы (по желанию)
 RUN rm -rf .nuxt .output node_modules/.vite
 RUN rm -rf node_modules pnpm-lock.yaml* package-lock.json*
 
-# 4. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
-COPY package.json* pnpm-lock.yaml* ./
 
 # 5. Устанавливаем зависимости
 RUN pnpm install
