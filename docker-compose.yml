@@ -12,4 +12,3 @@ services:
       NUXT_LOG_LEVEL: error
       HOST: 0.0.0.0   # чтобы Nuxt слушал все интерфейсы
       PORT: 3000      # порт внутри контейнера
-      NUXT_LOG_LEVEL: error
