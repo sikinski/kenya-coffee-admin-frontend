@@ -11,7 +11,7 @@
 
                 <div class="devices">
                     <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
-                        :class="{ 'device_active': receiptFilters.devices.includes(device.id) }">
+                        :class="{ 'device_active': receiptFilters.devices.includes(device.serialNumber) }">
                         <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon">
                         <p class="text">{{ device.shop.address?.data?.street || device.shop.name }}</p>
 
@@ -110,13 +110,11 @@ const data = ref({
         error: ''
     }
 })
-
 // =============== FILTERS ===============
+const receiptsPage = ref(1)
+const receiptsPageSize = 20
 const receiptFilters = ref({
-    page: 1,
-    page_size: 20,
     devices: []
-    // Позже добавлю остальные по необходимости.
 })
 
 
@@ -134,10 +132,10 @@ const getDevices = async () => {
     })
 }
 const getReceipts = async () => {
-    await $api.get(`/aqsi/get-receipts${toQueryString(receiptFilters.value)}`).then(res => {
+    await $api.get(`/aqsi/get-receipts?page=${receiptsPage.value}&page_size=${receiptsPageSize}&${toQueryString(receiptFilters.value)}`).then(res => {
 
         if (res.data.receipts?.length) {
-            if (receiptFilters.value.page !== 1 && data.value.receipts.items?.length) {
+            if (receiptsPage.value !== 1 && data.value.receipts.items?.length) {
                 data.value.receipts.items.push(...res.data.receipts)
             } else {
                 data.value.receipts.items = res.data.receipts
@@ -151,16 +149,18 @@ const getReceipts = async () => {
 }
 
 const toggleDeviceInFilters = (device) => {
-    let devicesArray = receiptFilters.value.devices
-    console.log(devicesArray);
-    console.log(devicesArray.includes(device.id))
-
-    if (devicesArray.includes(device.id)) {
-        receiptFilters.value.devices = devicesArray.filter(id => id !== device.id)
+    if (receiptFilters.value.devices.includes(device.serialNumber)) {
+        receiptFilters.value.devices = receiptFilters.value.devices.filter(serialNumber => serialNumber !== device.serialNumber)
     } else {
-        devicesArray.push(device.id)
+        receiptFilters.value.devices.push(device.serialNumber)
     }
 }
+
+watch(receiptFilters, async () => {
+    receiptsPage.value = 1
+    document.querySelector('.receipts').scrollTo(0, 0)
+    await getReceipts()
+}, { deep: true })
 
 const initWs = () => {
     const url = useRuntimeConfig().public.ws_address
@@ -185,7 +185,6 @@ const initWs = () => {
 
         }
     }
-
 }
 
 onMounted(async () => {
@@ -219,7 +218,7 @@ async function checkPosition() {
     const position = scrollTop + clientHeight;
 
     if (position >= threshold && !stopPaginate.value) {
-        receiptFilters.value.page += 1;
+        receiptsPage.value += 1;
         await getReceipts();
     }
 }

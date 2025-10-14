@@ -25,5 +25,5 @@ export function toQueryString(obj, prefix = '') {
         }
     }
 
-    return parts.length > 0 ? `?${parts.join('&')}` : '';
+    return parts.length > 0 ? `${parts.join('&')}` : '';
 }
