@@ -4,33 +4,30 @@ FROM node:20
 # 2. Рабочая директория
 WORKDIR /admin_frontend
 
-# 3. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
-COPY package.json* pnpm-lock.yaml* ./
+# 3. Копируем только package.json и lock-файлы для установки зависимостей
+COPY package.json pnpm-lock.yaml* ./
 
-# 4. Установим pnpm 
-RUN npx pnpm install
-
-# Чистим старые node_modules и lock-файлы (по желанию)
-RUN rm -rf .nuxt .output node_modules/.vite
-RUN rm -rf node_modules pnpm-lock.yaml* package-lock.json*
-
+# 4. Устанавливаем pnpm глобально
+RUN npm install -g pnpm
 
 # 5. Устанавливаем зависимости
-RUN npx pnpm install
 RUN pnpm install
 
-# 6. Копируем остальной код
+# 6. Копируем весь остальной код проекта
 COPY . .
 
-# 7. Сборка Nuxt
+# 7. Чистим возможные кеши перед билдом (по желанию)
+RUN rm -rf .nuxt .output node_modules/.vite
+
+# 8. Собираем Nuxt
 RUN pnpm run build
 
-# 8. Порт приложения
-EXPOSE 3001
-
-# Настраиваем переменные окружения
+# 9. Настройки окружения
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3001
 
-# Запускаем сервер
+# 10. Открываем порт
+EXPOSE 3001
+
+# 11. Команда запуска
 CMD ["node", ".output/server/index.mjs"]
