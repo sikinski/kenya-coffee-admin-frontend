@@ -4,17 +4,18 @@ FROM node:20
 # 2. Рабочая директория
 WORKDIR /admin_frontend
 
+
 # 3. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
-COPY package.json package-lock.json* ./
+COPY package.json pnpm-lock.yaml* ./
 
 # 4. Устанавливаем зависимости
-RUN npm install
+RUN pnpm install
 
 # 5. Копируем остальной код
 COPY . .
 
 # 6. Сборка Nuxt
-RUN npm run build
+RUN pnpm run build
 
 # 7. Порт приложения
 EXPOSE 3001

@@ -18,9 +18,10 @@ export function toQueryString(obj, prefix = '') {
         } else if (typeof value === 'object') {
             const nested = toQueryString(value, fullKey);
             if (nested) {
-                parts.push(nested.slice(1)); // удаляем ведущий "?" у вложенных
+                parts.push(nested); // ❌ убираем slice(1)
             }
-        } else {
+        }
+        else {
             parts.push(`${encodeURIComponent(fullKey)}=${encodeURIComponent(value)}`);
         }
     }

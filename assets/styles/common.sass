@@ -42,7 +42,7 @@ section
     align-items: center
     padding: 23px
     border-radius: 6px
-    background-color: var(--main-purple)
+    background-color: rgba(#ca9279, 1)
     font-size: 1.125rem
     font-weight: 800
     color: #fff
@@ -50,7 +50,7 @@ section
     text-align: left
     transition: .3s ease
     &:hover
-        background-color: color.adjust(#3D009C, $lightness: 10%, $space: hsl)
+        background-color: rgba(#ca9279, 1)
         
 .mt
     margin-top: 25px
@@ -101,11 +101,11 @@ section
         &:hover 
             background-color: #d8d8d8
     .active-page 
-        background-color: var(--main-purple)
-        border: 1px solid var(--main-purple)
+        background-color: rgba(#ca9279, 1)
+        border: 1px solid rgba(#ca9279, 1)
         color: white
         &:hover 
-            background-color: var(--main-purple)
+            background-color: rgba(#ca9279, 1)
 
 // Breadcrumbs
 
@@ -148,14 +148,17 @@ section
         left: 50%
         transform: translate(-50%)
         bottom: 0
-        background-color: var(--main-purple)
+        background-color: rgba(#ca9279, 1)
         width: 0%
         height: 2px
         transition: .3s ease
     &:hover
         &::after
             width: 100%
-
+.el-unactive
+    background-color: rgba(#ca9279, .5) // --creme-color
+.el-active
+    background-color: rgba(#ca9279, 1)
 
 @keyframes new-element
     0% 

@@ -4,6 +4,23 @@
             <div class="h1-wrapper">
                 <ui-go-back />
                 <h1 class="h1">Аналитика.</h1>
+
+                <div class="period-filters">
+                    <button class="btn" @click="commonFilters.dates.custom = 'week'"
+                        :class="commonFilters.dates.custom === 'week' ? 'el-active' : 'el-unactive'">Неделя</button>
+                    <button class="btn" @click="commonFilters.dates.custom = 'month'"
+                        :class="commonFilters.dates.custom === 'month' ? 'el-active' : 'el-unactive'">Месяц</button>
+                    <button class="btn" @click="commonFilters.dates.custom = 'quarter'"
+                        :class="commonFilters.dates.custom === 'quarter' ? 'el-active' : 'el-unactive'">Квартал</button>
+                    <button class="btn el-unactive"
+                        :class="commonFilters.dates.from && commonFilters.dates.to ? 'el-active' : 'el-unactive'"
+                        @click="showDatesModal = true">
+                        {{ commonFilters.dates.from && commonFilters.dates.to ?
+                            `${commonFilters.dates.from} - ${commonFilters.dates.to}` :
+                            'Выбрать даты'
+                        }}
+                    </button>
+                </div>
             </div>
 
             <div class="wrapper terminal-wrapper">
@@ -14,8 +31,6 @@
                         :class="{ 'device_active': receiptFilters.devices.includes(device.serialNumber) }">
                         <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon">
                         <p class="text">{{ device.shop.address?.data?.street || device.shop.name }}</p>
-
-                        <p class="activation-date">created at {{ getShortDate(device.shop.createdAt) }}</p>
                     </div>
                 </div>
             </div>
@@ -85,17 +100,22 @@
             </div>
         </div>
 
+        <!-- // MODALS -->
+
+        <ui-datepicker-modal :visible="showDatesModal" @close="showDatesModal = false" @datesSelected="handleDates" />
     </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
+import dayjs from 'dayjs'
 import throttle from 'lodash/throttle';
 const { $api } = useNuxtApp()
 
 const stopPaginate = ref(false)
 const throttledCheckPosition = throttle(checkPosition, 250);
 const scrollContainer = ref(null)
+const showDatesModal = ref(false)
 
 // =============== MAIN DATA ===============
 const data = ref({
@@ -110,12 +130,33 @@ const data = ref({
         error: ''
     }
 })
+
 // =============== FILTERS ===============
 const receiptsPage = ref(1)
 const receiptsPageSize = 20
-const receiptFilters = ref({
-    devices: []
+
+const commonFilters = ref({
+    dates: { from: '', to: '', custom: '' } // custom may be week, month, quarter
 })
+
+const receiptFilters = ref({
+    devices: [],
+    dates: computed(() => commonFilters.value.dates)
+})
+
+const handleDates = (dates) => {
+    console.log(dates);
+    const TZ = 'Asia/Yekaterinburg'
+    commonFilters.value.dates = {
+        from: dayjs(dates[0]).tz(TZ).format('DD.MM.YYYY'),
+        to: dayjs(dates[1]).tz(TZ).format('DD.MM.YYYY')
+    }
+    console.log(commonFilters.value);
+}
+
+watch(commonFilters, () => {
+
+}, { deep: true })
 
 
 // =============== FUNCTIONS ===============
@@ -159,6 +200,15 @@ const toggleDeviceInFilters = (device) => {
 watch(receiptFilters, async () => {
     receiptsPage.value = 1
     document.querySelector('.receipts').scrollTo(0, 0)
+
+    let dates = commonFilters.value.dates
+    if (dates.custom) {
+        dates.from = ''
+        dates.to = ''
+    }
+    // receiptFilters.value.dates = dates
+
+
     await getReceipts()
 }, { deep: true })
 
@@ -234,6 +284,19 @@ useHead({
 .analysis
     overflow-y: auto
     padding-bottom: 0 !important
+    .h1-wrapper
+        .period-filters
+            grid-column: 1/3
+            display: grid
+            grid-template-columns: 1fr 1fr
+            grid-gap: 4px 6px
+            .btn
+                font-size: 12px
+                padding: 10px
+                border-radius: 3px
+                color: var(--text-color)
+                font-weight: 400
+                    
     .wrapper
         margin: 22px 0
         .title
@@ -259,12 +322,10 @@ useHead({
                     opacity: 1
                     background-color: rgba(#ca9279, 1)
             .icon
-                width: 28px
-                height: 30px
-            .activation-date
-                // color: var(--border-color)
-                width: 100%
-                text-align: right
+                width: 24px
+                height: 27px
+            .text
+                font-size: 14px
     .grid-4
         display: grid
         grid-template-columns: 1fr 1fr
@@ -360,6 +421,20 @@ useHead({
                     font-size: 14px
 @media only screen and (min-width: $bp-tablet)
     .analysis
+        .h1-wrapper
+            grid-template-columns:  1fr auto
+            .period-filters
+                grid-column: unset
+                display: grid
+                grid-template-columns: repeat(4, auto)
+                grid-gap: 4px 6px
+                .btn
+                    font-size: 14px
+                    max-width: 150px
+                    padding: 10px
+                    border-radius: 3px
+                    color: var(--text-color)
+                    font-weight: 500
         .wrapper
             margin: 40px 0
             .title
