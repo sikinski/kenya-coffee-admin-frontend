@@ -9,7 +9,7 @@ RUN npx pnpm install
 
 # Чистим старые node_modules и lock-файлы (по желанию)
 RUN rm -rf .nuxt .output node_modules/.vite
-RUN rm -rf node_modules pnpm-lock.yaml package-lock.json
+RUN rm -rf node_modules pnpm-lock.yaml* package-lock.json*
 
 # 4. Сначала копируем только package.json и package-lock.json / pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml* ./
