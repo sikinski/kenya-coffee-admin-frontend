@@ -1,12 +1,7 @@
 <template>
     <div class="graphs">
         <div class="sales-graph graph-wrapper">
-            <div class="nav-btns">
-                <button class="nav-btn nav-btn_active">За неделю</button>
-                <button class="nav-btn">За месяц</button>
-                <button class="nav-btn">За год</button>
-            </div>
-            <charts-sales-chart />
+            <charts-sales-chart v-if="salesData" :data="salesData" />
         </div>
 
         <div class="products-graph graph-wrapper">
@@ -21,6 +16,25 @@
 </template>
 
 <script setup>
+import { onMounted, toRefs } from 'vue';
+const { $api } = useNuxtApp()
+
+const props = defineProps({ filters: Object })
+const { filters } = toRefs(props)
+
+const salesData = ref(null)
+
+const getSalesGraphData = async () => {
+    salesData.value = await $api.get(`/aqsi/sales-graph?${toQueryString(filters.value)}`).then(res => res.data)
+}
+
+watch(filters, async () => {
+    await getSalesGraphData()
+}, { deep: true })
+
+onMounted(async () => {
+    await getSalesGraphData()
+})
 </script>
 
 <style lang="sass">
@@ -31,6 +45,8 @@
     grid-template-columns: 1fr
     grid-gap: 20px
     .graph-wrapper
+        display: flex
+        flex-direction: column
         .nav-btns
             display: flex
             flex-wrap: wrap
@@ -48,6 +64,7 @@
                     
         .canvas
             height: 270px
+            margin-top: auto
 @media only screen and (min-width: $bp-tablet)
     .graphs
         grid-gap: 40px

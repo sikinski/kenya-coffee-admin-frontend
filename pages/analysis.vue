@@ -62,7 +62,7 @@
 
             <div class="wrapper charts-wrapper">
                 <p class="title">Графики.</p>
-                <graphs />
+                <graphs :filters="receiptFilters" />
             </div>
 
             <div class="receipts">
@@ -204,19 +204,6 @@ const toggleDeviceInFilters = (device) => {
     } else {
         receiptFilters.value.devices.push(device.serialNumber)
     }
-}
-
-const getWordPeriod = (dates) => {
-    if (dates.custom === 'week') {
-        return 'неделю'
-    }
-    if (dates.custom === 'month') {
-        return 'месяц'
-    }
-    if (dates.custom === 'quarter') {
-        return 'квартал'
-    }
-    return 'период ' + dates.from + '—' + dates.to
 }
 
 watch(receiptFilters, async () => {
