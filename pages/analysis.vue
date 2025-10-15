@@ -36,7 +36,7 @@
             </div>
 
             <div class="wrapper numbers-wrapper" v-if="data.stats">
-                <p class="title">Числа.</p>
+                <p class="title">Числа. <span class="icon refresh-icon" @click="refreshStats"></span></p>
 
                 <div class="numbers">
                     <div class="num-wrapper">
@@ -187,8 +187,11 @@ const getReceipts = async () => {
 }
 const getStats = async () => {
     data.value.stats = await $api.get(`/aqsi/get-stats?${toQueryString(receiptFilters.value)}`).then(res => res.data).catch(() => null)
-    console.log(data.value.stats);
+}
 
+const refreshStats = async () => {
+    await $api.post(`/aqsi/reset-stats`)
+    await getStats()
 }
 
 const simplePrice = (price) => {
@@ -321,10 +324,20 @@ useHead({
     .wrapper
         margin: 22px 0
         .title
+            display: flex
+            align-items: center
+            gap: 14px
             font-size: 14px
             font-weight: 600
             padding-bottom: 10px
             border-bottom: 1px solid var(--border-color)
+            .refresh-icon
+                mask: url(@/assets/images/icons/refresh.svg) no-repeat center
+                background-color: var(--creme-color)
+                display: block
+                width: 16px
+                height: 16px
+                cursor: pointer
         .devices
             display: grid
             grid-template-columns: 1fr 1fr
