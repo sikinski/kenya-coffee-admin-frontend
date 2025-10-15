@@ -35,35 +35,28 @@
                 </div>
             </div>
 
-            <div class="wrapper numbers-wrapper">
+            <div class="wrapper numbers-wrapper" v-if="data.stats">
                 <p class="title">Числа.</p>
 
                 <div class="numbers">
                     <div class="num-wrapper">
-                        <p class="num num-prefix">244 888 <span class="prefix">р.</span></p>
-                        <p class="text">пришло за месяц</p>
+                        <p class="num">{{ simplePrice(data.stats.dayRevenue) }}</p>
+                        <p class="text">выручка за сегодня (static)</p>
                     </div>
                     <div class="num-wrapper">
-                        <p class="num num-prefix">256<span class="prefix">р.</span></p>
+                        <p class="num num-prefix">{{ simplePrice(data.stats.revenue) }} <span class="prefix">р.</span>
+                        </p>
+                        <p class="text">пришло за {{ getWordPeriod(receiptFilters.dates) }}</p>
+                    </div>
+                    <div class="num-wrapper">
+                        <p class="num num-prefix">{{ data.stats.avgCheck }}<span class="prefix">р.</span></p>
                         <p class="text">средний чек</p>
                     </div>
                     <div class="num-wrapper">
-                        <p class="num">355</p>
-                        <p class="text">довольных клиентов</p>
-                    </div>
-                    <div class="num-wrapper">
-                        <p class="num">898</p>
-                        <p class="text">позиций продано</p>
+                        <p class="num">{{ simplePrice(data.stats.receiptsCount) }}</p>
+                        <p class="text">покупок</p>
                     </div>
 
-                    <div class="num-wrapper">
-                        <p class="num num-prefix">17-18<span class="prefix">ч.</span></p>
-                        <p class="text">час пик</p>
-                    </div>
-                    <div class="num-wrapper">
-                        <p class="num">999</p>
-                        <p class="text">что еще?</p>
-                    </div>
                 </div>
             </div>
 
@@ -73,6 +66,7 @@
             </div>
 
             <div class="receipts">
+                <span class="count">Всего {{ data.receipts.pagination.total }} чека</span>
                 <div class="receipt" v-for="receipt in data.receipts.items" :key="receipt.raw.id"
                     :class="{ 'receipt_is_new': receipt.is_new }">
                     <span class="date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
@@ -128,7 +122,9 @@ const data = ref({
         items: [],
         pagination: {},
         error: ''
-    }
+    },
+
+    stats: null,
 })
 
 // =============== FILTERS ===============
@@ -188,6 +184,15 @@ const getReceipts = async () => {
         data.value.receipts.error = e
     })
 }
+const getStats = async () => {
+    data.value.stats = await $api.get(`/aqsi/get-stats?${toQueryString(receiptFilters.value)}`).then(res => res.data).catch(() => null)
+    console.log(data.value.stats);
+
+}
+
+const simplePrice = (price) => {
+    return new Intl.NumberFormat('ru-RU').format(price)
+}
 
 const toggleDeviceInFilters = (device) => {
     if (receiptFilters.value.devices.includes(device.serialNumber)) {
@@ -195,6 +200,19 @@ const toggleDeviceInFilters = (device) => {
     } else {
         receiptFilters.value.devices.push(device.serialNumber)
     }
+}
+
+const getWordPeriod = (dates) => {
+    if (dates.custom === 'week') {
+        return 'неделю'
+    }
+    if (dates.custom === 'month') {
+        return 'месяц'
+    }
+    if (dates.custom === 'quarter') {
+        return 'квартал'
+    }
+    return 'период ' + dates.from + '—' + dates.to
 }
 
 watch(receiptFilters, async () => {
@@ -209,6 +227,7 @@ watch(receiptFilters, async () => {
     // receiptFilters.value.dates = dates
 
 
+    await getStats()
     await getReceipts()
 }, { deep: true })
 
@@ -240,6 +259,7 @@ const initWs = () => {
 onMounted(async () => {
     await getDevices()
     await getReceipts()
+    await getStats()
 
     scrollContainer.value = document.querySelector('.receipts')
     console.log(scrollContainer.value);
@@ -497,7 +517,7 @@ useHead({
                     font-size: 14px
         .numbers-wrapper
             .numbers
-                grid-template-columns: 1fr 1fr 1fr
+                grid-template-columns: 1fr 1fr 
                 grid-gap: 30px 20px
                 margin-top: 20px
                 .num-wrapper
@@ -560,7 +580,7 @@ useHead({
                     font-size: 16px
         .numbers-wrapper
             .numbers
-                grid-template-columns: 1fr 1fr 1fr 
+                grid-template-columns: 1fr 1fr 
                 grid-gap: 20px 20px
                 margin-top: 20px
                 .num-wrapper
