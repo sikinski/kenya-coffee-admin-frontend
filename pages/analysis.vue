@@ -7,11 +7,11 @@
 
                 <div class="period-filters">
                     <button class="btn" @click="commonFilters.dates.custom = 'week'"
-                        :class="commonFilters.dates.custom === 'week' ? 'el-active' : 'el-unactive'">Неделя</button>
+                        :class="commonFilters.dates.custom === 'week' ? 'el-active' : 'el-unactive'">7 дней</button>
                     <button class="btn" @click="commonFilters.dates.custom = 'month'"
-                        :class="commonFilters.dates.custom === 'month' ? 'el-active' : 'el-unactive'">Месяц</button>
+                        :class="commonFilters.dates.custom === 'month' ? 'el-active' : 'el-unactive'">30 дней</button>
                     <button class="btn" @click="commonFilters.dates.custom = 'quarter'"
-                        :class="commonFilters.dates.custom === 'quarter' ? 'el-active' : 'el-unactive'">Квартал</button>
+                        :class="commonFilters.dates.custom === 'quarter' ? 'el-active' : 'el-unactive'">90 дней</button>
                     <button class="btn el-unactive"
                         :class="commonFilters.dates.from && commonFilters.dates.to ? 'el-active' : 'el-unactive'"
                         @click="showDatesModal = true">
@@ -66,7 +66,8 @@
             </div>
 
             <div class="receipts">
-                <span class="count">Всего {{ data.receipts.pagination.total }} чека</span>
+                <span class="count">Всего {{ data.receipts.pagination.total }} чека (за {{
+                    getWordPeriod(receiptFilters.dates) }})</span>
                 <div class="receipt" v-for="receipt in data.receipts.items" :key="receipt.raw.id"
                     :class="{ 'receipt_is_new': receipt.is_new }">
                     <span class="date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
@@ -359,6 +360,10 @@ useHead({
         padding-bottom: 60px
         padding: 16px 10px
         margin-top: 20px
+        .count
+            font-size: 14px
+            font-weight: 500
+            color: var(--border-color)
         .receipt
             background-color: rgba(#bfa89b, .2)
             padding: 12px 20px
