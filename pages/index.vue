@@ -1,6 +1,6 @@
 <template>
     <div class="auth-page center">
-        <h1 class="h1">Новый день</h1>
+        <h1 class="h1">Кения</h1>
         <div class="window form mt">
             <div class="input-wrapper">
                 <input type="text" class="input" name="login" v-model="authForm.username" />
@@ -99,7 +99,7 @@ useHead({
 @use '@/assets/styles/forms' as *
 .auth-page
     background-color: var(--main-bg)
-    background-color: var(--main-dark)
+    // background-color: var(--main-dark)
     height: 100vh
     .form
         display: flex
@@ -107,7 +107,7 @@ useHead({
         gap: 10px
         .input-wrapper
             background-color: #fff
-            background-color: var(--main-bg)
+            background-color: var(--block-bg)
             width: 300px
             border-radius: 4px
         .username-btn

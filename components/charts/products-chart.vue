@@ -5,23 +5,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 
-// Поддельные данные по продуктам
-const products = [
-    "Капучино",
-    "Латте",
-    "Американо",
-    "Флэт Уайт",
-    "Эспрессо",
-    "Мокко"
+const props = defineProps({
+    data: {
+        type: Array,
+        required: true,
+        default: []
+    }
+})
 
-]
-const sales = [120, 80, 60, 150, 40, 100] // произвольные цифры
+const { data } = toRefs(props)
+console.log(data);
 
 const productsConfig = ref({
     title: {
-        text: 'Продажи по продуктам (ТЕСТ)',
+        text: 'Продажи по продуктам',
         left: 'center',
     },
     tooltip: {
@@ -36,7 +35,7 @@ const productsConfig = ref({
     },
     xAxis: {
         type: 'category',
-        data: products,
+        data: computed(() => data.value.map(el => el.name)),
         axisLabel: { rotate: 20 } // чтобы длинные названия помещались
     },
     yAxis: {
@@ -46,7 +45,7 @@ const productsConfig = ref({
         {
             name: 'Продажи',
             type: 'bar',
-            data: sales,
+            data: computed(() => data.value.map(el => el.count)),
             itemStyle: {
                 color: '#ca9279',
             },

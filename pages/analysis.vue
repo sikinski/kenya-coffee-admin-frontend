@@ -25,7 +25,6 @@
 
             <div class="wrapper terminal-wrapper">
                 <p class="title">Устройства.</p>
-
                 <div class="devices">
                     <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
                         :class="{ 'device_active': receiptFilters.devices.includes(device.serialNumber) }">

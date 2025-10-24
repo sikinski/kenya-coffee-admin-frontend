@@ -6,33 +6,68 @@
 
         <div class="products-graph graph-wrapper">
             <div class="nav-btns">
-                <button class="nav-btn nav-btn_active">Кофе</button>
-                <button class="nav-btn">Др.напитки</button>
-                <button class="nav-btn">Еда</button>
+                <button class="nav-btn" v-for="pType in productTypes"
+                    :class="{ 'nav-btn_active': productsFilters.product_type === pType }"
+                    @click="productsFilters.product_type = pType">
+                    {{ pType }}
+                </button>
+
             </div>
-            <charts-products-chart />
+            <charts-products-chart v-if="productsData" :data="productsData" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted, toRefs } from 'vue';
+import { onMounted, watch, ref, toRef } from 'vue';
 const { $api } = useNuxtApp()
 
 const props = defineProps({ filters: Object })
-const { filters } = toRefs(props)
+const filtersRef = toRef(props, 'filters') // Правильное создание рефа для пропса
 
-const salesData = ref(null)
+const productsFilters = ref({})
 
-const getSalesGraphData = async () => {
-    salesData.value = await $api.get(`/aqsi/sales-graph?${toQueryString(filters.value)}`).then(res => res.data)
+// Инициализируем productsFilters при монтировании и при изменении filters
+const initializeProductsFilters = () => {
+    productsFilters.value = {
+        product_type: 'Кофе',
+        ...filtersRef.value // Берем актуальное значение
+    }
 }
 
-watch(filters, async () => {
+const productTypes = ['Кофе', 'Другие напитки', 'Еда']
+
+const salesData = ref(null)
+const productsData = ref(null)
+
+const getSalesGraphData = async () => {
+    salesData.value = await $api.get(`/aqsi/sales-graph?${toQueryString(filtersRef.value)}`).then(res => res.data)
+}
+
+const getProductsGraphData = async () => {
+    productsData.value = await $api.get(`/aqsi/products-graph?${toQueryString(productsFilters.value)}`).then(res => res.data)
+}
+
+
+// Следим за изменением filters из родителя
+watch(filtersRef, async (newFilters) => {
+    // Обновляем productsFilters актуальными значениями
+    productsFilters.value = {
+        product_type: 'Кофе',
+        ...newFilters
+    }
+
     await getSalesGraphData()
+    await getProductsGraphData()
+}, { deep: true })
+
+// Следим за изменением productsFilters (включая изменения из родителя)
+watch(productsFilters, async () => {
+    await getProductsGraphData()
 }, { deep: true })
 
 onMounted(async () => {
+    initializeProductsFilters()
     await getSalesGraphData()
 })
 </script>

@@ -12,10 +12,6 @@
             <img src="@/assets/images/icons/notes.svg" alt="" class="icon" />
             <p class="name">Заметки</p>
         </nuxt-link>
-        <nuxt-link class="wrapper" to="/reporting">
-            <img src="@/assets/images/icons/reporting.svg" alt="" class="icon" />
-            <p class="name">Отчетность</p>
-        </nuxt-link>
         <!-- <nuxt-link class="wrapper" to="/users">
             <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
             <p class="name">Сменщики</p>
