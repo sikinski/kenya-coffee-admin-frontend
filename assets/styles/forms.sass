@@ -106,6 +106,57 @@
     textarea
         margin: 0
 
+    // Стили для Multiselect
+.multiselect
+    min-height: 44px
+    .multiselect-single-label,
+    .multiselect-placeholder
+        padding: 12px 14px
+        font-size: 14px
+        font-weight: 700
+        color: var(--text-color)
+    &.is-active
+        border-color: var(--accent-red)
+        box-shadow: 0 0 0 3px rgba(232, 69, 32, 0.1)
+    .multiselect-tags
+        min-height: 44px
+        padding: 0
+        border: 1px solid var(--border-color)
+        border-radius: 8px
+        background-color: #fff     
+        &:hover
+            border-color: var(--accent-red)
+        &.is-active
+            border-color: var(--accent-red)
+            box-shadow: 0 0 0 3px rgba(232, 69, 32, 0.1)
+    .multiselect-caret
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c2a26' d='M6 9L1 4h10z'/%3E%3C/svg%3E")
+        background-size: 12px
+        width: 12px
+        height: 12px
+        margin-right: 14px
+        border: none
+
+    .multiselect-dropdown
+        border: 1px solid var(--border-color)
+        border-radius: 8px
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+        margin-top: 4px
+        background-color: #fff
+        .multiselect-option
+            padding: 12px 14px
+            font-size: 14px
+            color: var(--text-color)
+            &:hover
+                background-color: rgba(232, 69, 32, 0.05)
+            &.is-selected
+                background-color: rgba(232, 69, 32, 0.1) !important
+                color: var(--accent-red)
+                font-weight: 600
+            &.is-pointed
+                background-color: rgba(232, 69, 32, 0.05)
+                color: var(--text-color)
+
 // ------------ CUSTOM ELEMENTS ------------ 
 .spans-input
     background-color: var(--bg-color)

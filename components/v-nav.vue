@@ -12,6 +12,10 @@
             <img src="@/assets/images/icons/notes.svg" alt="" class="icon" />
             <p class="name">Заметки</p>
         </nuxt-link>
+        <nuxt-link class="wrapper" to="/menu">
+            <img src="@/assets/images/icons/products.svg" alt="" class="icon" />
+            <p class="name">Меню</p>
+        </nuxt-link>
         <!-- <nuxt-link class="wrapper" to="/users">
             <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
             <p class="name">Сменщики</p>

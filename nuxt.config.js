@@ -6,6 +6,8 @@ export default defineNuxtConfig({
 
     modules: ['@vueuse/motion/nuxt', "nuxt-echarts"],
 
+    ssr: false,
+
     runtimeConfig: {
         public: {
             backend_address: process.env.BACKEND_ADDRESS,
