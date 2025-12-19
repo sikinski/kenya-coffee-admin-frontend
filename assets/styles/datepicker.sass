@@ -1,0 +1,112 @@
+@use './colors' as *
+
+// Стили для Vue DatePicker
+// Используем глобальные стили, так как datepicker рендерится вне scoped стилей
+.custom-datepicker
+    // Input поле
+    .dp__input_wrap
+        .dp__input
+            padding: 10px 14px
+            border: 1px solid var(--border-color)
+            border-radius: 4px
+            background-color: var(--block-bg)
+            color: var(--text-color)
+            font-size: 14px
+            cursor: pointer
+            transition: border-color 0.3s ease
+            font-family: inherit
+            padding-left: 40px
+            &:focus
+                outline: none
+                border-color: var(--creme-color)
+            &:hover
+                border-color: var(--creme-color)
+
+    // Иконка календаря
+    .dp__input_icon
+        color: var(--text-color)
+        opacity: 0.7
+
+// Глобальные стили для меню datepicker (рендерится в body)
+.dp__menu
+    background-color: var(--block-bg) !important
+    border: 1px solid var(--border-color) !important
+    border-radius: 6px !important
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important
+    z-index: 10000 !important
+    position: fixed !important
+
+.dp__calendar_header_item
+    color: var(--text-color) !important
+    font-weight: 600
+
+.dp__calendar_header_separator
+    background-color: var(--border-color) !important
+
+.dp__cell_inner
+    color: var(--text-color) !important
+    border-radius: 4px
+    transition: all 0.2s ease
+    &:hover
+        background-color: var(--creme-color) !important
+        color: #fff !important
+
+.dp__active_date
+    background-color: var(--creme-color) !important
+    color: #fff !important
+
+.dp__range_start, .dp__range_end
+    background-color: var(--creme-color) !important
+    color: #fff !important
+
+.dp__today
+    border-color: var(--creme-color) !important
+    border-width: 2px
+
+.dp__arrow_top
+    border-bottom-color: var(--block-bg) !important
+
+.dp__arrow_bottom
+    border-top-color: var(--block-bg) !important
+
+.dp__month_year_wrap
+    button
+        color: var(--text-color) !important
+        font-weight: 600
+        transition: all 0.2s ease
+        &:hover
+            background-color: var(--creme-color) !important
+            color: #fff !important
+
+.dp__inner_nav
+    button
+        color: var(--text-color) !important
+        transition: all 0.2s ease
+        &:hover
+            background-color: var(--creme-color) !important
+            color: #fff !important
+
+.dp__action_button
+    background-color: var(--creme-color) !important
+    color: #fff !important
+    border-radius: 4px
+    font-weight: 600
+    transition: background-color 0.3s ease
+    &:hover
+        background-color: rgba(#ca9279, 0.9) !important
+
+.dp__cell_offset
+    color: var(--text-color) !important
+    opacity: 0.4
+
+.dp__range_between
+    background-color: rgba(#ca9279, 0.2) !important
+
+// Адаптивные стили
+@media only screen and (min-width: 600px)
+    .custom-datepicker
+        .dp__input_wrap
+            .dp__input
+                padding: 12px 16px
+                font-size: 16px
+                padding-left: 40px

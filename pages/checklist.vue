@@ -5,39 +5,93 @@
                 <ui-go-back />
                 <h1 class="h1">Чеклист.</h1>
             </div>
-            <div class="container">
-                <p class="title">Сегодня.</p>
 
-                <ui-custom-checkbox v-for="(item, index) in todayList" :label="item.text" v-model="item.done"
-                    :key="index" @click="updateTask(item.id, { done: !item.done })" />
-            </div>
+            <div class="page-layout">
+                <!-- Основной контент с ежедневными задачами -->
+                <div class="daily-tasks-main">
+                    <div class="date-selector">
+                        <label class="date-label">Выберите дату:</label>
+                        <client-only>
+                            <vue-date-picker v-model="selectedDate" locale="ru" format="dd.MM.yyyy"
+                                :enable-time-picker="false" :auto-apply="true" :start-date="selectedDate"
+                                :month-picker="false" @update:model-value="onDateChange" class="custom-datepicker" />
+                        </client-only>
+                    </div>
 
-            <div class="day-wrapper" v-for="(day, index) in last30Days" :key="index"
-                :class="{ 'day-wrapper_opened': day.showInners }"
-                @click="{ day.showInners = !day.showInners; getTasks(day) }">
-                <p class="title">{{ getShortDate(day.date) }}</p>
-                <img src="@/assets/images/icons/arrow-down.svg" alt="" class="icon arrow-down transition" />
-
-                <div class="inner" v-if="day.showInners" v-motion-fade @click.stop>
-                    <template v-if="day.tasks?.length">
-                        <div class="item" v-for="(item, index) in day.tasks" :key="index"
-                            :class="{ 'item_done': item.done }">
-                            <div class="item-header" v-if="!index">
-                                <p class="author">{{ item.username }}</p>
-                                <p class="done-count">
-                                    {{day.tasks.filter(el => el.done).length}}
-                                    /
-                                    {{ day.tasks.length }}
-                                </p>
-                            </div>
-
-                            {{ index + 1 }}. {{ item.text }}
+                    <div class="tasks-container" v-if="dailyTasks?.length">
+                        <div v-for="task in dailyTasks" :key="task.id" class="task-item">
+                            <ui-custom-checkbox :label="task.text" v-model="task.done" :id="`daily-${task.id}`"
+                                @update:modelValue="updateDailyTask(task.id, { done: $event })" />
                         </div>
-                    </template>
+                    </div>
 
-                    <template v-else>
-                        <div class="empty">Не найдено</div>
-                    </template>
+                    <div class="empty" v-else>
+                        <p>Задач на этот день нет</p>
+                        <p class="empty-hint">Используйте кнопку редактирования справа, чтобы добавить задачи в шаблон
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Overlay для мобильных -->
+                <div class="edit-overlay" v-if="showEditPanel" @click="showEditPanel = false"></div>
+
+                <!-- Кнопка редактирования (всегда видна на мобильных) -->
+                <button class="edit-toggle-btn" @click="showEditPanel = !showEditPanel"
+                    :title="showEditPanel ? 'Закрыть редактирование' : 'Редактировать список задач'">
+                    <span class="edit-icon" :class="{ 'edit-icon-open': showEditPanel }"></span>
+                </button>
+
+                <!-- Боковая панель для редактирования шаблона -->
+                <div class="edit-panel" :class="{ 'edit-panel-open': showEditPanel }">
+
+                    <div class="edit-panel-content" v-if="showEditPanel">
+                        <div class="edit-panel-header">
+                            <h3 class="edit-panel-title">Редактирование списка задач</h3>
+                            <button class="close-panel-btn" @click="showEditPanel = false" title="Закрыть">
+                                <img src="@/assets/images/icons/close.svg" alt="Закрыть" class="close-icon">
+                            </button>
+                        </div>
+                        <p class="edit-panel-hint">Изменения в шаблоне не затронут уже сохраненные записи за прошлые дни
+                        </p>
+
+                        <button class="btn add-btn" @click="showTaskForm = true" v-if="!showTaskForm">
+                            <p class="text">Добавить задачу</p>
+                            <span class="icon plus-icon mask-icon"></span>
+                        </button>
+
+                        <form v-if="showTaskForm" class="form task-form" @submit.prevent="createTask">
+                            <img @click.prevent="showTaskForm = false" src="@/assets/images/icons/close.svg" alt=""
+                                class="close-icon">
+                            <div class="input-wrapper">
+                                <input type="text" class="input" name="task_name" v-model="newTask.text" required />
+                                <label for="task_name" class="label-name">
+                                    <span class="content-name" :class="{ 'valid-input': newTask.text }">Текст
+                                        задачи</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="save-btn">Добавить</button>
+                        </form>
+
+                        <div class="template-tasks-container" v-if="templateTasks?.length">
+                            <div v-for="(task, index) in templateTasks" :key="task.id" class="template-task-item"
+                                :draggable="true" @dragstart="onDragStart($event, index)"
+                                @dragover.prevent="onDragOver($event, index)" @drop="onDrop($event, index)"
+                                @dragend="onDragEnd" :class="{ 'dragging': draggedIndex === index }">
+                                <div class="drag-handle">
+                                    <span class="drag-icon"></span>
+                                </div>
+                                <span class="task-text">{{ task.text }}</span>
+                                <button class="delete-btn" @click="deleteTask(task.id)" title="Удалить из шаблона">
+                                    <span class="delete-icon"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="empty" v-else-if="!showTaskForm">
+                            <p>Шаблон задач пуст</p>
+                            <p class="empty-hint">Добавьте задачи, чтобы они появлялись в ежедневном списке</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -46,47 +100,177 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 const { $api } = useNuxtApp()
-const todayList = ref([])
-const last30Days = ref([]);
-const MAX_SHOWN_DATES_COUNT = 30
 
-const getTodayTasks = async () => {
-    const date = new Date().toISOString().split("T")[0] // "2025-08-22"
-    todayList.value = await $api.get(`/tasks?date=${date}`).then(res => res.data.tasks)
+// Ежедневные задачи (для выбранной даты)
+const dailyTasks = ref([])
+const selectedDate = ref(new Date()) // Сегодняшняя дата
+
+// Шаблон задач (для редактирования)
+const templateTasks = ref([])
+const showEditPanel = ref(false)
+const showTaskForm = ref(false)
+const newTask = ref({
+    text: ''
+})
+
+// Drag and drop для шаблона
+const draggedIndex = ref(null)
+const draggedOverIndex = ref(null)
+
+// Загрузка шаблона задач (обычные задачи)
+const getTemplateTasks = async () => {
+    try {
+        const res = await $api.get('/tasks')
+        // Обрабатываем разные форматы ответа
+        if (Array.isArray(res.data)) {
+            templateTasks.value = res.data
+        } else if (res.data?.tasks) {
+            templateTasks.value = res.data.tasks
+        } else if (res.data?.data) {
+            templateTasks.value = res.data.data
+        } else {
+            templateTasks.value = []
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки шаблона задач:', error)
+        templateTasks.value = []
+    }
 }
 
-const getTasks = async (day) => {
-    console.log(day);
+// Создание задачи в шаблоне
+const createTask = async () => {
+    if (!newTask.value.text.trim()) return
 
-    const date = day.date.toISOString().split("T")[0]
-    console.log(date);
-
-    day.tasks = await $api.get(`/tasks?date=${date}`).then(res => res.data.tasks)
+    try {
+        await $api.post('/tasks', { text: newTask.value.text })
+        newTask.value.text = ''
+        showTaskForm.value = false
+        await getTemplateTasks()
+    } catch (error) {
+        console.error('Ошибка создания задачи:', error)
+    }
 }
 
-const updateTask = async (task_id, body) => {
-    await $api.put(`/tasks/${task_id}`, body).then(async () => {
-        await getTodayTasks()
-    })
+// Удаление задачи из шаблона
+const deleteTask = async (taskId) => {
+    if (!confirm('Вы уверены, что хотите удалить эту задачу из шаблона? Это не затронет уже сохраненные записи за прошлые дни.')) return
+
+    try {
+        await $api.delete(`/tasks/${taskId}`)
+        await getTemplateTasks()
+    } catch (error) {
+        console.error('Ошибка удаления задачи:', error)
+    }
 }
 
-const getLastDays = async () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // обнуляем время, чтобы работать с "днями"
+// Обновление порядка задач в шаблоне
+const updateTasksOrder = async (newOrder) => {
+    try {
+        await $api.put('/tasks/order', { order: newOrder })
+        await getTemplateTasks()
+    } catch (error) {
+        console.error('Ошибка обновления порядка задач:', error)
+    }
+}
 
-    for (let i = 1; i <= MAX_SHOWN_DATES_COUNT; i++) { // начинаем с 1, чтобы не включать сегодня
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        last30Days.value.push({ date: d, showInners: false });
+// Drag and drop handlers для шаблона
+const onDragStart = (event, index) => {
+    draggedIndex.value = index
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/html', event.target.outerHTML)
+}
+
+const onDragOver = (event, index) => {
+    event.preventDefault()
+    draggedOverIndex.value = index
+}
+
+const onDrop = (event, dropIndex) => {
+    event.preventDefault()
+
+    if (draggedIndex.value === null || draggedIndex.value === dropIndex) {
+        return
     }
 
+    const draggedTask = templateTasks.value[draggedIndex.value]
+    const newTasks = [...templateTasks.value]
+    newTasks.splice(draggedIndex.value, 1)
+    newTasks.splice(dropIndex, 0, draggedTask)
+
+    // Обновляем порядок в локальном состоянии
+    templateTasks.value = newTasks
+
+    // Отправляем новый порядок на сервер
+    const newOrder = newTasks.map((task, index) => ({ id: task.id, order: index }))
+    updateTasksOrder(newOrder)
+}
+
+const onDragEnd = () => {
+    draggedIndex.value = null
+    draggedOverIndex.value = null
+}
+
+// Форматирование даты для API (YYYY-MM-DD)
+const formatDateForAPI = (date) => {
+    if (!date) return ''
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
+
+// Обработчик изменения даты
+const onDateChange = (date) => {
+    if (date) {
+        loadDailyTasks()
+    }
+}
+
+// Загрузка ежедневных задач для выбранной даты
+const loadDailyTasks = async () => {
+    try {
+        const dateString = formatDateForAPI(selectedDate.value)
+        const res = await $api.get(`/daily-tasks?date=${dateString}`)
+        // Обрабатываем разные форматы ответа
+        if (Array.isArray(res.data)) {
+            dailyTasks.value = res.data
+        } else if (res.data?.tasks) {
+            dailyTasks.value = res.data.tasks
+        } else if (res.data?.data) {
+            dailyTasks.value = res.data.data
+        } else {
+            dailyTasks.value = []
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки ежедневных задач:', error)
+        dailyTasks.value = []
+    }
+}
+
+// Обновление ежедневной задачи (отметка done)
+const updateDailyTask = async (taskId, data) => {
+    try {
+        await $api.put(`/daily-tasks/${taskId}`, data)
+        // Обновляем локальное состояние без перезагрузки
+        const task = dailyTasks.value.find(t => t.id === taskId)
+        if (task) {
+            task.done = data.done
+        }
+    } catch (error) {
+        console.error('Ошибка обновления ежедневной задачи:', error)
+        // В случае ошибки перезагружаем список
+        await loadDailyTasks()
+    }
 }
 
 onMounted(async () => {
-    await getTodayTasks()
-    await getLastDays()
+    await getTemplateTasks()
+    await loadDailyTasks()
 })
 
 useHead({
@@ -96,106 +280,370 @@ useHead({
 
 <style lang="sass">
 @use '@/assets/styles/adaptive' as *
+@use '@/assets/styles/forms' as *
+@use '@/assets/styles/datepicker' as *
+
 .checklist-page
-    .container
-        margin-top: 10px
-        .title
-            font-size: 18px
-            border-bottom: 1px solid var(--border-color)
-            padding: 10px 0
-            font-weight: 600
-    .day-wrapper
+    .page-layout
         display: grid
         grid-template-columns: 1fr auto
-        padding: 10px 0
-        padding-top: 20px
-        border-bottom: 1px solid var(--border-color)
-        &_opened
-            .arrow-down
-                transform: rotate(180deg)
-        .title
-            font-size: 1rem
-        .arrow-down
-            width: 14px
-            height: 14px
-            align-self: center
-        .inner
-            grid-column: 1/3
-            margin: 10px 0
-            margin-top: 20px
-            display: flex
-            flex-direction: column
-            gap: 10px
-            .item
-                // padding: 0 20px
-                font-weight: 500
-                color: var(--text-color) 
-                font-size: 14px
-                text-align: center
-                .item-header
-                    display: flex
-                    justify-content: space-between
-                    align-items: center
-                    font-weight: 600
-                    margin-bottom: 10px
-                    border-top: 1px solid var(--border-color)
-                    border-bottom: 1px solid var(--border-color)
-                    padding: 10px 0
-                &_done
-                    text-decoration: line-through
-                    font-weight: 300
-            .empty
+        gap: 20px
+        position: relative
+
+    .daily-tasks-main
+        min-width: 0
+
+    .date-selector
+        display: flex
+        align-items: center
+        gap: 12px
+        margin-bottom: 30px
+        position: relative
+        z-index: 1
+        .date-label
+            font-size: 16px
+            font-weight: 600
+            color: var(--text-color)
+        .custom-datepicker
+            width: auto
+            :deep(.dp__input_wrap)
+                .dp__input
+                    padding: 10px 14px
+                    border: 1px solid var(--border-color)
+                    border-radius: 4px
+                    background-color: var(--block-bg)
+                    color: var(--text-color)
+                    font-size: 14px
+                    cursor: pointer
+                    transition: border-color 0.3s ease
+                    font-family: inherit
+                    &:focus
+                        outline: none
+                        border-color: var(--creme-color)
+                    &:hover
+                        border-color: var(--creme-color)
+            :deep(.dp__input_icon)
                 color: var(--text-color)
-                    
-        &:first-child
-            border-top: 1px solid var(--main-dark)
+                opacity: 0.7
+
+    .tasks-container
+        display: flex
+        flex-direction: column
+        gap: 12px
+
+    .task-item
+        padding: 16px
+        background-color: var(--block-bg)
+        border: 1px solid var(--border-color)
+        border-radius: 6px
+        transition: all 0.3s ease
+        &:hover
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+            border-color: var(--creme-color)
+
+    .empty
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        text-align: center
+        color: var(--text-color)
+        min-height: 40vh
+        font-weight: 500
+        font-size: 14px
+        opacity: 0.7
+        gap: 10px
+        margin-top: 20px
+        position: relative
+        z-index: 0
+        .empty-hint
+            font-size: 12px
+            opacity: 0.6
+            font-weight: 400
+            margin-top: 5px
+
+    // Overlay для мобильных
+    .edit-overlay
+        display: none
+        @media only screen and (max-width: $bp-tablet)
+            display: block
+            position: fixed
+            top: 0
+            left: 0
+            right: 0
+            bottom: 0
+            background-color: rgba(0, 0, 0, 0.5)
+            z-index: 999
+
+    // Боковая панель редактирования
+    .edit-panel
+        position: relative
+        width: 0
+        transition: width 0.3s ease
+        overflow: visible
+        &.edit-panel-open
+            width: 350px
+            overflow: visible
+        @media only screen and (max-width: $bp-tablet)
+            position: fixed
+            top: 0
+            right: 0
+            bottom: 0
+            width: 100% !important
+            max-width: 400px
+            transform: translateX(100%)
+            transition: transform 0.3s ease
+            z-index: 1000
+            padding: 20px
+            overflow-y: auto
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.2)
+            background-color: var(--main-bg)
+            &.edit-panel-open
+                transform: translateX(0)
+
+    .edit-toggle-btn
+        position: fixed
+        right: 20px
+        bottom: 20px
+        width: 60px
+        height: 60px
+        background-color: var(--creme-color)
+        border: none
+        border-radius: 50%
+        cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
+        transition: all 0.3s ease
+        z-index: 999
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+        &:hover
+            background-color: rgba(#ca9279, 0.9)
+        .edit-icon
+            width: 24px
+            height: 24px
+            mask: url(@/assets/images/icons/pencil.svg) no-repeat center
+            mask-size: contain
+            background-color: #fff
+            transition: transform 0.3s ease
+            &.edit-icon-open
+                transform: rotate(180deg)
+        @media only screen and (min-width: $bp-tablet)
+            width: 50px
+            height: 50px
+            .edit-icon
+                width: 20px
+                height: 20px
+
+    .edit-panel-content
+        background-color: var(--block-bg)
+        border: 1px solid var(--border-color)
+        border-radius: 6px
+        padding: 20px
+        min-height: 400px
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1)
+        width: 100%
+        box-sizing: border-box
+
+    .edit-panel-header
+        display: flex
+        justify-content: space-between
+        align-items: center
+        margin-bottom: 10px
+        gap: 10px
+
+    .edit-panel-title
+        font-size: 1.25rem
+        font-weight: 700
+        color: var(--text-color)
+        margin: 0
+        flex: 1
+
+    .close-panel-btn
+        background: none
+        border: none
+        cursor: pointer
+        padding: 4px
+        display: flex
+        align-items: center
+        justify-content: center
+        opacity: 0.7
+        transition: opacity 0.3s ease
+        flex-shrink: 0
+        &:hover
+            opacity: 1
+        .close-icon
+            width: 18px
+            height: 18px
+
+    .edit-panel-hint
+        font-size: 12px
+        color: var(--text-color)
+        opacity: 0.7
+        margin-bottom: 20px
+        line-height: 1.4
+
+    .edit-panel-content
+        .btn.add-btn
+            font-size: 14px
+            font-weight: 600
+            padding: 14px 18px
+            margin-top: 0
+            margin-bottom: 20px
+            width: 100%
+            text-align: center
+            display: grid
+            grid-template-columns: 1fr auto
+            align-items: center
+            gap: 10px
+            cursor: pointer
+            background-color: var(--creme-color)
+            color: #fff
+            border: none
+            border-radius: 6px
+            transition: background-color 0.3s ease
+            &:hover
+                background-color: rgba(#ca9279, 0.9)
+            .text
+                margin: 0
+                color: #fff
+                font-weight: 600
+            .plus-icon
+                mask-image: url(@/assets/images/icons/plus.svg)
+                background-color: #fff
+                height: 18px
+                width: 18px
+                mask-size: contain
+                mask-repeat: no-repeat
+                mask-position: center
+
+    .form
+        position: relative
+        gap: 15px
+        margin-top: 20px
+        padding: 20px
+        background-color: #fff
+        border: 1px solid var(--border-color)
+        border-radius: 6px
+        .close-icon
+            position: absolute
+            right: -5px
+            top: -10px
+            width: 18px
+            cursor: pointer
+            opacity: 0.7
+            transition: opacity 0.3s ease
+            z-index: 2
+            &:hover
+                opacity: 1
+        .input-wrapper
+            background-color: #fff
+        .save-btn
+            padding: 12px 24px
+            background-color: var(--creme-color)
+            color: #fff
+            border: none
+            border-radius: 4px
+            font-size: 14px
+            font-weight: 600
+            cursor: pointer
+            transition: background-color 0.3s ease
+            &:hover
+                background-color: rgba(#ca9279, 0.9)
+
+    .template-tasks-container
+        margin-top: 20px
+        display: flex
+        flex-direction: column
+        gap: 8px
+
+    .template-task-item
+        position: relative
+        display: grid
+        grid-template-columns: auto 1fr auto
+        align-items: center
+        gap: 12px
+        padding: 12px
+        background-color: #fff
+        border: 1px solid var(--border-color)
+        border-radius: 6px
+        transition: all 0.3s ease
+        cursor: move
+        &:hover
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+            border-color: var(--creme-color)
+        &.dragging
+            opacity: 0.5
+            background-color: var(--second-bg)
+
+        .drag-handle
+            display: flex
+            align-items: center
+            cursor: grab
+            padding: 4px
+            &:active
+                cursor: grabbing
+            .drag-icon
+                width: 18px
+                height: 18px
+                mask: url(@/assets/images/icons/burger.svg) no-repeat center
+                mask-size: contain
+                background-color: var(--text-color)
+                opacity: 0.5
+
+        .task-text
+            font-size: 14px
+            font-weight: 500
+            color: var(--text-color)
+
+        .delete-btn
+            background: none
+            border: none
+            cursor: pointer
+            padding: 4px
+            display: flex
+            align-items: center
+            justify-content: center
+            opacity: 0.6
+            transition: opacity 0.3s ease
+            &:hover
+                opacity: 1
+            .delete-icon
+                width: 16px
+                height: 16px
+                background-color: var(--text-color)
+                mask: url(@/assets/images/icons/close-round.svg) no-repeat center
+                mask-size: contain
+                display: block
 
 @media only screen and (min-width: $bp-tablet)
     .checklist-page
-        padding: 40px 0
-        .container
-            margin-top: 20px
-            .title
-                font-size: 22px
-                padding: 14px 0
-                margin-bottom: 20px
-        .day-wrapper
-            margin: 0
-            padding: 20px
-            padding-top: 40px
-            .title
-                font-size: 19px
-            .arrow-down
-                width: 18px
-                height: 18px
-            .inner
-                margin: 20px 0
-                margin-top: 40px
-                .item
-                    font-size: 1rem
-                // ?
+        .date-selector
+            .date-label
+                font-size: 18px
+        .task-item
+            padding: 18px
+        .edit-panel-content
+            padding: 25px
+        .edit-panel-title
+            font-size: 1.5rem
+
+@media only screen and (max-width: $bp-tablet)
+    .checklist-page
+        .page-layout
+            grid-template-columns: 1fr
+
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .checklist-page
-        padding: 20px 0
-        .container
-            .title
-                font-size: 18px
-                padding: 10px 0
-        .day-wrapper
-            padding: 20px 0
-            .arrow-down
-                width: 14px
-                height: 14px
+        .page-layout
+            gap: 30px
+
 @media only screen and (min-width: $bp-pc)
     .checklist-page
         padding: 40px 0
-        .container
-            margin-bottom: 50px
-        .day-wrapper
-            padding: 30px 0
-            .inner
-                width: 50%
-            .arrow-down
-                width: 18px 
-                height: 18px
+        .edit-panel
+            &.edit-panel-open
+                width: 400px
+        .edit-panel-content
+            padding: 30px
 </style>
