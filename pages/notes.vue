@@ -1,12 +1,16 @@
 <template>
     <div class="notes-page page-padding">
         <div class="content">
-            <div class="h1-wrapper">
-                <ui-go-back />
-                <h1 class="h1">Заметки.</h1>
+            <div class="header-section">
+                <div class="header-top">
+                    <ui-go-back />
+                    <h1 class="h1">Заметки</h1>
+                </div>
+                <button class="add-new-btn" @click="showNoteForm = true" v-if="!showNoteForm">
+                    <span class="btn-text">Добавить новую</span>
+                    <span class="plus-icon"></span>
+                </button>
             </div>
-
-            <button class="add-new" @click="showNoteForm = true" v-if="!showNoteForm">Добавить новую</button>
 
             <div class="page-content">
                 <template v-if="showNoteForm">
@@ -49,18 +53,15 @@
 
                     <p class="topic-error" v-if="topicError">{{ topicError }}</p>
 
-                    <form class="form" v-if="showNoteTopicForm">
+                    <form class="form topic-form" v-if="showNoteTopicForm">
                         <img @click.prevent="showNoteTopicForm = false" src="@/assets/images/icons/close.svg" alt=""
                             class="close-icon">
                         <div class="input-wrapper">
-                            <input type="text" class="input" name="topic_name" v-model="topicForm.name" />
-                            <label for="name" class="label-name">
-                                <span class="content-name" :class="{ 'valid-input': topicForm.name }">Название темы
-                                    *</span>
-                            </label>
+                            <input type="text" class="input" name="topic_name" v-model="topicForm.name"
+                                placeholder="Название темы" />
                         </div>
 
-                        <div class="wrapper">
+                        <div class="color-section">
                             <p class="title">Выберите цвет (опционально)</p>
 
                             <div class="colors">
@@ -76,26 +77,27 @@
 
                 <p class="error" id="error-text" v-if="serverError">{{ serverError }}</p>
 
-                <div class="items" v-if="notes?.length">
-                    <div class="item" v-for="note in notes" :key="note.id">
-                        <img @click="deleteNote(note.id)" src="@/assets/images/icons/close.svg" alt=""
-                            class="close-icon">
+                <div class="notes-list" v-if="notes?.length">
+                    <div class="note-card" v-for="note in notes" :key="note.id">
+                        <button @click="deleteNote(note.id)" class="delete-note-btn" title="Удалить">
+                            <img src="@/assets/images/icons/close.svg" alt="" class="close-icon">
+                        </button>
 
-                        <span class="topic" v-if="getTopicById(note.topicId)"
+                        <span class="note-topic" v-if="getTopicById(note.topicId)"
                             :style="{ background: getTopicById(note.topicId).color }">#{{
                                 getTopicById(note.topicId).name
                             }}</span>
-                        <div class="text" v-html="note.text"></div>
+                        <div class="note-text" v-html="note.text"></div>
 
-                        <div class="footer">
-                            <p class="dates">
+                        <div class="note-footer">
+                            <div class="note-dates">
                                 <span class="date">{{ getShortDateTime(note.created_at) }}</span>
                                 <span class="updated-date" v-if="note.created_at !== note.updated_at">
                                     ( обновлено {{ getShortDateTime(note.updated_at) }} )
                                 </span>
-                            </p>
+                            </div>
 
-                            <span class="author">{{ note.author_name }}</span>
+                            <span class="note-author">{{ note.author_name }}</span>
                         </div>
                     </div>
                 </div>
@@ -248,25 +250,63 @@ useHead({
 @use '@/assets/styles/adaptive' as *
 @use '@/assets/styles/forms'
 .notes-page
-    .add-new
-        margin: 20px 0
-        background-color: var(--text-color)
-        color: var(--main-bg)
-        padding: 8px 12px
-        font-weight: 500
-        border: none
-        border-radius: 4px
+    background-color: var(--main-bg)
+    min-height: 100vh
+
+    .header-section
+        margin-bottom: 24px
+        .header-top
+            display: flex
+            align-items: center
+            gap: 12px
+            margin-bottom: 16px
+        .h1
+            font-size: 24px
+            font-weight: 700
+            color: var(--text-color)
+            margin: 0
+        .add-new-btn
+            display: flex
+            align-items: center
+            gap: 8px
+            background-color: var(--accent-red)
+            color: #fff
+            padding: 10px 20px
+            font-weight: 600
+            font-size: 14px
+            border: none
+            border-radius: 12px
+            cursor: pointer
+            transition: all 0.2s ease
+            &:hover
+                background-color: var(--accent-orange)
+                transform: translateY(-1px)
+                box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
+            .btn-text
+                color: #fff
+            .plus-icon
+                mask: url(@/assets/images/icons/plus.svg) no-repeat center
+                mask-size: contain
+                background-color: #fff
+                width: 16px
+                height: 16px
+
     .note-form
-        margin-bottom: 40px
+        margin-bottom: 32px
         .note-topics
             margin-bottom: 0
     .form
         position: relative
-        gap: 10px
-        margin-top: 20px
+        gap: 15px
+        margin-top: 24px
+        padding: 24px
+        background-color: #fff
+        border: 1px solid var(--border-color)
+        border-radius: 16px
         .input-wrapper
             background-color: #fff
             border: 1px solid var(--border-color)
+            border-radius: 8px
             .ql-toolbar
                 border-bottom: 1px solid var(--border-color)
         .ql-editor
@@ -277,268 +317,390 @@ useHead({
                 font-family: sans-serif
         .close-icon
             position: absolute
-            right: -5px
-            top: -10px
-            width: 16px
+            right: 12px
+            top: 12px
+            width: 18px
             z-index: 2
-            opacity: .8
+            cursor: pointer
+            opacity: 0.7
+            transition: opacity 0.2s ease
+            &:hover
+                opacity: 1
         .save-btn
-            background-color: var(--text-color)
-            color: var(--main-bg)
+            background-color: var(--accent-red)
+            color: #fff
             font-size: 14px
-            padding: 8px
+            font-weight: 600
+            padding: 12px 24px
             border: none
-            border-radius: 4px
+            border-radius: 8px
+            cursor: pointer
+            transition: all 0.2s ease
+            width: 100%
+            &:hover
+                background-color: var(--accent-orange)
+                transform: translateY(-1px)
     .note-topics
         display: flex
         flex-wrap: wrap
-        gap: 7px
-        margin-bottom: 30px
+        gap: 10px
+        margin-bottom: 24px
         .topic
             display: flex
             align-items: center
-            gap: 20px
-            background-color: var(--creme-color)
-            padding: 5px 10px
-            border-radius: 4px
+            gap: 12px
+            padding: 8px 14px
+            border-radius: 20px
             font-weight: 500
             font-family: sans-serif
-            opacity: .6
+            opacity: 0.7
             cursor: pointer
-            border: 1px solid rgba(0,0,0,0)
-            font-size: 14px
+            border: 2px solid transparent
+            font-size: 13px
+            transition: all 0.2s ease
+            color: #fff
+            &:hover
+                opacity: 1
             &_active
                 opacity: 1
-                border-color: var(--border-color)
+                border-color: rgba(255, 255, 255, 0.5)
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15)
             .delete-icon
                 width: 14px
                 height: 14px
-                background-color: var(--text-color)
+                background-color: #fff
                 mask: url(@/assets/images/icons/close-round.svg) no-repeat center
                 display: block
                 mask-size: contain
+                opacity: 0.8
+                transition: opacity 0.2s ease
+                &:hover
+                    opacity: 1
         .add-more
             width: 40px
-            min-height: 25px
+            height: 40px
+            flex-shrink: 0
             border: none
-            background-color: var(--text-color)
-            background-color: var(--text-color)
-            border-radius: 4px
+            background-color: var(--accent-red)
+            border-radius: 20px
+            cursor: pointer
+            transition: all 0.2s ease
+            display: flex
+            align-items: center
+            justify-content: center
+            align-self: flex-start
+            &:hover
+                background-color: var(--accent-orange)
+                transform: scale(1.05)
             .add-icon
                 mask-size: contain
                 mask: url(@/assets/images/icons/plus-round.svg) no-repeat center
-                background-color: var(--main-bg)
+                background-color: #fff
                 display: block
-                width: 50%
-                height: 60%
+                width: 20px
+                height: 20px
         .topic-error
             width: 100%
-        .form
+            color: var(--accent-red)
+            font-size: 12px
+            margin-top: 8px
+        .topic-form
             position: relative
             width: 100%
-            margin-top: 0
-            margin-top: 10px
-            padding: 25px 10px
+            margin-top: 12px
+            padding: 18px
             background-color: #fff
-            border: 1px solid var(--creme-color)
-            border-radius: 4px
-            margin-bottom: 40px
+            border: 1px solid var(--border-color)
+            border-radius: 12px
+            margin-bottom: 16px
+            .close-icon
+                position: absolute
+                right: 12px
+                top: 12px
+                width: 18px
+                cursor: pointer
+                opacity: 0.7
+                transition: opacity 0.2s ease
+                z-index: 2
+                &:hover
+                    opacity: 1
+            .color-section
+                margin-top: 14px
             .colors
                 margin-top: 10px
                 display: grid
                 grid-template-columns: repeat(5, 1fr)
-                grid-gap: 5px
+                grid-gap: 8px
                 .color
-                    height: 35px
+                    height: 32px
                     border: none
-                    border-radius: 2px
-                    opacity: .7
-                    border: 2px solid rgba(0,0,0,0)
+                    border-radius: 6px
+                    opacity: 0.7
+                    border: 2px solid transparent
+                    cursor: pointer
+                    transition: all 0.2s ease
+                    &:hover
+                        opacity: 1
+                        transform: scale(1.05)
                 .active
                     opacity: 1
-                    border-color: var(--border-color)
+                    border-color: var(--text-color)
             .input-wrapper
-                font-size: 12px
-                .content-name
-                    font-size: 12px
+                font-size: 14px
+                margin-bottom: 0
+                .input
+                    padding: 12px 14px
+                    font-size: 14px
+                    border: 1px solid var(--border-color)
+                    border-radius: 8px
+                    width: 100%
+                    &:focus
+                        outline: none
+                        border-color: var(--accent-red)
             .title
-                font-size: 12px
+                font-size: 13px
+                font-weight: 600
+                margin-bottom: 10px
+                color: var(--text-secondary)
+            .save-btn
+                padding: 12px 24px
+                font-size: 14px
+                font-weight: 600
+                margin-top: 14px
+                width: 100%
             
-    .items
-        margin-top: 10px
+    .notes-list
+        margin-top: 16px
         display: flex
         flex-direction: column
-        gap: 8px
-        .item
+        gap: 16px
+        .note-card
             position: relative
-            background-color: var(--block-bg)
-            padding: 14px 12px
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08)
-            font-size: 1rem
-            font-weight: 500
-            border-radius: 4px
-            .text
-                padding-right: 34px
-                margin-top: 10px
+            background-color: #fff
+            padding: 20px
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06)
+            border: 1px solid var(--border-color)
+            border-radius: 12px
+            transition: all 0.2s ease
+            &:hover
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+                border-color: var(--accent-red)
+            .note-text
+                padding-right: 40px
+                margin-top: 12px
                 font-family: sans-serif
+                font-size: 14px
+                line-height: 1.6
                 & > *
                     font-family: sans-serif
-            .topic
-                padding: 3px 10px
-                font-size: 14px
-                border-radius: 4px
+            .note-topic
+                padding: 6px 12px
+                font-size: 12px
+                border-radius: 20px
                 font-family: sans-serif
+                font-weight: 600
+                color: #fff
+                display: inline-block
+                margin-bottom: 8px
 
-            .close-icon
-                cursor: pointer
-                width: 14px
-                opacity: .6
+            .delete-note-btn
                 position: absolute
-                right: 12px
-                top: 14px
+                right: 16px
+                top: 16px
+                background: none
+                border: none
+                cursor: pointer
+                padding: 6px
+                opacity: 0.6
+                transition: all 0.2s ease
+                border-radius: 6px
+                display: flex
+                align-items: center
+                justify-content: center
+                &:hover
+                    opacity: 1
+                    background-color: rgba(232, 69, 32, 0.1)
+                .close-icon
+                    width: 16px
+                    height: 16px
             ol, ul
                 margin-left: 20px
                 padding: 0
                 li
                     list-style-type: unset
                 
-            .date, .updated-date, .author
-                color: var(--text-color)
-                opacity: .6
+            .date, .updated-date, .note-author
+                color: var(--text-secondary)
                 font-weight: 500
-                font-size: 14px
-            .footer
+                font-size: 12px
+            .note-footer
                 display: flex
                 justify-content: space-between
                 align-items: center
-                margin-top: 15px
+                margin-top: 16px
+                padding-top: 12px
+                border-top: 1px solid var(--border-color)
+            .note-dates
+                display: flex
+                flex-direction: column
+                gap: 4px
 
 @media only screen and (min-width: $bp-tablet)
     .notes-page
-        .add-new
-            margin-top: 40px
-            padding: 12px 16px
-            font-size: 18px
-            font-weight: 600
+        .header-section
+            .add-new-btn
+                padding: 12px 24px
+                font-size: 15px
         .form
-            gap: 10px
-            margin-top: 40px
+            gap: 20px
+            margin-top: 32px
+            padding: 28px
             .input-wrapper
-                font-size: 18px
+                font-size: 16px
             .ql-editor
-                font-size: 18px
+                font-size: 16px
                 &::before
                     font-size: inherit
             .save-btn
-                font-size: 18px
-                font-weight: 600
-                padding: 12px
+                font-size: 15px
+                padding: 14px 28px
         .note-topics
-            gap: 10px
+            gap: 12px
             .topic
-                padding: 8px 18px
-                font-size: 1rem
-            .form
+                padding: 10px 16px
+                font-size: 14px
+            .topic-form
+                width: 50%
+                padding: 18px
                 .colors
-                    display: flex
-                    width: 100%
+                    grid-gap: 8px
                     .color
-                        flex: 1
-        .items
-            margin-top: 40px
-            gap: 14px
-            .item
-                padding: 26px
-                font-size: 18px
-                .text
-                    margin-top: 15px
-                .close-icon
-                    top: 26px
-                    right: 26px
-                    width: 16px
-                .date, .updated-date, .author
-                    font-size: 1rem
+                        height: 34px
+        .notes-list
+            margin-top: 24px
+            gap: 20px
+            .note-card
+                padding: 24px
+                .note-text
+                    font-size: 15px
+                .note-topic
+                    font-size: 13px
+                .delete-note-btn
+                    .close-icon
+                        width: 18px
+                        height: 18px
+                .date, .updated-date, .note-author
+                    font-size: 13px
+
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .notes-page
         .content
             display: grid
-            grid-template-areas: 'h1 btn' 'page-cont page-cont'
-            grid-template-columns: 1fr 25%
-        .h1-wrapper
-            grid-area: h1
-        .add-new
-            grid-area: btn
+            grid-template-areas: 'header header' 'page-cont page-cont'
+            grid-template-columns: 1fr
+        .header-section
+            grid-area: header
+            display: grid
+            grid-template-columns: 1fr auto
+            align-items: center
+            gap: 20px
+            .header-top
+                margin-bottom: 0
+            .add-new-btn
+                align-self: center
         .page-content
             grid-area: page-cont
-        .add-new
-            margin-top: 20px
-            padding: 10px 14px
-            font-size: 16px
-            font-weight: 600
-            align-self: center
         .note-topics
             .topic
-                font-size: 14px
-                padding: 5px 10px
+                font-size: 13px
+                padding: 8px 14px
         .form
-            gap: 10px
-            margin-top: 40px
-            .input-wrapper
-                font-size: 16px
-                
             .ql-editor
-                font-size: 16px
+                font-size: 15px
                 &::before
                     font-size: inherit
             .save-btn
-                font-size: 18px
-                font-weight: 600
-                padding: 12px
-        .items
-            margin-top: 20px
-            gap: 10px
-            grid-area: items
-            .item
-                padding: 22px
-                font-size: 16px
-                .close-icon
-                    top: 22px
-                    right: 22px
-                    width: 16px
-                .date, .updated-date, .author
-                    font-size: 1rem
+                font-size: 15px
+
 @media only screen and (min-width: $bp-pc)
     .notes-page
+        .header-section
+            .h1
+                font-size: 28px
+            .add-new-btn
+                padding: 14px 28px
+                font-size: 16px
         .form
             .ql-editor
-                font-size: 18px
+                font-size: 16px
                 &::before
                     font-size: inherit
         .note-topics
             .topic
-                font-size: 1rem
-                padding: 12px 20px
+                font-size: 14px
+                padding: 10px 18px
                 .delete-icon
-                    width: 20px
-                    height: 20px
-            .form
-                background-color: rgba(0,0,0,0)
-                border: none
-                padding: 0
-                padding-right: 50%
+                    width: 16px
+                    height: 16px
+            .topic-form
+                padding: 20px
                 .input-wrapper
-                    font-size: 1rem
+                    font-size: 14px
                     .input
-                        font-size: 1rem
-                    .content-name
-                        font-size: 1rem
-                .close-icon
-                    right: 50%
-                    transform: translateX(50%)
-        .add-new
-            padding: 16px
-            font-size: 18px
-        .items
-            .item
+                        font-size: 14px
+                .colors
+                    grid-gap: 8px
+                    .color
+                        height: 36px
+        .notes-list
+            .note-card
+                padding: 28px
+                .note-text
+                    font-size: 16px
+                .date, .updated-date, .note-author
+                    font-size: 13px
+
+@media only screen and (min-width: $bp-large)
+    .notes-page
+        .header-section
+            .h1
+                font-size: 32px
+            .add-new-btn
+                padding: 16px 32px
+                font-size: 17px
+        .form
+            padding: 32px
+            .ql-editor
                 font-size: 18px
+                &::before
+                    font-size: inherit
+            .save-btn
+                font-size: 16px
+                padding: 14px 32px
+        .note-topics
+            gap: 12px
+            .topic
+                font-size: 15px
+                padding: 12px 20px
+            .topic-form
+                padding: 24px
+                .input-wrapper
+                    .input
+                        font-size: 15px
+                        padding: 14px 16px
+                .colors
+                    .color
+                        height: 38px
+                .save-btn
+                    font-size: 15px
+        .notes-list
+            gap: 20px
+            .note-card
+                padding: 32px
+                .note-text
+                    font-size: 17px
+                .note-topic
+                    font-size: 14px
+                .date, .updated-date, .note-author
+                    font-size: 14px
 </style>

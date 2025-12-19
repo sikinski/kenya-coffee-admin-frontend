@@ -47,11 +47,11 @@ const productsConfig = ref({
             type: 'bar',
             data: computed(() => data.value.map(el => el.count)),
             itemStyle: {
-                color: '#ca9279',
+                color: '#e84520',
             },
             emphasis: {
                 itemStyle: {
-                    color: '#e84520' // super-highlight
+                    color: '#ff6b35' // lighter orange on hover
                 }
             },
             animationDuration: 1000, // анимация роста

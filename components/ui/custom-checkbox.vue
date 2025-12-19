@@ -51,16 +51,19 @@ $CHECKMARK-size-tablet: 30px
         min-width: $CHECKMARK-size-mobile
         max-height: $CHECKMARK-size-mobile
         max-width: $CHECKMARK-size-mobile
-        border-radius: 4px
-        background-color: var(--block-bg)
-        border: 1px solid var(--border-color)
+        border-radius: 6px
+        background-color: #fff
+        border: 2px solid var(--border-color)
+        transition: all 0.2s ease
         img
             width: 60%
         &_checked
-            background-color: var(--creme-color)
+            background-color: var(--accent-red)
+            border-color: var(--accent-red)
 
     .checkbox:hover input~.checkmark 
-        background-color: #eee
+        border-color: var(--accent-red)
+        background-color: rgba(232, 69, 32, 0.05)
 @media only screen and (min-width: $bp-tablet)
     .checkbox
         padding: 14px
@@ -94,5 +97,6 @@ $CHECKMARK-size-tablet: 30px
             max-width: $CHECKMARK-size-tablet
         &:hover
             .checkmark
-                background-color: var(--creme-color)
+                border-color: var(--accent-red)
+                background-color: rgba(232, 69, 32, 0.05)
 </style>

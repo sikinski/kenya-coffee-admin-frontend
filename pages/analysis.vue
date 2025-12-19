@@ -1,19 +1,21 @@
 <template>
     <div class="analysis page-padding">
         <div class="page-content content">
-            <div class="h1-wrapper">
-                <ui-go-back />
-                <h1 class="h1">Аналитика.</h1>
-
+            <!-- Header with title and period filters -->
+            <div class="header-section">
+                <div class="header-top">
+                    <ui-go-back />
+                    <h1 class="h1">Аналитика</h1>
+                </div>
                 <div class="period-filters">
-                    <button class="btn" @click="commonFilters.dates.custom = 'week'"
-                        :class="commonFilters.dates.custom === 'week' ? 'el-active' : 'el-unactive'">7 дней</button>
-                    <button class="btn" @click="commonFilters.dates.custom = 'month'"
-                        :class="commonFilters.dates.custom === 'month' ? 'el-active' : 'el-unactive'">30 дней</button>
-                    <button class="btn" @click="commonFilters.dates.custom = 'quarter'"
-                        :class="commonFilters.dates.custom === 'quarter' ? 'el-active' : 'el-unactive'">90 дней</button>
-                    <button class="btn el-unactive"
-                        :class="commonFilters.dates.from && commonFilters.dates.to ? 'el-active' : 'el-unactive'"
+                    <button class="filter-btn" @click="commonFilters.dates.custom = 'week'"
+                        :class="commonFilters.dates.custom === 'week' ? 'filter-btn_active' : ''">7 дней</button>
+                    <button class="filter-btn" @click="commonFilters.dates.custom = 'month'"
+                        :class="commonFilters.dates.custom === 'month' ? 'filter-btn_active' : ''">30 дней</button>
+                    <button class="filter-btn" @click="commonFilters.dates.custom = 'quarter'"
+                        :class="commonFilters.dates.custom === 'quarter' ? 'filter-btn_active' : ''">90 дней</button>
+                    <button class="filter-btn"
+                        :class="commonFilters.dates.from && commonFilters.dates.to ? 'filter-btn_active' : ''"
                         @click="showDatesModal = true">
                         {{ commonFilters.dates.from && commonFilters.dates.to ?
                             `${commonFilters.dates.from} - ${commonFilters.dates.to}` :
@@ -23,78 +25,91 @@
                 </div>
             </div>
 
-            <div class="wrapper terminal-wrapper">
-                <p class="title">Устройства.</p>
-                <div class="devices">
-                    <div class="device" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
-                        :class="{ 'device_active': receiptFilters.devices.includes(device.serialNumber) }">
-                        <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon">
-                        <p class="text">{{ device.shop.address?.data?.street || device.shop.name }}</p>
+            <!-- Devices/Stores Section -->
+            <div class="devices-section" v-if="data.devices.items.length">
+                <div class="section-title">Устройства</div>
+                <div class="devices-grid">
+                    <div class="device-card" v-for="device in data.devices.items" @click="toggleDeviceInFilters(device)"
+                        :class="{ 'device-card_active': receiptFilters.devices.includes(device.serialNumber) }">
+                        <img src="@/assets/images/icons/shop-location.svg" alt="" class="device-icon">
+                        <span class="device-text">{{ device.shop.address?.data?.street || device.shop.name }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="wrapper numbers-wrapper" v-if="data.stats">
-                <p class="title">Числа. <span class="icon refresh-icon" @click="refreshStats"></span></p>
-
-                <div class="numbers">
-                    <div class="num-wrapper">
-                        <p class="num">{{ simplePrice(data.stats.dayRevenue) }}</p>
-                        <p class="text">выручка за сегодня (static)</p>
+            <!-- Metrics Cards -->
+            <div class="metrics-section" v-if="data.stats">
+                <div class="section-header">
+                    <div class="section-title">Метрики</div>
+                    <span class="refresh-icon" @click="refreshStats"></span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card metric-card_highlight">
+                        <div class="metric-value">{{ simplePrice(data.stats.dayRevenue) }} <span
+                                class="metric-currency">₽</span></div>
+                        <div class="metric-label">Выручка за сегодня</div>
                     </div>
-                    <div class="num-wrapper">
-                        <p class="num num-prefix">{{ simplePrice(data.stats.revenue) }} <span class="prefix">р.</span>
-                        </p>
-                        <p class="text">пришло за {{ getWordPeriod(receiptFilters.dates) }}</p>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ simplePrice(data.stats.revenue) }} <span
+                                class="metric-currency">₽</span></div>
+                        <div class="metric-label">За {{ getWordPeriod(receiptFilters.dates) }}</div>
                     </div>
-                    <div class="num-wrapper">
-                        <p class="num num-prefix">{{ data.stats.avgCheck }}<span class="prefix">р.</span></p>
-                        <p class="text">средний чек</p>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ data.stats.avgCheck }}<span class="metric-currency">₽</span></div>
+                        <div class="metric-label">Средний чек</div>
                     </div>
-                    <div class="num-wrapper">
-                        <p class="num">{{ simplePrice(data.stats.receiptsCount) }}</p>
-                        <p class="text">покупок</p>
+                    <div class="metric-card">
+                        <div class="metric-value">{{ simplePrice(data.stats.receiptsCount) }}</div>
+                        <div class="metric-label">Покупок</div>
                     </div>
-
                 </div>
             </div>
 
-            <div class="wrapper charts-wrapper">
-                <p class="title">Графики.</p>
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="section-title">Графики</div>
                 <graphs :filters="receiptFilters" />
             </div>
 
-            <div class="receipts">
-                <span class="count">Всего {{ data.receipts.pagination.total }} чека (за {{
-                    getWordPeriod(receiptFilters.dates) }})</span>
-                <div class="receipt" v-for="receipt in data.receipts.items" :key="receipt.raw.id"
-                    :class="{ 'receipt_is_new': receipt.is_new }">
-                    <span class="date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
-
-
-                    <p class="cashier">{{ receipt.raw.cashier.name }} <img src="@/assets/images/icons/nice-icon.svg"
-                            alt="" class="icon"></p>
-                    <p class="coffee-address">{{ receipt.raw.content.settlementAddress }}</p>
-
-                    <div class="products">
-                        <div class="product" v-for="product in receipt.raw.content.positions" :key="product.id">
-                            <span class="count">x{{ product.quantity }}</span>
-                            <p class="name">{{ product.text }}</p>
-                            <p class="price"><span class="discount"
-                                    v-if="product.discountMoney || product.discountPercent">Скидка {{
-                                        product.discountMoney + 'руб.' || product.discountPercent + '%'
-                                    }}</span>{{ product.price }} руб.</p>
-
+            <!-- Receipts List -->
+            <div class="receipts-section">
+                <div class="section-header">
+                    <div class="section-title">Чеки</div>
+                    <span class="receipts-count">Всего {{ data.receipts.pagination.total }} (за {{
+                        getWordPeriod(receiptFilters.dates) }})</span>
+                </div>
+                <div class="receipts-list">
+                    <div class="receipt-card" v-for="receipt in data.receipts.items" :key="receipt.raw.id"
+                        :class="{ 'receipt-card_new': receipt.is_new }">
+                        <div class="receipt-header">
+                            <span class="receipt-date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
+                            <div class="receipt-sum">{{ receipt.raw.amount }} ₽</div>
                         </div>
-                    </div>
-                    <div class="final-sum">
-                        <p class="sum">{{ receipt.raw.amount }} руб.</p>
+                        <div class="receipt-info">
+                            <div class="receipt-cashier">
+                                <img src="@/assets/images/icons/nice-icon.svg" alt="" class="cashier-icon">
+                                <span>{{ receipt.raw.cashier.name }}</span>
+                            </div>
+                            <div class="receipt-address">{{ receipt.raw.content.settlementAddress }}</div>
+                        </div>
+                        <div class="receipt-products">
+                            <div class="product-item" v-for="product in receipt.raw.content.positions"
+                                :key="product.id">
+                                <span class="product-quantity">×{{ product.quantity }}</span>
+                                <span class="product-name">{{ product.text }}</span>
+                                <div class="product-price">
+                                    <span class="product-discount"
+                                        v-if="product.discountMoney || product.discountPercent">
+                                        Скидка {{ product.discountMoney + 'руб.' || product.discountPercent + '%' }}
+                                    </span>
+                                    <span>{{ product.price }} ₽</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- // MODALS -->
 
         <ui-datepicker-modal :visible="showDatesModal" @close="showDatesModal = false" @datesSelected="handleDates" />
     </div>
@@ -291,342 +306,383 @@ useHead({
 
 <style lang="sass">
 @use '@/assets/styles/adaptive' as *
+
 .analysis
     overflow-y: auto
     padding-bottom: 0 !important
-    .h1-wrapper
-        .period-filters
-            grid-column: 1/3
-            display: grid
-            grid-template-columns: 1fr 1fr
-            grid-gap: 4px 6px
-            .btn
-                font-size: 12px
-                padding: 10px
-                border-radius: 3px
-                color: var(--text-color)
-                font-weight: 400
-                    
-    .wrapper
-        margin: 22px 0
-        .title
-            display: flex
-            align-items: center
-            gap: 14px
-            font-size: 14px
-            font-weight: 600
-            padding-bottom: 10px
-            border-bottom: 1px solid var(--border-color)
-            .refresh-icon
-                mask: url(@/assets/images/icons/refresh.svg) no-repeat center
-                background-color: var(--creme-color)
-                display: block
-                width: 16px
-                height: 16px
-                cursor: pointer
-        .devices
-            display: grid
-            grid-template-columns: 1fr 1fr
-            margin-top: 20px
-            gap: 10px
-            .device
-                display: flex
-                flex-wrap: wrap
-                gap: 4px 7px
-                padding: 12px 8px 
-                background-color: rgba(#ca9279, .5)
-                border-radius: 4px
-                transition: .3s ease
-                cursor: pointer
-                &_active
-                    opacity: 1
-                    background-color: rgba(#ca9279, 1)
-            .icon
-                width: 24px
-                height: 27px
-            .text
-                font-size: 14px
-    .grid-4
-        display: grid
-        grid-template-columns: 1fr 1fr
-        grid-gap: 20px
-    .receipts
+    background-color: var(--main-bg)
+    min-height: 100vh
+
+    .page-content
         display: flex
         flex-direction: column
-        gap: 7px
-        max-height: 100vh
-        overflow: auto
-        padding-bottom: 60px
-        padding: 16px 10px
-        margin-top: 20px
-        .count
-            font-size: 14px
+        gap: 20px
+
+    // Header Section
+    .header-section
+        margin-bottom: 8px
+        .header-top
+            display: flex
+            align-items: center
+            gap: 12px
+            margin-bottom: 16px
+        .h1
+            font-size: 24px
+            font-weight: 700
+            color: var(--text-color)
+            margin: 0
+
+    // Period Filters
+    .period-filters
+        display: flex
+        flex-wrap: wrap
+        gap: 8px
+        .filter-btn
+            padding: 8px 16px
+            border-radius: 20px
+            border: 1px solid var(--border-color)
+            background-color: #fff
+            color: var(--text-color)
+            font-size: 13px
             font-weight: 500
-            color: var(--border-color)
-        .receipt
-            background-color: rgba(#bfa89b, .2)
-            padding: 12px 20px
+            cursor: pointer
+            transition: all 0.2s ease
+            white-space: nowrap
+            &:hover
+                border-color: var(--accent-red)
+                color: var(--accent-red)
+            &_active
+                background-color: var(--accent-red)
+                border-color: var(--accent-red)
+                color: #fff
+
+    // Section Styles
+    .section-title
+        font-size: 18px
+        font-weight: 700
+        color: var(--text-color)
+        margin-bottom: 12px
+
+    .section-header
+        display: flex
+        justify-content: space-between
+        align-items: center
+        margin-bottom: 12px
+        .refresh-icon
+            mask: url(@/assets/images/icons/refresh.svg) no-repeat center
+            background-color: var(--accent-red)
+            display: block
+            width: 18px
+            height: 18px
+            cursor: pointer
+            transition: transform 0.3s ease
+            &:hover
+                transform: rotate(180deg)
+        .receipts-count
+            font-size: 13px
+            color: var(--text-light)
+            font-weight: 400
+
+    // Devices Section
+    .devices-section
+        .devices-grid
             display: grid
-            grid-template-areas: 'date sum' 'products products' 'address address' 'cashier cashier'
-            grid-template-columns: 1fr auto
-            grid-gap: 10px 
-            font-size: 14px
-            // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
-            border-radius: 8px
-            &_is_new
-                animation: new-element 3s ease-out
-                
-            .date
-                color: var(--border-color)
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))
+            gap: 10px
+        .device-card
+            display: flex
+            align-items: center
+            gap: 8px
+            padding: 12px 14px
+            background-color: var(--second-bg)
+            border-radius: 12px
+            cursor: pointer
+            transition: all 0.2s ease
+            border: 2px solid transparent
+            &:hover
+                background-color: #f0f0f0
+            &_active
+                background-color: rgba(232, 69, 32, 0.1)
+                border-color: var(--accent-red)
+        .device-icon
+            width: 20px
+            height: 20px
+            flex-shrink: 0
+        .device-text
+            font-size: 13px
+            color: var(--text-color)
+            font-weight: 500
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+
+    // Metrics Section
+    .metrics-section
+        .metrics-grid
+            display: grid
+            grid-template-columns: repeat(2, 1fr)
+            gap: 12px
+        .metric-card
+            background: linear-gradient(135deg, #fff 0%, #fafafa 100%)
+            border-radius: 16px
+            padding: 16px
+            border: 1px solid var(--border-color)
+            transition: all 0.2s ease
+            &:hover
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+            &_highlight
+                background: linear-gradient(135deg, rgba(232, 69, 32, 0.05) 0%, rgba(232, 69, 32, 0.02) 100%)
+                border-color: rgba(232, 69, 32, 0.3)
+        .metric-value
+            font-size: 24px
+            font-weight: 700
+            color: var(--accent-red)
+            margin-bottom: 6px
+            line-height: 1.2
+            .metric-currency
+                font-size: 18px
                 font-weight: 600
-                font-family: sans-serif
-                grid-area: date
-            .cashier
-                display: grid
-                grid-template-columns:  1fr 10px
-                align-items: center
-                gap: 7px
-                font-size: 12px
-                color: var(--border-color)
-                grid-area: cashier
-            .coffee-address
-                grid-area: address
-                color: var(--border-color)
-            .final-sum
-                grid-area: sum
-                text-align: right
-                margin: 10px 0
-                // margin-bottom: 5px
-                .sum
-                    // font-family: sans-serif
-                    font-size: 16px
-                    font-weight: 600
-                    color: var(--green-color)
-            .products
-                grid-area: products
-                display: flex
-                flex-direction: column
-                .product
-                    padding: 6px 0
-                    font-size: 14px
-                    border-top: 1px solid var(--border-color)
-                    display: grid
-                    grid-template-columns: auto 1fr 100px
-                    grid-gap: 14px
-                    font-family: sans-serif
-                    .name
-                        font-weight: 500
-                    .price
-                        text-align: right
-                        font-size: 12px
-                        font-weight: 500
-                        font-family: sans-serif
-    .numbers-wrapper
-        .numbers
+        .metric-label
+            font-size: 12px
+            color: var(--text-secondary)
+            font-weight: 500
+
+    // Charts Section
+    .charts-section
+        margin-top: 8px
+
+    // Receipts Section
+    .receipts-section
+        .receipts-list
+            display: flex
+            flex-direction: column
+            gap: 12px
+            max-height: none
+            overflow: visible
+        .receipt-card
+            background-color: #fff
+            border-radius: 12px
+            padding: 16px
+            border: 1px solid var(--border-color)
+            transition: all 0.2s ease
+            &:hover
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06)
+            &_new
+                animation: new-element 3s ease-out
+                border-color: var(--green-color)
+        .receipt-header
+            display: flex
+            justify-content: space-between
+            align-items: center
+            margin-bottom: 12px
+            padding-bottom: 12px
+            border-bottom: 1px solid var(--border-color)
+        .receipt-date
+            font-size: 12px
+            color: var(--text-light)
+            font-weight: 500
+        .receipt-sum
+            font-size: 18px
+            font-weight: 700
+            color: var(--green-color)
+        .receipt-info
+            display: flex
+            flex-direction: column
+            gap: 6px
+            margin-bottom: 12px
+        .receipt-cashier
+            display: flex
+            align-items: center
+            gap: 6px
+            font-size: 13px
+            color: var(--text-color)
+            font-weight: 500
+        .cashier-icon
+            width: 14px
+            height: 14px
+        .receipt-address
+            font-size: 12px
+            color: var(--text-secondary)
+        .receipt-products
+            display: flex
+            flex-direction: column
+            gap: 8px
+            padding-top: 12px
+            border-top: 1px solid var(--border-color)
+        .product-item
             display: grid
-            grid-template-columns: 1fr 1fr
-            grid-gap: 20px
-            margin-top: 20px
-            .num-wrapper
-                display: flex
-                flex-direction: column
-                // align-items: center
-                .num
-                    font-family: "Mozilla Text"
-                    font-size: 28px
-                    font-weight: 800
-                    color: var(--green-color)
-                    // &-prefix
-                    //     margin-left: 16px
-                    .prefix
-                        font-size: 20px
-                        margin-left: 5px
-                .text
-                    font-size: 14px
+            grid-template-columns: auto 1fr auto
+            gap: 12px
+            align-items: center
+            font-size: 13px
+        .product-quantity
+            color: var(--text-light)
+            font-weight: 500
+        .product-name
+            color: var(--text-color)
+            font-weight: 500
+        .product-price
+            text-align: right
+            color: var(--text-color)
+            font-weight: 600
+        .product-discount
+            display: block
+            font-size: 11px
+            color: var(--accent-red)
+            font-weight: 500
+            margin-bottom: 2px
 @media only screen and (min-width: $bp-tablet)
     .analysis
-        .h1-wrapper
-            grid-template-columns:  1fr auto
+        .page-content
+            gap: 24px
+        .header-section
+            .h1
+                font-size: 28px
             .period-filters
-                grid-column: unset
-                display: grid
-                grid-template-columns: repeat(4, auto)
-                grid-gap: 4px 6px
-                .btn
+                gap: 10px
+                .filter-btn
                     font-size: 14px
-                    max-width: 150px
-                    padding: 10px
-                    border-radius: 3px
-                    color: var(--text-color)
-                    font-weight: 500
-        .wrapper
-            margin: 40px 0
-            .title
-                font-size: 18px
-            .devices
-                grid-template-columns: repeat(3, 1fr)
-                .device
-                    grid-gap: 8px 12px
-                    padding: 16px
-        .numbers-wrapper
-            .numbers
-                grid-template-columns: 1fr 1fr 1fr
-                grid-gap: 30px 20px
-                margin-top: 20px
-                .num-wrapper
-                    .num
-                        font-size: 34px
-                        font-weight: 800
-                        color: var(--green-color)
-                        // &-prefix
-                        //     margin-left: 16px
-                        .prefix
-                            font-size: 20px
-                            margin-left: 5px
-                    .text
-                        font-size: 18px
-        .receipts
-            gap: 10px
-            .receipt
-                padding: 20px 30px
-                font-size: 1rem
-                grid-template-areas: 'date sum' 'products products' 'address cashier' 
-                .cashier
-                    font-size: 14px
-                    grid-template-columns:  auto 1fr
-                    img
-                        width: 12px
-                .final-sum
-                    // margin-top: 20px
-                    margin-top: 0
-                    .sum
-                        font-size: 24px
-                .products
-                    .product
-                        padding: 10px 0
-                        font-size: 18px
-                        grid-template-columns: auto 1fr 100px
-        
+                    padding: 10px 20px
+        .section-title
+            font-size: 20px
+        .devices-section
+            .devices-grid
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr))
+                gap: 12px
+            .device-card
+                padding: 14px 16px
+            .device-text
+                font-size: 14px
+        .metrics-section
+            .metrics-grid
+                grid-template-columns: repeat(2, 1fr)
+                gap: 16px
+            .metric-card
+                padding: 20px
+            .metric-value
+                font-size: 28px
+                .metric-currency
+                    font-size: 20px
+            .metric-label
+                font-size: 13px
+        .receipts-section
+            .receipt-card
+                padding: 20px
+            .receipt-sum
+                font-size: 20px
+            .receipt-cashier
+                font-size: 14px
+            .receipt-address
+                font-size: 13px
+            .product-item
+                font-size: 14px
+
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .analysis
-        .wrapper
-            margin: 20px 0
-            .title
-                font-size: 16px
-            .devices
-                grid-template-columns: repeat(3, 1fr)
-                .device
-                    grid-gap: 8px 10px
-                    padding: 14px
-                    font-size: 14px
-        .numbers-wrapper
-            .numbers
-                grid-template-columns: 1fr 1fr 
-                grid-gap: 30px 20px
-                margin-top: 20px
-                .num-wrapper
-                    .num
-                        font-size: 28px
-                        font-weight: 800
-                        color: var(--green-color)
-                        // &-prefix
-                        //     margin-left: 16px
-                        .prefix
-                            font-size: 20px
-                            margin-left: 5px
-                    .text
-                        font-size: 16px
-        .receipts
-            gap: 10px
-            .receipt
-                padding: 14px 30px
+        .page-content
+            gap: 28px
+        .header-section
+            .h1
+                font-size: 32px
+        .devices-section
+            .devices-grid
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+        .metrics-section
+            .metrics-grid
+                grid-template-columns: repeat(4, 1fr)
+                gap: 16px
+            .metric-value
+                font-size: 32px
+                .metric-currency
+                    font-size: 24px
+            .metric-label
                 font-size: 14px
-                .date
-                    font-size: 13px
-                .cashier
-                    font-size: 14px
-                .final-sum
-                    margin-top: 5px
-                    .sum
-                        font-size: 18px
-                .products
-                    .product
-                        padding: 10px 0
-                        font-size: 14px
-                        grid-template-columns: auto 1fr 100px
+        .receipts-section
+            .receipt-card
+                padding: 24px
+
 @media only screen and (min-width: $bp-pc)
     .analysis
         .page-content
             display: grid
-            grid-template-columns: 2fr 5fr
-            grid-template-areas: 'h1 h1' 'devices numbers' 'charts charts' 'receipts receipts'
-            grid-gap: 0px 70px
-        .h1-wrapper
-            grid-area: h1
-        .terminal-wrapper
+            grid-template-columns: 1fr
+            grid-template-areas: 'header' 'devices' 'metrics' 'charts' 'receipts'
+            gap: 32px
+            max-width: 1400px
+        .header-section
+            grid-area: header
+        .devices-section
             grid-area: devices
-        .numbers-wrapper
-            grid-area: numbers
-        .charts-wrapper
+            .devices-grid
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr))
+        .metrics-section
+            grid-area: metrics
+            .metrics-grid
+                grid-template-columns: repeat(4, 1fr)
+                gap: 20px
+            .metric-card
+                padding: 24px
+            .metric-value
+                font-size: 36px
+                .metric-currency
+                    font-size: 28px
+            .metric-label
+                font-size: 15px
+        .charts-section
             grid-area: charts
-        .receipts
+        .receipts-section
             grid-area: receipts
-        .wrapper
-            margin: 20px 0
-            .title
+            .receipts-list
+                display: grid
+                grid-template-columns: 1fr
+                gap: 16px
+            .receipt-card
+                padding: 24px 28px
+            .receipt-sum
+                font-size: 22px
+            .product-item
+                font-size: 15px
+                gap: 16px
+
+@media only screen and (min-width: $bp-large)
+    .analysis
+        .page-content
+            max-width: 1800px
+            gap: 40px
+        .header-section
+            .h1
+                font-size: 36px
+            .period-filters
+                gap: 12px
+                .filter-btn
+                    font-size: 15px
+                    padding: 12px 24px
+        .section-title
+            font-size: 22px
+        .devices-section
+            .devices-grid
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr))
+                gap: 16px
+            .device-card
+                padding: 18px 20px
+            .device-text
+                font-size: 15px
+        .metrics-section
+            .metrics-grid
+                gap: 24px
+            .metric-card
+                padding: 32px
+            .metric-value
+                font-size: 42px
+                .metric-currency
+                    font-size: 32px
+            .metric-label
                 font-size: 16px
-            .devices
-                display: flex
-                flex-direction: column
-                .device
-                    grid-gap: 8px 10px
-                    padding: 14px
-                    font-size: 16px
-        .numbers-wrapper
-            .numbers
-                grid-template-columns: 1fr 1fr 
-                grid-gap: 20px 20px
-                margin-top: 20px
-                .num-wrapper
-                    .num
-                        font-size: 36px
-                        font-weight: 800
-                        color: var(--green-color)
-                        // &-prefix
-                        //     margin-left: 16px
-                        .prefix
-                            font-size: 20px
-                            margin-left: 5px
-                    .text
-                        font-size: 16px
-        .receipts
-            gap: 10px
-            width: 70%
-            // margin: 0 auto
-            margin-top: 60px
-            .receipt
-                padding: 26px 32px
+        .receipts-section
+            .receipt-card
+                padding: 28px 32px
+            .receipt-sum
+                font-size: 24px
+            .product-item
                 font-size: 16px
-                grid-template-areas: 'date address cashier' 'products products sum'
-                grid-template-columns: auto 1fr auto
-                grid-gap: 20px
-                .date
-                    font-size: 14px
-                .cashier
-                    font-size: 16px
-                .final-sum
-                    margin: 0
-                    margin-top: 5px
-                    align-self: flex-end
-                    justify-self: end
-                    .sum
-                        font-size: 24px
-                .products
-                    width: 90%
-                    .product
-                        padding: 10px 0
-                        font-size: 16px
-                        grid-template-columns: auto 1fr 100px   
-                        .name
-                            font-weight: 600
 </style>

@@ -1,16 +1,18 @@
 <template>
     <div class="checklist-page page-padding">
         <div class="content">
-            <div class="h1-wrapper">
-                <ui-go-back />
-                <h1 class="h1">Чеклист.</h1>
+            <div class="header-section">
+                <div class="header-top">
+                    <ui-go-back />
+                    <h1 class="h1">Чеклист</h1>
+                </div>
             </div>
 
             <div class="page-layout">
                 <!-- Основной контент с ежедневными задачами -->
                 <div class="daily-tasks-main">
                     <div class="date-selector">
-                        <label class="date-label">Выберите дату:</label>
+                        <label class="date-label">Выберите дату</label>
                         <client-only>
                             <vue-date-picker v-model="selectedDate" locale="ru" format="dd.MM.yyyy"
                                 :enable-time-picker="false" :auto-apply="true" :start-date="selectedDate"
@@ -19,7 +21,7 @@
                     </div>
 
                     <div class="tasks-container" v-if="dailyTasks?.length">
-                        <div v-for="task in dailyTasks" :key="task.id" class="task-item">
+                        <div v-for="task in dailyTasks" :key="task.id" class="task-card">
                             <ui-custom-checkbox :label="task.text" v-model="task.done" :id="`daily-${task.id}`"
                                 @update:modelValue="updateDailyTask(task.id, { done: $event })" />
                         </div>
@@ -54,26 +56,23 @@
                         <p class="edit-panel-hint">Изменения в шаблоне не затронут уже сохраненные записи за прошлые дни
                         </p>
 
-                        <button class="btn add-btn" @click="showTaskForm = true" v-if="!showTaskForm">
-                            <p class="text">Добавить задачу</p>
-                            <span class="icon plus-icon mask-icon"></span>
+                        <button class="add-task-btn" @click="showTaskForm = true" v-if="!showTaskForm">
+                            <span class="btn-text">Добавить задачу</span>
+                            <span class="plus-icon"></span>
                         </button>
 
-                        <form v-if="showTaskForm" class="form task-form" @submit.prevent="createTask">
+                        <form v-if="showTaskForm" class="task-form" @submit.prevent="createTask">
                             <img @click.prevent="showTaskForm = false" src="@/assets/images/icons/close.svg" alt=""
                                 class="close-icon">
                             <div class="input-wrapper">
-                                <input type="text" class="input" name="task_name" v-model="newTask.text" required />
-                                <label for="task_name" class="label-name">
-                                    <span class="content-name" :class="{ 'valid-input': newTask.text }">Текст
-                                        задачи</span>
-                                </label>
+                                <input type="text" class="input" name="task_name" v-model="newTask.text" required
+                                    placeholder="Текст задачи" />
                             </div>
                             <button type="submit" class="save-btn">Добавить</button>
                         </form>
 
                         <div class="template-tasks-container" v-if="templateTasks?.length">
-                            <div v-for="(task, index) in templateTasks" :key="task.id" class="template-task-item"
+                            <div v-for="(task, index) in templateTasks" :key="task.id" class="template-task-card"
                                 :draggable="true" @dragstart="onDragStart($event, index)"
                                 @dragover.prevent="onDragOver($event, index)" @drop="onDrop($event, index)"
                                 @dragend="onDragEnd" :class="{ 'dragging': draggedIndex === index }">
@@ -284,10 +283,25 @@ useHead({
 @use '@/assets/styles/datepicker' as *
 
 .checklist-page
+    background-color: var(--main-bg)
+    min-height: 100vh
+
+    .header-section
+        margin-bottom: 24px
+        .header-top
+            display: flex
+            align-items: center
+            gap: 12px
+        .h1
+            font-size: 24px
+            font-weight: 700
+            color: var(--text-color)
+            margin: 0
+
     .page-layout
         display: grid
         grid-template-columns: 1fr auto
-        gap: 20px
+        gap: 24px
         position: relative
 
     .daily-tasks-main
@@ -297,31 +311,31 @@ useHead({
         display: flex
         align-items: center
         gap: 12px
-        margin-bottom: 30px
+        margin-bottom: 24px
         position: relative
         z-index: 1
         .date-label
-            font-size: 16px
+            font-size: 15px
             font-weight: 600
             color: var(--text-color)
         .custom-datepicker
             width: auto
             :deep(.dp__input_wrap)
                 .dp__input
-                    padding: 10px 14px
+                    padding: 10px 16px
                     border: 1px solid var(--border-color)
-                    border-radius: 4px
-                    background-color: var(--block-bg)
+                    border-radius: 12px
+                    background-color: #fff
                     color: var(--text-color)
                     font-size: 14px
                     cursor: pointer
-                    transition: border-color 0.3s ease
+                    transition: all 0.2s ease
                     font-family: inherit
                     &:focus
                         outline: none
-                        border-color: var(--creme-color)
+                        border-color: var(--accent-red)
                     &:hover
-                        border-color: var(--creme-color)
+                        border-color: var(--accent-red)
             :deep(.dp__input_icon)
                 color: var(--text-color)
                 opacity: 0.7
@@ -331,15 +345,15 @@ useHead({
         flex-direction: column
         gap: 12px
 
-    .task-item
-        padding: 16px
-        background-color: var(--block-bg)
+    .task-card
+        padding: 16px 20px
+        background-color: #fff
         border: 1px solid var(--border-color)
-        border-radius: 6px
-        transition: all 0.3s ease
+        border-radius: 12px
+        transition: all 0.2s ease
         &:hover
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
-            border-color: var(--creme-color)
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06)
+            border-color: var(--accent-red)
 
     .empty
         display: flex
@@ -405,20 +419,22 @@ useHead({
         position: fixed
         right: 20px
         bottom: 20px
-        width: 60px
-        height: 60px
-        background-color: var(--creme-color)
+        width: 56px
+        height: 56px
+        background-color: var(--accent-red)
         border: none
         border-radius: 50%
         cursor: pointer
         display: flex
         align-items: center
         justify-content: center
-        transition: all 0.3s ease
+        transition: all 0.2s ease
         z-index: 999
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2)
+        box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
         &:hover
-            background-color: rgba(#ca9279, 0.9)
+            background-color: var(--accent-orange)
+            transform: translateY(-2px)
+            box-shadow: 0 6px 16px rgba(232, 69, 32, 0.4)
         .edit-icon
             width: 24px
             height: 24px
@@ -436,12 +452,12 @@ useHead({
                 height: 20px
 
     .edit-panel-content
-        background-color: var(--block-bg)
+        background-color: #fff
         border: 1px solid var(--border-color)
-        border-radius: 6px
-        padding: 20px
+        border-radius: 16px
+        padding: 24px
         min-height: 400px
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1)
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08)
         width: 100%
         box-sizing: border-box
 
@@ -449,11 +465,11 @@ useHead({
         display: flex
         justify-content: space-between
         align-items: center
-        margin-bottom: 10px
+        margin-bottom: 12px
         gap: 10px
 
     .edit-panel-title
-        font-size: 1.25rem
+        font-size: 18px
         font-weight: 700
         color: var(--text-color)
         margin: 0
@@ -463,115 +479,126 @@ useHead({
         background: none
         border: none
         cursor: pointer
-        padding: 4px
+        padding: 6px
         display: flex
         align-items: center
         justify-content: center
         opacity: 0.7
-        transition: opacity 0.3s ease
+        transition: all 0.2s ease
         flex-shrink: 0
+        border-radius: 8px
         &:hover
             opacity: 1
+            background-color: var(--second-bg)
         .close-icon
             width: 18px
             height: 18px
 
     .edit-panel-hint
         font-size: 12px
-        color: var(--text-color)
-        opacity: 0.7
+        color: var(--text-secondary)
         margin-bottom: 20px
-        line-height: 1.4
+        line-height: 1.5
 
-    .edit-panel-content
-        .btn.add-btn
-            font-size: 14px
-            font-weight: 600
-            padding: 14px 18px
-            margin-top: 0
-            margin-bottom: 20px
-            width: 100%
-            text-align: center
-            display: grid
-            grid-template-columns: 1fr auto
-            align-items: center
-            gap: 10px
-            cursor: pointer
-            background-color: var(--creme-color)
+    .add-task-btn
+        font-size: 14px
+        font-weight: 600
+        padding: 12px 20px
+        margin-bottom: 20px
+        width: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 10px
+        cursor: pointer
+        background-color: var(--accent-red)
+        color: #fff
+        border: none
+        border-radius: 12px
+        transition: all 0.2s ease
+        &:hover
+            background-color: var(--accent-orange)
+            transform: translateY(-1px)
+            box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
+        .btn-text
             color: #fff
-            border: none
-            border-radius: 6px
-            transition: background-color 0.3s ease
-            &:hover
-                background-color: rgba(#ca9279, 0.9)
-            .text
-                margin: 0
-                color: #fff
-                font-weight: 600
-            .plus-icon
-                mask-image: url(@/assets/images/icons/plus.svg)
-                background-color: #fff
-                height: 18px
-                width: 18px
-                mask-size: contain
-                mask-repeat: no-repeat
-                mask-position: center
+            font-weight: 600
+        .plus-icon
+            mask-image: url(@/assets/images/icons/plus.svg)
+            background-color: #fff
+            height: 18px
+            width: 18px
+            mask-size: contain
+            mask-repeat: no-repeat
+            mask-position: center
 
-    .form
+    .task-form
         position: relative
         gap: 15px
         margin-top: 20px
         padding: 20px
-        background-color: #fff
+        background-color: var(--second-bg)
         border: 1px solid var(--border-color)
-        border-radius: 6px
+        border-radius: 12px
         .close-icon
             position: absolute
-            right: -5px
-            top: -10px
+            right: 12px
+            top: 12px
             width: 18px
             cursor: pointer
             opacity: 0.7
-            transition: opacity 0.3s ease
+            transition: opacity 0.2s ease
             z-index: 2
             &:hover
                 opacity: 1
         .input-wrapper
             background-color: #fff
+            border-radius: 8px
+            .input
+                padding: 12px 16px
+                border: 1px solid var(--border-color)
+                border-radius: 8px
+                font-size: 14px
+                width: 100%
+                &:focus
+                    outline: none
+                    border-color: var(--accent-red)
         .save-btn
             padding: 12px 24px
-            background-color: var(--creme-color)
+            background-color: var(--accent-red)
             color: #fff
             border: none
-            border-radius: 4px
+            border-radius: 8px
             font-size: 14px
             font-weight: 600
             cursor: pointer
-            transition: background-color 0.3s ease
+            transition: all 0.2s ease
+            width: 100%
             &:hover
-                background-color: rgba(#ca9279, 0.9)
+                background-color: var(--accent-orange)
+                transform: translateY(-1px)
 
     .template-tasks-container
         margin-top: 20px
         display: flex
         flex-direction: column
-        gap: 8px
+        gap: 10px
 
-    .template-task-item
+    .template-task-card
         position: relative
         display: grid
         grid-template-columns: auto 1fr auto
         align-items: center
         gap: 12px
-        padding: 12px
+        padding: 14px 16px
         background-color: #fff
         border: 1px solid var(--border-color)
-        border-radius: 6px
-        transition: all 0.3s ease
+        border-radius: 12px
+        transition: all 0.2s ease
         cursor: move
         &:hover
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
-            border-color: var(--creme-color)
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06)
+            border-color: var(--accent-red)
         &.dragging
             opacity: 0.5
             background-color: var(--second-bg)
@@ -581,15 +608,19 @@ useHead({
             align-items: center
             cursor: grab
             padding: 4px
+            border-radius: 6px
+            transition: background-color 0.2s ease
             &:active
                 cursor: grabbing
+            &:hover
+                background-color: var(--second-bg)
             .drag-icon
                 width: 18px
                 height: 18px
                 mask: url(@/assets/images/icons/burger.svg) no-repeat center
                 mask-size: contain
-                background-color: var(--text-color)
-                opacity: 0.5
+                background-color: var(--text-secondary)
+                opacity: 0.6
 
         .task-text
             font-size: 14px
@@ -600,18 +631,20 @@ useHead({
             background: none
             border: none
             cursor: pointer
-            padding: 4px
+            padding: 6px
             display: flex
             align-items: center
             justify-content: center
             opacity: 0.6
-            transition: opacity 0.3s ease
+            transition: all 0.2s ease
+            border-radius: 6px
             &:hover
                 opacity: 1
+                background-color: rgba(232, 69, 32, 0.1)
             .delete-icon
                 width: 16px
                 height: 16px
-                background-color: var(--text-color)
+                background-color: var(--accent-red)
                 mask: url(@/assets/images/icons/close-round.svg) no-repeat center
                 mask-size: contain
                 display: block
@@ -646,4 +679,35 @@ useHead({
                 width: 400px
         .edit-panel-content
             padding: 30px
+
+@media only screen and (min-width: $bp-large)
+    .checklist-page
+        padding: 60px 0
+        .header-section
+            .h1
+                font-size: 32px
+        .date-selector
+            .date-label
+                font-size: 18px
+            .custom-datepicker
+                :deep(.dp__input_wrap)
+                    .dp__input
+                        padding: 14px 20px
+                        font-size: 16px
+        .task-card
+            padding: 20px 24px
+        .edit-panel
+            &.edit-panel-open
+                width: 450px
+        .edit-panel-content
+            padding: 36px
+            .edit-panel-title
+                font-size: 20px
+            .add-task-btn
+                font-size: 15px
+                padding: 14px 24px
+            .template-task-card
+                padding: 16px 20px
+                .task-text
+                    font-size: 15px
 </style>

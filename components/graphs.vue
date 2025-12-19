@@ -78,39 +78,75 @@ onMounted(async () => {
 .graphs
     display: grid
     grid-template-columns: 1fr
-    grid-gap: 20px
+    grid-gap: 24px
     .graph-wrapper
         display: flex
         flex-direction: column
+        background-color: #fff
+        border-radius: 16px
+        padding: 20px
+        border: 1px solid var(--border-color)
         .nav-btns
             display: flex
             flex-wrap: wrap
-            gap: 0
-            margin-top: 20px
+            gap: 8px
+            margin-bottom: 20px
             .nav-btn
                 border: 1px solid var(--border-color)
-                padding: 5px 12px
-                font-size: 14px
-                transition: .3s ease
-                
-                &_active, &:hover
-                    background-color: var(--creme-color)
-                    border-color: var(--creme-color)
+                padding: 8px 16px
+                font-size: 13px
+                font-weight: 500
+                border-radius: 20px
+                background-color: #fff
+                color: var(--text-color)
+                transition: all 0.2s ease
+                cursor: pointer
+                &:hover
+                    border-color: var(--accent-red)
+                    color: var(--accent-red)
+                &_active
+                    background-color: var(--accent-red)
+                    border-color: var(--accent-red)
+                    color: #fff
                     
         .canvas
-            height: 270px
+            height: 280px
             margin-top: auto
+            border-radius: 8px
+            overflow: hidden
+
 @media only screen and (min-width: $bp-tablet)
     .graphs
-        grid-gap: 40px
+        grid-gap: 24px
         .graph-wrapper
+            padding: 24px
+            .nav-btns
+                margin-bottom: 24px
+                .nav-btn
+                    font-size: 14px
+                    padding: 10px 20px
             .canvas
-                height: 300px
+                height: 320px
+
 @media only screen and (min-width: $bp-pc)
     .graphs
         grid-template-columns: 1fr 1fr
-        grid-gap: 20px
+        grid-gap: 24px
         .graph-wrapper
+            padding: 28px
             .canvas
-                height: 370px
+                height: 380px
+
+@media only screen and (min-width: $bp-large)
+    .graphs
+        grid-gap: 32px
+        .graph-wrapper
+            padding: 36px
+            .nav-btns
+                margin-bottom: 28px
+                .nav-btn
+                    font-size: 15px
+                    padding: 12px 24px
+            .canvas
+                height: 420px
 </style>

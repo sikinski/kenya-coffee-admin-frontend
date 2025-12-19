@@ -54,9 +54,9 @@ const salesConfig = computed(() => {
                 symbol: 'circle',
                 symbolSize: 8,
                 data: yData,
-                lineStyle: { color: '#ca9279', width: 3 },
-                areaStyle: { color: 'rgba(202,146,121,0.3)' },
-                itemStyle: { color: '#ca9279' },
+                lineStyle: { color: '#e84520', width: 3 },
+                areaStyle: { color: 'rgba(232, 69, 32, 0.15)' },
+                itemStyle: { color: '#e84520' },
                 emphasis: { focus: 'series' },
                 animationDuration: 1500,
                 animationEasing: 'cubicOut'

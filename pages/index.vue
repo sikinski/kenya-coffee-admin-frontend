@@ -1,27 +1,24 @@
 <template>
     <div class="auth-page center">
-        <h1 class="h1">Кения</h1>
-        <div class="window form mt">
-            <div class="input-wrapper">
-                <input type="text" class="input" name="login" v-model="authForm.username" />
-                <label for="name" class="label-name">
-                    <span class="content-name" :class="{ 'valid-input': authForm.username }">Username *</span>
-                </label>
-                <span class="error-icon icon" v-if="validationError && !authForm.username" v-motion-pop></span>
-            </div>
+        <div class="auth-container">
+            <h1 class="auth-title">Кения</h1>
+            <div class="auth-form">
+                <div class="input-wrapper">
+                    <input type="text" class="input" name="login" v-model="authForm.username" placeholder="Username" />
+                    <span class="error-icon icon" v-if="validationError && !authForm.username" v-motion-pop></span>
+                </div>
 
-            <div class="input-wrapper">
-                <input type="password" class="input" name="password" v-model="authForm.password" />
-                <label for="name" class="label-name">
-                    <span class="content-name" :class="{ 'valid-input': authForm.password }">Password *</span>
-                </label>
-                <span class="error-icon icon" v-if="validationError && !authForm.password" v-motion-pop></span>
-            </div>
+                <div class="input-wrapper">
+                    <input type="password" class="input" name="password" v-model="authForm.password"
+                        placeholder="Password" />
+                    <span class="error-icon icon" v-if="validationError && !authForm.password" v-motion-pop></span>
+                </div>
 
-            <span class="error" v-if="errorText">
-                {{ errorText }}
-            </span>
-            <button class="username-btn" @click.prevent="username">Войти</button>
+                <span class="error" v-if="errorText">
+                    {{ errorText }}
+                </span>
+                <button class="login-btn" @click.prevent="username">Войти</button>
+            </div>
         </div>
     </div>
 </template>
@@ -98,28 +95,94 @@ useHead({
 @use '@/assets/styles/adaptive' as *
 @use '@/assets/styles/forms' as *
 .auth-page
-    background-color: var(--main-bg)
-    // background-color: var(--main-dark)
+    background: linear-gradient(135deg, #f9f4ef 0%, #ffffff 100%)
     height: 100vh
-    .form
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 20px
+
+    .auth-container
+        width: 100%
+        max-width: 400px
+        background-color: #fff
+        border-radius: 20px
+        padding: 40px 32px
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1)
+        border: 1px solid var(--border-color)
+
+    .auth-title
+        font-size: 32px
+        font-weight: 700
+        color: var(--text-color)
+        text-align: center
+        margin-bottom: 32px
+
+    .auth-form
         display: flex
         flex-direction: column
-        gap: 10px
+        gap: 20px
         .input-wrapper
+            position: relative
             background-color: #fff
-            background-color: var(--block-bg)
-            width: 300px
-            border-radius: 4px
-        .username-btn
-            background-color: var(--text-color)
-            color: var(--main-bg)
+            width: 100%
+            .input
+                width: 100%
+                padding: 14px 16px
+                border: 1px solid var(--border-color)
+                border-radius: 12px
+                font-size: 15px
+                transition: all 0.2s ease
+                background-color: #fff
+                &:focus
+                    outline: none
+                    border-color: var(--accent-red)
+                    box-shadow: 0 0 0 3px rgba(232, 69, 32, 0.1)
+                &::placeholder
+                    color: var(--text-light)
+            .error-icon
+                position: absolute
+                right: 12px
+                top: 50%
+                transform: translateY(-50%)
+        .login-btn
+            background-color: var(--accent-red)
+            color: #fff
             border: none
-            padding: 18px 
-            border-radius: 4px
+            padding: 14px 24px
+            border-radius: 12px
+            font-size: 16px
+            font-weight: 600
+            cursor: pointer
+            transition: all 0.2s ease
+            margin-top: 8px
+            &:hover
+                background-color: var(--accent-orange)
+                transform: translateY(-1px)
+                box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
         .error
-            color: var(--error-color)
-            font-size: 12px
+            color: var(--accent-red)
+            font-size: 13px
             text-align: center
-            max-width: 80vw
-            margin: 5px auto
+            padding: 8px 12px
+            background-color: rgba(232, 69, 32, 0.1)
+            border-radius: 8px
+            border: 1px solid rgba(232, 69, 32, 0.2)
+
+@media only screen and (min-width: $bp-tablet)
+    .auth-page
+        .auth-container
+            padding: 48px 40px
+        .auth-title
+            font-size: 36px
+            margin-bottom: 40px
+        .auth-form
+            gap: 24px
+            .input-wrapper
+                .input
+                    padding: 16px 20px
+                    font-size: 16px
+            .login-btn
+                padding: 16px 28px
+                font-size: 17px
 </style>
