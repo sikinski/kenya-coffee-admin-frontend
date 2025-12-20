@@ -84,7 +84,8 @@ onMounted(async () => {
         flex-direction: column
         background-color: #fff
         border-radius: 16px
-        padding: 20px
+        padding: 10px 5px
+        margin: 10px 0
         border: 1px solid var(--border-color)
         .nav-btns
             display: flex
@@ -110,7 +111,7 @@ onMounted(async () => {
                     color: #fff
                     
         .canvas
-            height: 280px
+            height: 260px
             margin-top: auto
             border-radius: 8px
             overflow: hidden
@@ -135,7 +136,7 @@ onMounted(async () => {
         .graph-wrapper
             padding: 28px
             .canvas
-                height: 380px
+                height: 360px
 
 @media only screen and (min-width: $bp-large)
     .graphs

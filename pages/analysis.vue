@@ -83,13 +83,14 @@
                         :class="{ 'receipt-card_new': receipt.is_new }">
                         <div class="receipt-header">
                             <span class="receipt-date">{{ getShortDateTime(receipt.processedAtRaw) }}</span>
+                            <div class="receipt-address-hidden">{{ receipt.raw.content.settlementAddress }}</div>
                             <div class="receipt-sum">{{ receipt.raw.amount }} ₽</div>
                         </div>
                         <div class="receipt-info">
-                            <div class="receipt-cashier">
+                            <!-- <div class="receipt-cashier">
                                 <img src="@/assets/images/icons/nice-icon.svg" alt="" class="cashier-icon">
                                 <span>{{ receipt.raw.cashier.name }}</span>
-                            </div>
+                            </div> -->
                             <div class="receipt-address">{{ receipt.raw.content.settlementAddress }}</div>
                         </div>
                         <div class="receipt-products">
@@ -443,11 +444,11 @@ useHead({
         .receipts-list
             display: flex
             flex-direction: column
-            gap: 12px
+            gap: 8px
             max-height: none
             overflow: visible
         .receipt-card
-            background-color: #fff
+            background-color: var(--second-bg)
             border-radius: 12px
             padding: 16px
             border: 1px solid var(--border-color)
@@ -464,12 +465,14 @@ useHead({
             margin-bottom: 12px
             padding-bottom: 12px
             border-bottom: 1px solid var(--border-color)
+            .receipt-address-hidden
+                display: none
         .receipt-date
             font-size: 12px
-            color: var(--text-light)
+            color: var(--text-color)
             font-weight: 500
         .receipt-sum
-            font-size: 18px
+            font-size: 19px
             font-weight: 700
             color: var(--green-color)
         .receipt-info
@@ -477,13 +480,6 @@ useHead({
             flex-direction: column
             gap: 6px
             margin-bottom: 12px
-        .receipt-cashier
-            display: flex
-            align-items: center
-            gap: 6px
-            font-size: 13px
-            color: var(--text-color)
-            font-weight: 500
         .cashier-icon
             width: 14px
             height: 14px
@@ -501,9 +497,8 @@ useHead({
             grid-template-columns: auto 1fr auto
             gap: 12px
             align-items: center
-            font-size: 13px
+            font-size: 14px
         .product-quantity
-            color: var(--text-light)
             font-weight: 500
         .product-name
             color: var(--text-color)
@@ -553,14 +548,14 @@ useHead({
         .receipts-section
             .receipt-card
                 padding: 20px
+            .receipt-date
+                font-size: 1rem
             .receipt-sum
-                font-size: 20px
-            .receipt-cashier
-                font-size: 14px
+                font-size: 22px
             .receipt-address
                 font-size: 13px
             .product-item
-                font-size: 14px
+                font-size: 16px
 
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .analysis
@@ -576,12 +571,16 @@ useHead({
             .metric-value
                 font-size: 32px
                 .metric-currency
-                    font-size: 24px
+                    font-size: 22px
             .metric-label
                 font-size: 14px
         .receipts-section
             .receipt-card
                 padding: 24px
+                .product-name, .receipt-date
+                    font-size: 14px
+                .receipt-sum
+                    font-size: 20px
 
 @media only screen and (min-width: $bp-pc)
     .analysis
@@ -593,6 +592,9 @@ useHead({
             max-width: 1400px
         .header-section
             grid-area: header
+            .period-filters
+                .filter-btn
+                    font-size: 15px
         .devices-section
             grid-area: devices
             .devices-grid
@@ -619,12 +621,26 @@ useHead({
                 grid-template-columns: 1fr
                 gap: 16px
             .receipt-card
+                position: relative
                 padding: 24px 28px
-            .receipt-sum
-                font-size: 22px
-            .product-item
-                font-size: 15px
-                gap: 16px
+                .receipt-header
+                    border: none
+                    .receipt-address-hidden
+                        display: inline
+                        flex: 1
+                        margin-left: 20px
+                        color: var(--text-light)
+                .receipt-sum
+                    font-size: 24px
+                .product-item
+                    font-size: 15px
+                    gap: 16px
+                .product-name, .receipt-date
+                    font-size: 17px
+                .receipt-info
+                    display: none 
+                .product-price
+                    font-size: 17px
 
 @media only screen and (min-width: $bp-large)
     .analysis
@@ -635,7 +651,7 @@ useHead({
             .period-filters
                 gap: 12px
                 .filter-btn
-                    font-size: 15px
+                    font-size: 17px
                     padding: 12px 24px
         .section-title
             font-size: 22px
@@ -646,7 +662,7 @@ useHead({
             .device-card
                 padding: 18px 20px
             .device-text
-                font-size: 15px
+                font-size: 17px
         .metrics-section
             .metrics-grid
                 gap: 24px
@@ -661,8 +677,12 @@ useHead({
         .receipts-section
             .receipt-card
                 padding: 28px 32px
-            .receipt-sum
-                font-size: 24px
-            .product-item
-                font-size: 16px
+                .receipt-date, .receipt-address-hidden, .product-name, .product-price
+                    font-size: 20px
+                .receipt-products
+                    gap: 12px
+                .receipt-sum
+                    font-size: 28px
+                .product-item
+                    font-size: 16px
 </style>
