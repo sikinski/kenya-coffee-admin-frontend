@@ -387,7 +387,7 @@ useHead({
             right: 0
             bottom: 0
             background-color: rgba(0, 0, 0, 0.5)
-            z-index: 999
+            z-index: 15
 
     // Боковая панель редактирования
     .edit-panel
@@ -407,7 +407,7 @@ useHead({
             max-width: 400px
             transform: translateX(100%)
             transition: transform 0.3s ease
-            z-index: 1000
+            z-index: 15
             padding: 20px
             overflow-y: auto
             box-shadow: -2px 0 12px rgba(0, 0, 0, 0.2)
@@ -429,7 +429,7 @@ useHead({
         align-items: center
         justify-content: center
         transition: all 0.2s ease
-        z-index: 999
+        z-index: 10
         box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
         &:hover
             background-color: var(--accent-orange)

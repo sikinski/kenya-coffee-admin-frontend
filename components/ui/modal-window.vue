@@ -49,7 +49,7 @@ const handleClose = () => {
     display: flex
     align-items: center
     justify-content: center
-    z-index: 1000
+    z-index: 20
     padding: 20px
     animation: fadeIn 0.2s ease
     .window
