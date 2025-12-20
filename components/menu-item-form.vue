@@ -169,7 +169,7 @@ const volumeOptions = computed(() => {
 
 const { $api } = useNuxtApp()
 
-// Отдельный ref для volumes для лучшей реактивности с Multiselect
+// Отдельный ref для volume для лучшей реактивности с Multiselect
 const selectedVolumes = ref([])
 
 // Тип цены: 'from', 'to', 'fixed'
@@ -181,7 +181,7 @@ const formData = ref({
     description: '',
     price: { from: null, to: null },
     discountPrice: null,
-    volumes: [],
+    volume: [],
     typeId: null,
     quantity: null,
     order: 0,
@@ -225,9 +225,9 @@ watch(priceType, (newType, oldType) => {
     }
 })
 
-// Синхронизируем selectedVolumes с formData.volumes
+// Синхронизируем selectedVolumes с formData.volume
 watch(selectedVolumes, (newVolumes) => {
-    formData.value.volumes = Array.isArray(newVolumes) ? [...newVolumes] : []
+    formData.value.volume = Array.isArray(newVolumes) ? [...newVolumes] : []
 }, { deep: true })
 
 const resetForm = () => {
@@ -239,7 +239,7 @@ const resetForm = () => {
         description: '',
         price: { from: null, to: null },
         discountPrice: null,
-        volumes: [],
+        volume: [],
         typeId: null,
         quantity: null,
         order: 0,
@@ -254,10 +254,13 @@ watch(() => props.editingItem, (item) => {
     if (item) {
         // Обрабатываем объемы: если это массив - используем его, если строка - преобразуем в массив
         let volumes = []
-        if (item.volumes && Array.isArray(item.volumes)) {
-            volumes = item.volumes
-        } else if (item.volume) {
+        if (item.volume && Array.isArray(item.volume)) {
+            volumes = item.volume
+        } else if (item.volume && typeof item.volume === 'string') {
             volumes = [item.volume]
+        } else if (item.volumes && Array.isArray(item.volumes)) {
+            // Для обратной совместимости
+            volumes = item.volumes
         } else if (item.weight) {
             volumes = [item.weight]
         }
@@ -310,7 +313,7 @@ watch(() => props.editingItem, (item) => {
             description: item.description || '',
             price: price,
             discountPrice: item.discountPrice || null,
-            volumes: volumes,
+            volume: volumes,
             typeId: item.types?.[0]?.id || item.typeId || null,
             quantity: item.quantity || null,
             order: item.order || 0,
@@ -342,7 +345,7 @@ const toggleVolume = (volume) => {
         selectedVolumes.value.push(volume)
     }
     // Синхронизируем с formData
-    formData.value.volumes = [...selectedVolumes.value]
+    formData.value.volume = [...selectedVolumes.value]
 }
 
 const getTagStyle = (tag) => {
@@ -466,25 +469,25 @@ const handleSubmit = () => {
 .item-form
     .form-grid
         display: grid
-        grid-template-columns: repeat(2, 1fr)
-        gap: 16px
-        margin-bottom: 24px
+        grid-template-columns: 1fr
+        gap: 12px
+        margin-bottom: 20px
         .form-group
             display: flex
             flex-direction: column
-            gap: 8px
+            gap: 6px
             position: relative
             &-full
                 grid-column: 1 / -1
             .form-label
-                font-size: 13px
+                font-size: 12px
                 font-weight: 600
                 color: var(--text-color)
             .input
-                padding: 12px 14px
+                padding: 10px 12px
                 border: 1px solid var(--border-color)
                 border-radius: 8px
-                font-size: 14px
+                font-size: 13px
                 font-family: inherit
                 transition: all 0.2s ease
                 &:focus
@@ -495,17 +498,17 @@ const handleSubmit = () => {
             .price-selector
                 display: flex
                 flex-direction: column
-                gap: 8px
+                gap: 6px
                 .price-type-buttons
                     display: flex
-                    gap: 8px
+                    gap: 6px
                     .price-type-btn
                         flex: 1
-                        padding: 8px 12px
+                        padding: 8px 10px
                         background-color: var(--second-bg)
                         border: 1px solid var(--border-color)
                         border-radius: 8px
-                        font-size: 13px
+                        font-size: 12px
                         font-weight: 500
                         color: var(--text-color)
                         cursor: pointer
@@ -521,16 +524,16 @@ const handleSubmit = () => {
             .tags-select, .volumes-select
                 display: flex
                 flex-wrap: wrap
-                gap: 8px
+                gap: 6px
                 .tag-select, .volume-select
                     display: inline-flex
                     align-items: center
-                    gap: 6px
-                    padding: 8px 14px
+                    gap: 4px
+                    padding: 6px 12px
                     background-color: var(--second-bg)
                     border: 2px solid var(--border-color)
                     border-radius: 20px
-                    font-size: 13px
+                    font-size: 12px
                     cursor: pointer
                     transition: all 0.2s ease
                     &:hover
@@ -541,24 +544,24 @@ const handleSubmit = () => {
                         color: var(--accent-red)
                         font-weight: 600
                     .tag-icon
-                        width: 14px
-                        height: 14px
+                        width: 12px
+                        height: 12px
                         object-fit: contain
             .images-upload
                 display: flex
                 flex-direction: column
-                gap: 12px
+                gap: 10px
                 .file-input
                     display: none
                 .upload-btn
                     display: flex
                     align-items: center
-                    gap: 8px
-                    padding: 12px 20px
+                    gap: 6px
+                    padding: 10px 16px
                     background-color: var(--second-bg)
                     border: 1px solid var(--border-color)
                     border-radius: 8px
-                    font-size: 14px
+                    font-size: 13px
                     cursor: pointer
                     transition: all 0.2s ease
                     &:hover:not(:disabled)
@@ -571,12 +574,12 @@ const handleSubmit = () => {
                         mask: url(@/assets/images/icons/plus.svg) no-repeat center
                         mask-size: contain
                         background-color: var(--accent-red)
-                        width: 16px
-                        height: 16px
+                        width: 14px
+                        height: 14px
                 .images-list
                     display: grid
-                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
-                    gap: 12px
+                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr))
+                    gap: 10px
                     .image-item
                         position: relative
                         cursor: move
@@ -611,20 +614,20 @@ const handleSubmit = () => {
                                 display: flex
                                 align-items: flex-start
                                 justify-content: space-between
-                                padding: 8px
+                                padding: 6px
                                 .image-badge
                                     background-color: var(--accent-red)
                                     color: #fff
-                                    padding: 4px 8px
+                                    padding: 3px 6px
                                     border-radius: 4px
-                                    font-size: 11px
+                                    font-size: 10px
                                     font-weight: 600
                                 .remove-image-btn
                                     background-color: rgba(0, 0, 0, 0.6)
                                     border: none
                                     border-radius: 50%
-                                    width: 24px
-                                    height: 24px
+                                    width: 20px
+                                    height: 20px
                                     display: flex
                                     align-items: center
                                     justify-content: center
@@ -633,38 +636,40 @@ const handleSubmit = () => {
                                     &:hover
                                         background-color: rgba(0, 0, 0, 0.8)
                                     .remove-icon
-                                        width: 12px
-                                        height: 12px
+                                        width: 10px
+                                        height: 10px
                         &:hover .image-overlay
                             opacity: 1
             .checkbox-label
                 display: flex
                 align-items: center
-                gap: 8px
+                gap: 6px
                 cursor: pointer
                 .checkbox-input
-                    width: 18px
-                    height: 18px
+                    width: 16px
+                    height: 16px
                     cursor: pointer
                 .checkbox-text
-                    font-size: 14px
+                    font-size: 13px
                     color: var(--text-color)
     .form-actions
         display: flex
-        gap: 12px
-        justify-content: flex-end
+        flex-direction: column
+        gap: 10px
         padding-top: 16px
         border-top: 1px solid var(--border-color)
-        .save-btn
-            padding: 12px 24px
-            background-color: var(--accent-red)
-            color: #fff
-            border: none
+        .save-btn, .cancel-btn
+            width: 100%
+            padding: 12px 20px
             border-radius: 8px
             font-size: 14px
             font-weight: 600
             cursor: pointer
             transition: all 0.2s ease
+        .save-btn
+            background-color: var(--accent-red)
+            color: #fff
+            border: none
             &:hover:not(:disabled)
                 background-color: var(--accent-orange)
                 transform: translateY(-1px)
@@ -673,16 +678,87 @@ const handleSubmit = () => {
                 opacity: 0.6
                 cursor: not-allowed
         .cancel-btn
-            padding: 12px 24px
             background-color: var(--second-bg)
             color: var(--text-color)
             border: 1px solid var(--border-color)
-            border-radius: 8px
-            font-size: 14px
-            font-weight: 600
-            cursor: pointer
-            transition: all 0.2s ease
             &:hover
                 border-color: var(--accent-red)
                 background-color: rgba(232, 69, 32, 0.05)
+
+// Tablet styles (min-width: 600px)
+@media only screen and (min-width: $bp-tablet)
+    .item-form
+        .form-grid
+            gap: 14px
+            margin-bottom: 22px
+            .form-group
+                gap: 8px
+                .form-label
+                    font-size: 13px
+                .input
+                    padding: 12px 14px
+                    font-size: 14px
+                .price-selector
+                    gap: 8px
+                    .price-type-buttons
+                        gap: 8px
+                        .price-type-btn
+                            padding: 8px 12px
+                            font-size: 13px
+                .tags-select, .volumes-select
+                    gap: 8px
+                    .tag-select, .volume-select
+                        gap: 6px
+                        padding: 8px 14px
+                        font-size: 13px
+                        .tag-icon
+                            width: 14px
+                            height: 14px
+                .images-upload
+                    gap: 12px
+                    .upload-btn
+                        gap: 8px
+                        padding: 12px 20px
+                        font-size: 14px
+                        .upload-icon
+                            width: 16px
+                            height: 16px
+                    .images-list
+                        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr))
+                        gap: 12px
+                        .image-item
+                            .image-preview-wrapper
+                                .image-overlay
+                                    padding: 8px
+                                    .image-badge
+                                        padding: 4px 8px
+                                        font-size: 11px
+                                    .remove-image-btn
+                                        width: 24px
+                                        height: 24px
+                                        .remove-icon
+                                            width: 12px
+                                            height: 12px
+                .checkbox-label
+                    gap: 8px
+                    .checkbox-input
+                        width: 18px
+                        height: 18px
+                    .checkbox-text
+                        font-size: 14px
+        .form-actions
+            flex-direction: row
+            gap: 12px
+            justify-content: flex-end
+            .save-btn, .cancel-btn
+                width: auto
+                padding: 12px 24px
+
+// PC styles (min-width: 1200px)
+@media only screen and (min-width: $bp-pc)
+    .item-form
+        .form-grid
+            grid-template-columns: repeat(2, 1fr)
+            gap: 16px
+            margin-bottom: 24px
 </style>

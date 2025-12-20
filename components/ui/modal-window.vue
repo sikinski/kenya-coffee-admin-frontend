@@ -62,7 +62,8 @@ const handleClose = () => {
         flex-direction: column
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2)
         animation: slideUp 0.3s ease
-        padding: 20px
+        padding: 0
+        overflow: hidden
         
         .modal-header
             display: flex
@@ -70,6 +71,7 @@ const handleClose = () => {
             align-items: center
             padding: 24px 24px 16px 24px
             border-bottom: 1px solid var(--border-color)
+            border-radius: 12px
             .title
                 font-size: 20px
                 font-weight: 700

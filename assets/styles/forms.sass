@@ -3,21 +3,21 @@
 .form
     display: flex
     flex-direction: column
-    gap: 60px
+    gap: 40px
     .form-section
         .section-title
             display: flex
             align-items: center
             gap: 10px
-            font-size: 1.5rem
+            font-size: 1rem
             text-transform: uppercase
-            font-weight: 300
+            font-weight: 400
             border-bottom: 1px solid var(--text-color)
             margin-bottom: 20px
             padding-bottom: 10px
             .info-btn
-                width: 25px
-                height: 25px
+                width: 20px
+                height: 20px
                 mask: url(@/assets/images/icons/add-info.svg) no-repeat center
                 display: block
                 background-color: var(--opacity-color)
@@ -54,7 +54,7 @@
         height: 100% !important
         color: #000
         border: none
-        padding: 25px 23px
+        padding: 16px
         padding-right: 0
         background-color: rgba(0,0,0,0)
         &::placeholder
@@ -62,10 +62,11 @@
             opacity: 1
     label
         position: absolute
-        left: 25px
+        left: 16px
         width: 100%
         height: 100%
         pointer-events: none
+        bottom: 16px
 
     .content-name
         position: absolute
@@ -85,8 +86,8 @@
     .icon
         display: block
         position: absolute
-        right: 25px
-        bottom: 25px
+        right: 16px
+        bottom: 16px
         z-index: -1
         width: 25px
         height: 25px
@@ -94,15 +95,12 @@
         mask: url(@/assets/images/icons/attention.svg) no-repeat center
         background-color: var(--error-color)
         mask-size: contain
-.input-wrapper
-    label
-        bottom: 25px
 .textarea-wrapper
     padding-top: 10px
     height: 180px
     label
         bottom: 0
-        transform: translateY(calc( -100% + 55px))
+        transform: translateY(calc( -100% + 65px))
     textarea
         margin: 0
 
@@ -112,7 +110,7 @@
     .multiselect-single-label,
     .multiselect-placeholder
         padding: 12px 14px
-        font-size: 14px
+        font-size: 13px
         font-weight: 700
         color: var(--text-color)
     &.is-active
@@ -160,7 +158,7 @@
 // ------------ CUSTOM ELEMENTS ------------ 
 .spans-input
     background-color: var(--bg-color)
-    padding: 20px
+    padding: 16px
     label
         font-size: 1rem
         text-transform: uppercase
@@ -169,7 +167,7 @@
         display: flex
         flex-wrap: wrap
         gap: 4px
-        margin-top: 20px
+        margin-top: 10px
         span
             background-color: #fff
             color: var(--dark-color)
@@ -189,40 +187,53 @@
     .selected
         background-color: var(--bg-color)
         font-weight: 400
-        padding: 25px 23px
+        padding: 16px
+        font-size: 14px
         &::after
-            width: 20px
+            width: 15px
             height: 20px
-            right: 20px
+            right: 16px
     .opacity
         color: var(--opacity-color)
         text-transform: uppercase
+        font-size: 12px
     .options
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
         background-color: var(--bg-color)
         z-index: 2
         .option
-            padding: 10px 23px
-        
+            padding: 10px 16px
+            font-size: 14px
 
 // ------------ VUE-QUILL ------------
 .text-wrapper
     padding: 0
 
+// ------------ GRID ------------
+.grid-2
+    display: flex
+    flex-direction: column
+    gap: 5px
 
 // ------------ ADAPTIVE ------------
 
-@media only screen and (max-width: $bp-pc)
+// Tablet styles (min-width: 600px)
+@media only screen and (min-width: $bp-tablet)
     .form
         .form-section
             .section-title
                 font-size: 1.25rem
+                font-weight: 300
+                .info-btn
+                    width: 25px
+                    height: 25px
     .input-wrapper, .textarea-wrapper
         .input, .textarea
             padding: 20px
             font-size: 1rem
         label
             left: 20px
+            bottom: 20px
         .icon
             right: 20px
             bottom: 20px
@@ -230,15 +241,13 @@
             font-size: 14px
         .input:focus:not(.file-input:focus) + .label-name .content-name, .valid-input
             font-size: 13px
-    .input-wrapper
-        label
-            bottom: 20px
     .textarea-wrapper
         height: 150px
         label
             transform: translateY(calc( -100% + 50px))
 
     .spans-input
+        padding: 20px
         label
             font-size: 14px
         .spans
@@ -249,55 +258,64 @@
     .custom-select
         .selected
             padding: 20px 20px
+            font-size: inherit
             &::after
                 width: 17px
+                right: 20px
         .opacity
             font-size: 14px
         .options
             .option
                 padding: 10px  20px
 
-@media only screen and (max-width: $bp-tablet)
+// PC styles (min-width: 1200px)
+@media only screen and (min-width: $bp-pc)
     .form
-        gap: 40px
+        gap: 60px
         .form-section
             .section-title
-                font-size: 1rem
-                font-weight: 400
-                .info-btn
-                    width: 20px
-                    height: 20px
+                font-size: 1.5rem
     .input-wrapper, .textarea-wrapper
         .input, .textarea
-            padding: 16px
+            padding: 25px 23px
         label
-            left: 16px
-            bottom: 16px
+            left: 25px
         .icon
-            right: 16px
-            bottom: 16px
-    .textarea-wrapper
+            right: 25px
+            bottom: 25px
+    .input-wrapper
         label
-            transform: translateY(calc( -100% + 65px))
+            bottom: 25px
+    .textarea-wrapper
+        height: 180px
+        label
+            transform: translateY(calc( -100% + 55px))
+
     .spans-input
-        padding: 16px
+        padding: 20px
+        label
+            font-size: 1rem
         .spans
-            margin-top: 10px
+            margin-top: 20px
+            span
+                font-size: 18px
+    .multiselect
+        min-height: 44px
+        .multiselect-single-label,
+        .multiselect-placeholder
+            font-size: 15px
+        .multiselect-dropdown
+            .multiselect-option
+                font-size: 15px
     .custom-select
         .selected
-            padding: 16px
-            font-size: 14px
+            padding: 25px 23px
             &::after
-                width: 15px
-                right: 16px
+                width: 20px
+                height: 20px
+                right: 20px
         .opacity
-            font-size: 12px
+            font-size: inherit
         .options
             .option
-                padding: 10px 16px
-                font-size: 14px
-    .grid-2
-        display: flex
-        flex-direction: column
-        gap: 5px
-// TODO FOR MOBILE
+                padding: 10px 23px

@@ -192,6 +192,10 @@
                 </template>
             </ui-modal-window>
 
+            <!-- Модальное окно с деталями продукта -->
+            <ProductDetailModal v-if="selectedProduct" :visible="showProductDetailModal" :item="selectedProduct"
+                :types="types" @close="closeProductDetail" />
+
             <!-- Список позиций -->
             <div class="items-section">
                 <div class="section-header">
@@ -199,7 +203,7 @@
                 </div>
                 <div class="items-grid" v-if="items.length">
                     <ProductCard v-for="item in items" :key="item.id" :item="item" :types="types" @edit="editItem"
-                        @delete="deleteItem" />
+                        @delete="deleteItem" @show-detail="showProductDetail" />
                 </div>
                 <div class="empty" v-else>
                     Позиций не найдено
@@ -245,6 +249,8 @@ const showTypeForm = ref(false)
 const showTagForm = ref(false)
 const editingItem = ref(null)
 const saving = ref(false)
+const showProductDetailModal = ref(false)
+const selectedProduct = ref(null)
 
 // Фильтры
 const filters = ref({
@@ -567,7 +573,7 @@ const handleSaveItem = async (formData) => {
             // Опциональные поля
             description: formData.description || null,
             discountPrice: formData.discountPrice || null,
-            volumes: formData.volumes && formData.volumes.length ? formData.volumes : [],
+            volume: formData.volume && formData.volume.length ? formData.volume : [],
             quantity: formData.quantity !== null && formData.quantity !== undefined ? formData.quantity : null,
             order: formData.order || 0,
             active: formData.active !== undefined ? formData.active : true,
@@ -606,6 +612,17 @@ const deleteItem = async (id) => {
 const closeItemForm = () => {
     showItemForm.value = false
     editingItem.value = null
+}
+
+// Показ деталей продукта
+const showProductDetail = (item) => {
+    selectedProduct.value = item
+    showProductDetailModal.value = true
+}
+
+const closeProductDetail = () => {
+    showProductDetailModal.value = false
+    selectedProduct.value = null
 }
 
 // Вспомогательные функции
@@ -647,12 +664,10 @@ useHead({
 @use '@/assets/styles/adaptive' as *
 
 .menu-page
-
     .header-section
         .header-actions
             display: flex
             gap: 12px
-
     .add-item-btn, .add-btn
         display: flex
         align-items: center
@@ -666,6 +681,7 @@ useHead({
         border-radius: 12px
         cursor: pointer
         transition: all 0.2s ease
+        margin-bottom: 10px
         &:hover
             background-color: var(--accent-orange)
             transform: translateY(-1px)
@@ -694,13 +710,13 @@ useHead({
             display: flex
             flex-direction: column
             gap: 8px
-            min-width: 150px
+            min-width: 45%
             position: relative
             .filter-label
                 font-size: 13px
                 font-weight: 600
                 color: var(--text-color)
-                margin-bottom: 8px
+                margin-bottom: 0
         .tags-filter
             display: flex
             flex-wrap: wrap
@@ -713,7 +729,7 @@ useHead({
                 background-color: var(--second-bg)
                 border: 1px solid var(--border-color)
                 border-radius: 20px
-                font-size: 12px
+                font-size: 14px
                 cursor: pointer
                 transition: all 0.2s ease
                 &:hover
@@ -724,8 +740,8 @@ useHead({
                     color: var(--accent-red)
                     font-weight: 600
                 .tag-icon
-                    width: 12px
-                    height: 12px
+                    width: 14px
+                    height: 14px
                     object-fit: contain
 
     // Управление
@@ -736,11 +752,11 @@ useHead({
         position: relative
         z-index: 0
         .manage-btn
-            padding: 10px 20px
+            padding: 8px 16px
             background-color: #fff
             border: 1px solid var(--border-color)
             border-radius: 12px
-            font-size: 14px
+            font-size: 13px
             font-weight: 500
             cursor: pointer
             transition: all 0.2s ease
@@ -753,7 +769,7 @@ useHead({
         background-color: #fff
         border: 1px solid var(--border-color)
         border-radius: 12px
-        padding: 20px
+        padding: 16px
         margin-bottom: 24px
         .panel-header
             display: flex
@@ -761,7 +777,7 @@ useHead({
             align-items: center
             margin-bottom: 16px
             .panel-title
-                font-size: 18px
+                font-size: 16px
                 font-weight: 700
                 color: var(--text-color)
                 margin: 0
@@ -775,8 +791,8 @@ useHead({
                 &:hover
                     background-color: var(--second-bg)
                 .close-icon
-                    width: 18px
-                    height: 18px
+                    width: 16px
+                    height: 16px
         .type-form, .tag-form
             display: flex
             flex-direction: column
@@ -796,15 +812,15 @@ useHead({
             .color-select
                 display: flex
                 flex-direction: column
-                gap: 8px
+                gap: 3px
                 .color-label
                     font-size: 13px
                     font-weight: 600
                     color: var(--text-color)
                 .colors-grid
-                    display: grid
-                    grid-template-columns: repeat(8, 1fr)
-                    gap: 8px
+                    display: flex
+                    flex-wrap: wrap
+                    gap: 2px
                     .color-btn
                         width: 32px
                         height: 32px
@@ -977,7 +993,7 @@ useHead({
                         gap: 6px
                         padding: 4px 10px
                         border-radius: 12px
-                        font-size: 12px
+                        font-size: 14px
                         font-weight: 500
                         color: var(--text-color)
                         border: 1px solid var(--border-color)
@@ -1014,8 +1030,8 @@ useHead({
                 color: var(--text-color)
     .items-grid
         display: grid
-        grid-template-columns: repeat(4, 1fr)
-        gap: 20px
+        grid-template-columns: repeat(2, 1fr)
+        gap: 8px
     .empty
         text-align: center
         color: var(--text-secondary)
@@ -1024,40 +1040,54 @@ useHead({
 @media only screen and (min-width: $bp-tablet)
     .menu-page
         .items-grid
+            grid-template-columns: repeat(3, 1fr)
+
+@media only screen and (min-width: $bp-tablet-landscape-up)
+    .menu-page
+        .items-grid
             grid-template-columns: repeat(4, 1fr)
 
 @media only screen and (min-width: $bp-pc)
     .menu-page
         .add-item-btn, .add-btn
-            font-size: 16px
+            font-size: 17px
             padding: 12px 24px
+            margin-bottom: 30px
         .filters-section
             .filter-group
+                min-width: 200px
                 .filter-label
                     font-size: 15px
                 .tags-filter
                     .tag-filter
-                        font-size: 14px
+                        font-size: 15px
         .management-section
             .manage-btn
-                font-size: 16px
+                font-size: 17px
         .panel
             .panel-header
                 .panel-title
                     font-size: 20px
             .type-form, .tag-form
                 .input
-                    font-size: 16px
+                    font-size: 17px
             .items-list
                 .item-card
-                    .item-name
-                        font-size: 16px
+                    .item-content
+                        .item-name, .item-tag-preview
+                            font-size: 17px
+                            .tag-icon-small
+                                width: 20px
+                                height: 20px
+                        .type-icon
+                            width: 20px
+                            height: 20px
         .items-section
             .section-header
                 .section-title
                     font-size: 20px
         .items-grid
-            grid-template-columns: repeat(4, 1fr)
+            grid-template-columns: repeat(5, 1fr)
 
 @media only screen and (min-width: $bp-large)
     .menu-page

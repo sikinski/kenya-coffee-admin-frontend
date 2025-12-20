@@ -38,6 +38,9 @@ importers:
       nuxt-echarts:
         specifier: 1.0.1
         version: 1.0.1(echarts@6.0.0)(magicast@0.3.5)(vue-echarts@8.0.1(echarts@6.0.0)(vue@3.5.22(typescript@5.9.3)))
+      nuxt-swiper:
+        specifier: ^2.0.1
+        version: 2.0.1(magicast@0.3.5)
       vue:
         specifier: ^3.5.18
         version: 3.5.22(typescript@5.9.3)
@@ -2444,6 +2447,9 @@ packages:
       echarts: ^6.0.0
       vue-echarts: ^8.0.0
 
+  nuxt-swiper@2.0.1:
+    resolution: {integrity: sha512-mUAzuGqQHcsqJa1p5y/Hafvurn62o6njHq8DcwQErourkpJpv7z/SnnT0ezXMr7YvDPNg22ayEKGdHkGXXOxMQ==}
+
   nuxt@3.19.3:
     resolution: {integrity: sha512-J5vfkt69gamnl81iDgeSi1tZ0ADEesKfZizPfKxY10dMdjuelAo9WYItFmFGWZ9j1+uXtFJ+PLzqGmXfPLBsuw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3195,6 +3201,10 @@ packages:
     resolution: {integrity: sha512-VvrHQ+9uniE+Mvx3+C9IEe/lWasXCU0nXMY2kZeLrHNICuRiC8uMPyM14UEaMOFA5mhyQqEkB02VoQ16n3DLaw==}
     engines: {node: '>=16'}
     hasBin: true
+
+  swiper@11.2.10:
+    resolution: {integrity: sha512-RMeVUUjTQH+6N3ckimK93oxz6Sn5la4aDlgPzB+rBrG/smPdCTicXyhxa+woIpopz+jewEloiEE3lKo1h9w2YQ==}
+    engines: {node: '>= 4.7.0'}
 
   sync-child-process@1.0.2:
     resolution: {integrity: sha512-8lD+t2KrrScJ/7KXCSyfhT3/hRq78rC0wBFqNJXv3mZyn6hW2ypM05JmlSvtqRbeq6jqA94oHbxAr2vYsJ8vDA==}
@@ -6120,6 +6130,13 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
+  nuxt-swiper@2.0.1(magicast@0.3.5):
+    dependencies:
+      '@nuxt/kit': 3.19.3(magicast@0.3.5)
+      swiper: 11.2.10
+    transitivePeerDependencies:
+      - magicast
+
   nuxt@3.19.3(@parcel/watcher@2.5.1)(@vue/compiler-sfc@3.5.22)(db0@0.3.4)(ioredis@5.8.1)(lightningcss@1.30.2)(magicast@0.3.5)(rollup@4.52.4)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.3)(vite@7.1.9(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1))(yaml@2.8.1):
     dependencies:
       '@nuxt/cli': 3.29.3(magicast@0.3.5)
@@ -7032,6 +7049,8 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.4.1
+
+  swiper@11.2.10: {}
 
   sync-child-process@1.0.2:
     dependencies:

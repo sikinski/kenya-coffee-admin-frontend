@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     css: ['@/assets/styles/index.sass'],
 
-    modules: ['@vueuse/motion/nuxt', "nuxt-echarts"],
+    modules: ['@vueuse/motion/nuxt', "nuxt-echarts", "nuxt-swiper"],
 
     ssr: false,
 

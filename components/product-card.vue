@@ -1,37 +1,42 @@
 <template>
-    <div class="menu-item-card" :class="{ 'menu-item-card_inactive': !item.active }">
-        <div class="item-image" v-if="getMainImage(item)">
-            <img :src="getImageUrl(getMainImage(item))" alt="" class="item-img" />
+    <div class="menu-item-card" :class="{ 'menu-item-card_inactive': !item.active }" @click="openDetail">
+        <div class="item-image" v-if="getImages(item).length">
+            <swiper-container class="item-swiper" slides-per-view="1" space-between="0" pagination="true">
+                <swiper-slide v-for="(image, index) in getImages(item)" :key="index">
+                    <div class="swiper-image-wrapper">
+                        <img :src="getImageUrl(image.imageThumbnail || image.thumbnail)" :alt="item.name"
+                            class="item-img" />
+                    </div>
+                </swiper-slide>
+            </swiper-container>
         </div>
         <div class="item-content">
             <div class="item-header">
                 <h4 class="item-name">{{ item.name }}</h4>
-                <button class="item-actions-btn" @click="$emit('edit', item)" title="Редактировать">
-                    <img src="@/assets/images/icons/pencil.svg" alt="" class="action-icon">
-                </button>
-                <button class="item-actions-btn" @click="$emit('delete', item.id)" title="Удалить">
-                    <img src="@/assets/images/icons/close-round.svg" alt="" class="action-icon">
-                </button>
+                <div class="item-actions" @click.stop>
+                    <button class="item-actions-btn" @click="$emit('edit', item)" title="Редактировать">
+                        <img src="@/assets/images/icons/pencil.svg" alt="" class="action-icon">
+                    </button>
+                    <button class="item-actions-btn" @click="$emit('delete', item.id)" title="Удалить">
+                        <img src="@/assets/images/icons/close-round.svg" alt="" class="action-icon">
+                    </button>
+                </div>
             </div>
-            <div class="item-description" v-if="item.description" v-html="item.description"></div>
             <div class="item-meta">
-                <span class="item-type">
-                    <img v-if="getTypeIcon(item.typeId)" :src="getTypeIcon(item.typeId)" alt="" class="type-icon-small" />
-                    {{ getTypeName(item.typeId) }}
-                </span>
-                <template v-if="getVolumes(item).length">
-                    <span class="item-weight" v-for="(volume, index) in getVolumes(item)" :key="index">
-                        {{ volume }}
+                <template v-if="getTypes(item).length">
+                    <span class="item-type" v-for="(type, index) in getTypes(item)" :key="type.id || index">
+                        <img v-if="type.icon" :src="type.icon" alt="" class="type-icon-small" />
+                        {{ type.name }}
                     </span>
                 </template>
+                <!-- <template v-if="getVolumes(item).length">
+                    <span class="item-weight" v-for="(volume, index) in getVolumes(item)" :key="index">
+                        {{ getVolumeDisplay(volume) }}
+                    </span>
+                </template> -->
             </div>
             <div class="item-tags" v-if="item.tags?.length">
-                <span 
-                    class="item-tag" 
-                    v-for="tag in item.tags" 
-                    :key="tag.id"
-                    :style="getTagStyle(tag)"
-                >
+                <span class="item-tag" v-for="tag in item.tags" :key="tag.id" :style="getTagStyle(tag)">
                     <img v-if="tag.icon" :src="tag.icon" alt="" class="tag-icon" />
                     {{ tag.name }}
                 </span>
@@ -54,6 +59,8 @@
 
 <script setup>
 import { shouldUseWhiteText } from '@/helpers/tagColors'
+import { getImageUrl } from '@/utils/getImageUrl'
+import { findById } from '@/utils/findById'
 
 const props = defineProps({
     item: {
@@ -66,31 +73,51 @@ const props = defineProps({
     }
 })
 
-defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'show-detail'])
 
-const getTypeName = (typeId) => {
-    const type = findById(typeId, props.types)
-    return type?.name || ''
+const openDetail = () => {
+    emit('show-detail', props.item)
 }
 
-const getTypeIcon = (typeId) => {
-    const type = findById(typeId, props.types)
-    return type?.icon || null
+const getTypes = (item) => {
+    // Если types - массив объектов, возвращаем его
+    if (item.types && Array.isArray(item.types) && item.types.length > 0) {
+        return item.types
+    }
+    // Для обратной совместимости: если есть typeId, ищем в props.types
+    if (item.typeId) {
+        const type = findById(item.typeId, props.types)
+        return type ? [type] : []
+    }
+    return []
 }
 
 const getVolumes = (item) => {
-    // Если volumes - массив, возвращаем его
+    // Если volume - массив объектов или строк, возвращаем его
+    if (item.volume && Array.isArray(item.volume) && item.volume.length > 0) {
+        return item.volume
+    }
+    // Для обратной совместимости: если есть volume как строка
+    if (item.volume && typeof item.volume === 'string') {
+        return [item.volume]
+    }
+    // Для обратной совместимости: если есть volumes (старый формат)
     if (item.volumes && Array.isArray(item.volumes) && item.volumes.length > 0) {
         return item.volumes
-    }
-    // Для обратной совместимости: если есть volume или weight как строка
-    if (item.volume) {
-        return [item.volume]
     }
     if (item.weight) {
         return [item.weight]
     }
     return []
+}
+
+const getVolumeDisplay = (volume) => {
+    // Если volume - объект, извлекаем значение
+    if (typeof volume === 'object' && volume !== null) {
+        return volume.value || volume.name || volume.label || JSON.stringify(volume)
+    }
+    // Если volume - строка, возвращаем как есть
+    return volume
 }
 
 const getTagStyle = (tag) => {
@@ -101,24 +128,24 @@ const getTagStyle = (tag) => {
     }
 }
 
-const getMainImage = (item) => {
-    // Если есть массив images, берем первое изображение (главное)
+const getImages = (item) => {
+    // Если есть массив images, возвращаем все изображения
     if (item.images && Array.isArray(item.images) && item.images.length > 0) {
-        return item.images[0].imageThumbnail || item.images[0].thumbnail || item.images[0].imageOriginal || item.images[0].original
+        return item.images
     }
     // Для обратной совместимости со старым форматом
-    if (item.imageThumbnail) {
-        return item.imageThumbnail
+    if (item.imageThumbnail || item.imageOrg || item.imageOriginal) {
+        return [{
+            imageThumbnail: item.imageThumbnail || null,
+            imageOrg: item.imageOrg || item.imageOriginal || null
+        }]
     }
-    if (item.imageOriginal) {
-        return item.imageOriginal
-    }
-    return null
+    return []
 }
 
 const formatPrice = (price) => {
     if (!price) return '0 ₽'
-    
+
     // Если это объект с from и to
     if (typeof price === 'object' && price !== null) {
         if (price.from && price.to && price.from === price.to) {
@@ -135,7 +162,7 @@ const formatPrice = (price) => {
             return `${price.from} - ${price.to} ₽`
         }
     }
-    
+
     // Старый формат - просто число
     return `${price} ₽`
 }
@@ -150,9 +177,13 @@ const formatPrice = (price) => {
     border-radius: 12px
     overflow: hidden
     transition: all 0.2s ease
+    cursor: pointer
+    display: flex
+    flex-direction: column
     &:hover
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
         border-color: var(--accent-red)
+        transform: translateY(-2px)
     &_inactive
         opacity: 0.7
     .item-image
@@ -160,24 +191,42 @@ const formatPrice = (price) => {
         height: 200px
         overflow: hidden
         background-color: var(--second-bg)
-        .item-img
+        position: relative
+        .item-swiper
             width: 100%
             height: 100%
-            object-fit: contain
+        .swiper-image-wrapper
+            width: 100%
+            height: 100%
+            display: flex
+            align-items: center
+            justify-content: center
+            .item-img
+                width: 100%
+                height: 100%
+                object-fit: cover
+                object-position: center
     .item-content
         padding: 16px
+        display: flex
+        flex-direction: column
+        flex: 1
         .item-header
             display: flex
             justify-content: space-between
             align-items: flex-start
             gap: 8px
             margin-bottom: 8px
+            flex: 1
             .item-name
                 font-size: 16px
                 font-weight: 700
                 color: var(--text-color)
                 margin: 0
                 flex: 1
+            .item-actions
+                display: flex
+                gap: 4px
             .item-actions-btn
                 background: none
                 border: none
@@ -200,6 +249,8 @@ const formatPrice = (price) => {
             gap: 8px
             margin-bottom: 8px
             flex-wrap: wrap
+            flex: 2
+            align-items: flex-start
             .item-type
                 display: flex
                 align-items: center
@@ -269,12 +320,26 @@ const formatPrice = (price) => {
                     background-color: rgba(78, 159, 112, 0.1)
                     color: var(--green-color)
 
-@media only screen and (min-width: $bp-pc)
+@media only screen and (min-width: $bp-tablet)
+    .menu-item-card
+        .item-content
+            .item-header
+                .item-name
+                    font-size: 20px
+                    margin-bottom: 10px
+@media only screen and (min-width: $bp-tablet-landscape-up)
     .menu-item-card
         .item-content
             .item-header
                 .item-name
                     font-size: 18px
+                    margin-bottom: 10px
+@media only screen and (min-width: $bp-pc)
+    .menu-item-card
+        .item-content
+            .item-header
+                .item-name
+                    font-size: 22px
             .item-description
                 font-size: 15px
             .item-meta
