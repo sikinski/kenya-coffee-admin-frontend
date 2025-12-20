@@ -267,7 +267,7 @@ onMounted(async () => {
     await getReceipts()
     await getStats()
 
-    scrollContainer.value = document.querySelector('.receipts')
+    scrollContainer.value = document.querySelector('.receipts-list')
     console.log(scrollContainer.value);
 
     if (scrollContainer.value) {
@@ -355,7 +355,7 @@ useHead({
         display: flex
         justify-content: space-between
         align-items: center
-        margin-bottom: 12px
+        // margin-bottom: 12px
         .refresh-icon
             mask: url(@/assets/images/icons/refresh.svg) no-repeat center
             background-color: var(--accent-red)
@@ -447,6 +447,8 @@ useHead({
             gap: 8px
             max-height: none
             overflow: visible
+            max-height: 80vh
+            overflow-y: auto
         .receipt-card
             background-color: var(--second-bg)
             border-radius: 12px
