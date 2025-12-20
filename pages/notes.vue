@@ -19,10 +19,7 @@
                             class="close-icon">
                         <div class="input-wrapper text-wrapper">
                             <div class="editor">
-                                <client-only>
-                                    <quill-editor class="input" v-model:content="noteForm.text" contentType="html"
-                                        :options="editorOptions" placeholder="Напишите что-то" />
-                                </client-only>
+                                <ui-html-editor v-model="noteForm.text" />
                             </div>
                         </div>
 
@@ -231,15 +228,6 @@ onMounted(async () => {
     await getNoteTopics()
     await getNotes()
 })
-//
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
-
-const editorOptions = {
-    theme: 'snow',
-    modules: {
-        toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'bullet' }, { 'list': 'ordered' }]]
-    },
-}
 
 useHead({
     title: 'Заметки — Кения',
@@ -288,7 +276,7 @@ useHead({
         position: relative
         gap: 15px
         margin-top: 24px
-        padding: 24px
+        padding: 14px
         background-color: #fff
         border: 1px solid var(--border-color)
         border-radius: 16px
@@ -334,6 +322,8 @@ useHead({
         flex-wrap: wrap
         gap: 10px
         margin-bottom: 24px
+        align-items: flex-start
+        margin-top: 20px
         .topic
             display: flex
             align-items: center
@@ -465,7 +455,7 @@ useHead({
         gap: 16px
         .note-card
             position: relative
-            background-color: #fff
+            background-color: var(--second-bg)
             padding: 20px
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06)
             border: 1px solid var(--border-color)
@@ -603,13 +593,17 @@ useHead({
             .topic
                 font-size: 13px
                 padding: 8px 14px
+        .notes-list
+            .note-card
+                .note-text
+                    font-size: 14px
         .form
             .ql-editor
-                font-size: 15px
+                font-size: 14px
                 &::before
                     font-size: inherit
             .save-btn
-                font-size: 15px
+                font-size: 14px
 
 @media only screen and (min-width: $bp-pc)
     .notes-page
@@ -660,13 +654,16 @@ useHead({
                 &::before
                     font-size: inherit
             .save-btn
-                font-size: 16px
+                font-size: 17px
                 padding: 14px 32px
         .note-topics
             gap: 12px
             .topic
-                font-size: 15px
+                font-size: 17px
                 padding: 12px 20px
+            .add-more
+                width: 50px
+                height: 50px
             .topic-form
                 padding: 24px
                 .input-wrapper
@@ -687,5 +684,5 @@ useHead({
                 .note-topic
                     font-size: 14px
                 .date, .updated-date, .note-author
-                    font-size: 14px
+                    font-size: 15px
 </style>

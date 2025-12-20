@@ -53,17 +53,18 @@ const handleUpdate = (content) => {
     min-height: 200px
     display: flex
     flex-direction: column
-    :deep(.ql-container)
+    .ql-container
         border: 1px solid var(--border-color)
         border-radius: 8px
         font-size: 14px
         font-family: inherit
         min-height: 200px
+        flex: 1
         &:hover
             border-color: var(--accent-red)
         &.ql-snow
             border-color: var(--border-color)
-    :deep(.ql-toolbar)
+    .ql-toolbar
         border: 1px solid var(--border-color)
         border-radius: 8px 8px 0 0
         background-color: #fff
@@ -84,7 +85,7 @@ const handleUpdate = (content) => {
                 stroke: var(--accent-red)
             .ql-fill
                 fill: var(--accent-red)
-    :deep(.ql-editor)
+    .ql-editor
         min-height: 200px
         padding: 12px 14px
         color: var(--text-color)
@@ -93,7 +94,14 @@ const handleUpdate = (content) => {
             font-style: normal
         &:focus
             outline: none
-    :deep(.ql-container.ql-snow)
+    .editor-input
+        flex: 1
+        display: flex
+        flex-direction: column
+        .ql-editor
+            height: 100%
+            flex: 1
+    .ql-container.ql-snow
         border-top: none
         border-radius: 0 0 8px 8px
         &:focus-within
