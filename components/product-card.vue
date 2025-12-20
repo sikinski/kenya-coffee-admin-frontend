@@ -1,7 +1,7 @@
 <template>
     <div class="menu-item-card" :class="{ 'menu-item-card_inactive': !item.active }">
-        <div class="item-image" v-if="item.imageThumbnail">
-            <img :src="getImageUrl(item.imageThumbnail)" alt="" class="item-img" />
+        <div class="item-image" v-if="getMainImage(item)">
+            <img :src="getImageUrl(getMainImage(item))" alt="" class="item-img" />
         </div>
         <div class="item-content">
             <div class="item-header">
@@ -99,6 +99,21 @@ const getTagStyle = (tag) => {
         backgroundColor: tag.color,
         color: shouldUseWhiteText(tag.color) ? '#fff' : 'var(--text-color)'
     }
+}
+
+const getMainImage = (item) => {
+    // Если есть массив images, берем первое изображение (главное)
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+        return item.images[0].imageThumbnail || item.images[0].thumbnail || item.images[0].imageOriginal || item.images[0].original
+    }
+    // Для обратной совместимости со старым форматом
+    if (item.imageThumbnail) {
+        return item.imageThumbnail
+    }
+    if (item.imageOriginal) {
+        return item.imageOriginal
+    }
+    return null
 }
 
 const formatPrice = (price) => {

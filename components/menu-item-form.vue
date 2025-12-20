@@ -78,20 +78,31 @@
             </div>
 
             <div class="form-group form-group-full">
-                <label class="form-label">Изображение</label>
-                <div class="image-upload">
-                    <input type="file" ref="imageInput" @change="handleImageSelect" accept="image/*"
+                <label class="form-label">Изображения</label>
+                <div class="images-upload">
+                    <input type="file" ref="imageInput" @change="handleImageSelect" accept="image/*" multiple
                         class="file-input" />
                     <button type="button" class="upload-btn" @click="$refs.imageInput.click()"
                         :disabled="uploadingImage">
                         <span class="upload-icon"></span>
-                        {{ uploadingImage ? 'Загрузка...' : 'Выбрать изображение' }}
+                        {{ uploadingImage ? 'Загрузка...' : 'Добавить изображения' }}
                     </button>
-                    <div class="image-preview" v-if="formData.imageThumbnail">
-                        <img :src="getImageUrl(formData.imageThumbnail)" alt="" class="preview-img" />
-                        <button type="button" class="remove-image-btn" @click="removeImage">
-                            <img src="@/assets/images/icons/close-round.svg" alt="" class="remove-icon">
-                        </button>
+                    <div class="images-list" v-if="formData.images && formData.images.length">
+                        <div v-for="(image, index) in formData.images" :key="index" class="image-item"
+                            :class="{ 'image-item_main': index === 0 }" draggable="true"
+                            @dragstart="handleDragStart(index, $event)" @dragover.prevent="handleDragOver($event)"
+                            @drop="handleDrop(index, $event)" @dragend="handleDragEnd">
+                            <div class="image-preview-wrapper">
+                                <img :src="getImageUrl(image.imageThumbnail || image.thumbnail)" alt=""
+                                    class="preview-img" />
+                                <div class="image-overlay">
+                                    <span class="image-badge" v-if="index === 0">Главное</span>
+                                    <button type="button" class="remove-image-btn" @click="removeImage(index)">
+                                        <img src="@/assets/images/icons/close-round.svg" alt="" class="remove-icon">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -118,6 +129,7 @@ import { ref, computed, watch } from 'vue'
 import Multiselect from '@vueform/multiselect'
 import { ALL_VOLUME_WEIGHT_OPTIONS } from '@/helpers/volumeOptions'
 import { shouldUseWhiteText } from '@/helpers/tagColors'
+import { getImageUrl } from '@/utils/getImageUrl'
 
 const props = defineProps({
     editingItem: {
@@ -175,10 +187,12 @@ const formData = ref({
     order: 0,
     active: true,
     tagIds: [],
-    image: null,
-    imageOriginal: null,
-    imageThumbnail: null
+    images: [] // Массив объектов { imageOrg, imageThumbnail }
 })
+
+// Для drag & drop
+const draggedIndex = ref(null)
+const dragOverIndex = ref(null)
 
 // Текущее значение цены для инпута
 const currentPriceValue = ref(0)
@@ -231,9 +245,7 @@ const resetForm = () => {
         order: 0,
         active: true,
         tagIds: [],
-        image: null,
-        imageOriginal: null,
-        imageThumbnail: null
+        images: []
     }
 }
 
@@ -280,6 +292,18 @@ watch(() => props.editingItem, (item) => {
             currentPriceValue.value = price.from || price.to || 0
         }
 
+        // Обрабатываем изображения: если это массив - используем его, если старый формат - преобразуем
+        let images = []
+        if (item.images && Array.isArray(item.images)) {
+            images = item.images
+        } else if (item.imageOrg || item.imageThumbnail) {
+            // Старый формат - преобразуем в массив
+            images = [{
+                imageOrg: item.imageOrg || null,
+                imageThumbnail: item.imageThumbnail || null
+            }]
+        }
+
         selectedVolumes.value = volumes
         formData.value = {
             name: item.name,
@@ -292,9 +316,7 @@ watch(() => props.editingItem, (item) => {
             order: item.order || 0,
             active: item.active !== undefined ? item.active : true,
             tagIds: item.tags?.map(t => t.id) || [],
-            image: null,
-            imageOriginal: item.imageOriginal || null,
-            imageThumbnail: item.imageThumbnail || null
+            images: images
         }
     } else {
         resetForm()
@@ -334,28 +356,37 @@ const getTagStyle = (tag) => {
 const uploadingImage = ref(false)
 
 const handleImageSelect = async (event) => {
-    const file = event.target.files[0]
-    if (!file) return
+    const files = Array.from(event.target.files || [])
+    if (!files.length) return
 
     uploadingImage.value = true
     try {
-        // Создаем FormData для загрузки изображения
-        const imageData = new FormData()
-        imageData.append('image', file)
+        // Загружаем все выбранные файлы
+        const uploadPromises = files.map(async (file) => {
+            const imageData = new FormData()
+            imageData.append('image', file)
 
-        // Загружаем изображение через POST /images
-        const response = await $api.post('/images', imageData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await $api.post('/images', imageData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+
+            if (response.data) {
+                return {
+                    imageOrg: response.data.original,
+                    imageThumbnail: response.data.thumbnail
+                }
+            }
+            return null
         })
 
-        // Сохраняем URL-ы из ответа
-        if (response.data) {
-            formData.value.imageOriginal = response.data.original
-            formData.value.imageThumbnail = response.data.thumbnail
-        }
+        const uploadedImages = await Promise.all(uploadPromises)
+        const validImages = uploadedImages.filter(img => img !== null)
+
+        // Добавляем новые изображения в массив
+        formData.value.images = [...formData.value.images, ...validImages]
     } catch (error) {
-        console.error('Ошибка загрузки изображения:', error)
-        alert('Ошибка загрузки изображения: ' + (error.response?.data?.error || error.message))
+        console.error('Ошибка загрузки изображений:', error)
+        alert('Ошибка загрузки изображений: ' + (error.response?.data?.error || error.message))
     } finally {
         uploadingImage.value = false
         if (imageInput.value) {
@@ -364,13 +395,64 @@ const handleImageSelect = async (event) => {
     }
 }
 
-const removeImage = () => {
-    formData.value.image = null
-    formData.value.imageOriginal = null
-    formData.value.imageThumbnail = null
-    if (imageInput.value) {
-        imageInput.value.value = ''
+const removeImage = (index) => {
+    formData.value.images.splice(index, 1)
+}
+
+// Drag & Drop функции
+const handleDragStart = (index, event) => {
+    draggedIndex.value = index
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/html', event.target)
+    event.target.style.opacity = '0.5'
+}
+
+const handleDragOver = (event) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+}
+
+const handleDrop = async (dropIndex, event) => {
+    event.preventDefault()
+
+    if (draggedIndex.value === null || draggedIndex.value === dropIndex) {
+        draggedIndex.value = null
+        return
     }
+
+    // Перемещаем элемент в массиве
+    const images = [...formData.value.images]
+    const draggedImage = images[draggedIndex.value]
+    images.splice(draggedIndex.value, 1)
+    images.splice(dropIndex, 0, draggedImage)
+
+    formData.value.images = images
+    draggedIndex.value = null
+    dragOverIndex.value = null
+
+    // Отправляем новый порядок на сервер, если редактируем существующую позицию
+    if (props.editingItem && props.editingItem.id) {
+        try {
+            // Формируем массив с порядком изображений (используем индексы или id, если есть)
+            const imageOrder = images.map((img, index) => ({
+                id: img.id || null,
+                order: index
+            }))
+
+            await $api.put(`/menu/items/${props.editingItem.id}/images/order`, {
+                images: imageOrder
+            })
+        } catch (error) {
+            console.error('Ошибка обновления порядка изображений:', error)
+            // Не показываем ошибку пользователю, так как это не критично
+        }
+    }
+}
+
+const handleDragEnd = (event) => {
+    event.target.style.opacity = '1'
+    draggedIndex.value = null
+    dragOverIndex.value = null
 }
 
 const handleSubmit = () => {
@@ -462,7 +544,7 @@ const handleSubmit = () => {
                         width: 14px
                         height: 14px
                         object-fit: contain
-            .image-upload
+            .images-upload
                 display: flex
                 flex-direction: column
                 gap: 12px
@@ -479,45 +561,82 @@ const handleSubmit = () => {
                     font-size: 14px
                     cursor: pointer
                     transition: all 0.2s ease
-                    &:hover
+                    &:hover:not(:disabled)
                         border-color: var(--accent-red)
                         background-color: rgba(232, 69, 32, 0.05)
+                    &:disabled
+                        opacity: 0.6
+                        cursor: not-allowed
                     .upload-icon
                         mask: url(@/assets/images/icons/plus.svg) no-repeat center
                         mask-size: contain
                         background-color: var(--accent-red)
                         width: 16px
                         height: 16px
-                .image-preview
-                    position: relative
-                    width: 200px
-                    height: 200px
-                    border: 1px solid var(--border-color)
-                    border-radius: 8px
-                    overflow: hidden
-                    .preview-img
-                        width: 100%
-                        height: 100%
-                        object-fit: cover
-                    .remove-image-btn
-                        position: absolute
-                        top: 8px
-                        right: 8px
-                        background-color: rgba(0, 0, 0, 0.6)
-                        border: none
-                        border-radius: 50%
-                        width: 28px
-                        height: 28px
-                        display: flex
-                        align-items: center
-                        justify-content: center
-                        cursor: pointer
+                .images-list
+                    display: grid
+                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+                    gap: 12px
+                    .image-item
+                        position: relative
+                        cursor: move
                         transition: all 0.2s ease
+                        &.image-item_main
+                            .image-preview-wrapper
+                                border: 2px solid var(--accent-red)
                         &:hover
-                            background-color: rgba(0, 0, 0, 0.8)
-                        .remove-icon
-                            width: 14px
-                            height: 14px
+                            transform: translateY(-2px)
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1)
+                        .image-preview-wrapper
+                            position: relative
+                            width: 100%
+                            aspect-ratio: 1
+                            border: 1px solid var(--border-color)
+                            border-radius: 8px
+                            overflow: hidden
+                            background-color: var(--second-bg)
+                            .preview-img
+                                width: 100%
+                                height: 100%
+                                object-fit: cover
+                            .image-overlay
+                                position: absolute
+                                top: 0
+                                left: 0
+                                right: 0
+                                bottom: 0
+                                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, transparent 30%)
+                                opacity: 0
+                                transition: opacity 0.2s ease
+                                display: flex
+                                align-items: flex-start
+                                justify-content: space-between
+                                padding: 8px
+                                .image-badge
+                                    background-color: var(--accent-red)
+                                    color: #fff
+                                    padding: 4px 8px
+                                    border-radius: 4px
+                                    font-size: 11px
+                                    font-weight: 600
+                                .remove-image-btn
+                                    background-color: rgba(0, 0, 0, 0.6)
+                                    border: none
+                                    border-radius: 50%
+                                    width: 24px
+                                    height: 24px
+                                    display: flex
+                                    align-items: center
+                                    justify-content: center
+                                    cursor: pointer
+                                    transition: all 0.2s ease
+                                    &:hover
+                                        background-color: rgba(0, 0, 0, 0.8)
+                                    .remove-icon
+                                        width: 12px
+                                        height: 12px
+                        &:hover .image-overlay
+                            opacity: 1
             .checkbox-label
                 display: flex
                 align-items: center

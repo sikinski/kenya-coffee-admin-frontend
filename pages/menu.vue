@@ -572,9 +572,8 @@ const handleSaveItem = async (formData) => {
             order: formData.order || 0,
             active: formData.active !== undefined ? formData.active : true,
             tagIds: formData.tagIds && formData.tagIds.length ? formData.tagIds : [],
-            // URL-ы изображений
-            imageOriginal: formData.imageOriginal || null,
-            imageThumbnail: formData.imageThumbnail || null
+            // Массив изображений
+            images: formData.images && formData.images.length ? formData.images : []
         }
 
         if (editingItem.value) {
