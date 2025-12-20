@@ -1,8 +1,8 @@
 <template>
     <label class="checkbox">
-        <span class="checkmark center transition" :class="{ 'checkmark_checked': modelValue }">
-            <img v-if="modelValue" src="@/assets/images/icons/checkmark.svg" alt="✔">
-        </span>
+        <div class="checkmark center transition" :class="{ 'checkmark_checked': modelValue }">
+            <span class="icon"></span>
+        </div>
         <p class="label-text">{{ label }}</p>
         <input type="checkbox" :id="id" :checked="modelValue"
             @change="$emit('update:modelValue', $event.target.checked)" />
@@ -32,7 +32,7 @@ $CHECKMARK-size-tablet: 30px
     user-select: none
     padding: 12px
     display: flex
-    // align-items: center
+    align-items: center
     gap: 16px
     border-radius: 5px
     .label-text
@@ -47,6 +47,9 @@ $CHECKMARK-size-tablet: 30px
         height: 0
         width: 0
     .checkmark
+        width: 20px
+        height: 20px
+        position: relative
         min-height: $CHECKMARK-size-mobile
         min-width: $CHECKMARK-size-mobile
         max-height: $CHECKMARK-size-mobile
@@ -55,15 +58,15 @@ $CHECKMARK-size-tablet: 30px
         background-color: #fff
         border: 2px solid var(--border-color)
         transition: all 0.2s ease
-        img
+        .icon
+            mask: url(@/assets/images/icons/checkmark.svg) no-repeat center
+            background-color: #fff
+            display: block
             width: 60%
+            height: 60%
         &_checked
             background-color: var(--accent-red)
             border-color: var(--accent-red)
-
-    .checkbox:hover input~.checkmark 
-        border-color: var(--accent-red)
-        background-color: rgba(232, 69, 32, 0.05)
 @media only screen and (min-width: $bp-tablet)
     .checkbox
         padding: 14px
@@ -95,8 +98,8 @@ $CHECKMARK-size-tablet: 30px
             min-width: $CHECKMARK-size-tablet
             max-height: $CHECKMARK-size-tablet
             max-width: $CHECKMARK-size-tablet
-        &:hover
-            .checkmark
-                border-color: var(--accent-red)
-                background-color: rgba(232, 69, 32, 0.05)
+@media only screen and (min-width: $bp-large)
+    .checkbox
+        .label-text
+            font-size: 24px
 </style>

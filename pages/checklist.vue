@@ -22,7 +22,7 @@
 
                     <div class="tasks-container" v-if="dailyTasks?.length">
                         <div v-for="task in dailyTasks" :key="task.id" class="task-card">
-                            <ui-custom-checkbox :label="task.text" v-model="task.done" :id="`daily-${task.id}`"
+                            <ui-custom-checkbox :label="task.task.text" v-model="task.done" :id="`daily-${task.id}`"
                                 @update:modelValue="updateDailyTask(task.id, { done: $event })" />
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                         <p class="edit-panel-hint">Изменения в шаблоне не затронут уже сохраненные записи за прошлые дни
                         </p>
 
-                        <button class="add-task-btn" @click="showTaskForm = true" v-if="!showTaskForm">
+                        <button class="add-task-btn filled-btn" @click="showTaskForm = true" v-if="!showTaskForm">
                             <span class="btn-text">Добавить задачу</span>
                             <span class="plus-icon"></span>
                         </button>
@@ -90,6 +90,8 @@
                             <p>Шаблон задач пуст</p>
                             <p class="empty-hint">Добавьте задачи, чтобы они появлялись в ежедневном списке</p>
                         </div>
+
+                        <button class="sync-btn" @click="syncTasks">Синхронизировать</button>
                     </div>
                 </div>
             </div>
@@ -173,6 +175,15 @@ const updateTasksOrder = async (newOrder) => {
         await getTemplateTasks()
     } catch (error) {
         console.error('Ошибка обновления порядка задач:', error)
+    }
+}
+
+const syncTasks = async () => {
+    try {
+        await $api.post('/daily-tasks/sync')
+        await loadDailyTasks()
+    } catch (error) {
+        console.error('Ошибка синхронизации задач', error)
     }
 }
 
@@ -334,7 +345,7 @@ useHead({
         gap: 12px
 
     .task-card
-        padding: 16px 20px
+        padding: 5px
         background-color: #fff
         border: 1px solid var(--border-color)
         border-radius: 12px
@@ -489,28 +500,6 @@ useHead({
         line-height: 1.5
 
     .add-task-btn
-        font-size: 14px
-        font-weight: 600
-        padding: 12px 20px
-        margin-bottom: 20px
-        width: 100%
-        display: flex
-        align-items: center
-        justify-content: center
-        gap: 10px
-        cursor: pointer
-        background-color: var(--accent-red)
-        color: #fff
-        border: none
-        border-radius: 12px
-        transition: all 0.2s ease
-        &:hover
-            background-color: var(--accent-orange)
-            transform: translateY(-1px)
-            box-shadow: 0 4px 12px rgba(232, 69, 32, 0.3)
-        .btn-text
-            color: #fff
-            font-weight: 600
         .plus-icon
             mask-image: url(@/assets/images/icons/plus.svg)
             background-color: #fff
@@ -636,6 +625,13 @@ useHead({
                 mask: url(@/assets/images/icons/close-round.svg) no-repeat center
                 mask-size: contain
                 display: block
+    .sync-btn
+        margin-top: 20px
+        width: 100%
+        border: none
+        font-size: 14px
+        font-weight: 600
+        color: var(--accent-orange)
 
 @media only screen and (min-width: $bp-tablet)
     .checklist-page
@@ -658,6 +654,8 @@ useHead({
     .checklist-page
         .page-layout
             gap: 30px
+        .task-card
+            padding: 5px 20px
 
 @media only screen and (min-width: $bp-pc)
     .checklist-page
@@ -671,26 +669,22 @@ useHead({
     .checklist-page
         .date-selector
             .date-label
-                font-size: 18px
-            .custom-datepicker
-                :deep(.dp__input_wrap)
-                    .dp__input
-                        padding: 14px 20px
-                        font-size: 16px
+                font-size: 20px
         .task-card
             padding: 20px 24px
         .edit-panel
             &.edit-panel-open
-                width: 450px
+                width: 600px
         .edit-panel-content
             padding: 36px
             .edit-panel-title
-                font-size: 20px
-            .add-task-btn
-                font-size: 15px
-                padding: 14px 24px
+                font-size: 22px
             .template-task-card
                 padding: 16px 20px
                 .task-text
-                    font-size: 15px
+                    font-size: 17px
+        .edit-toggle-btn
+            width: 70px
+            height: 70px
+    
 </style>
