@@ -15,19 +15,34 @@
             </div>
             <div class="item-description" v-if="item.description" v-html="item.description"></div>
             <div class="item-meta">
-                <span class="item-type">{{ getTypeName(item.typeId) }}</span>
-                <span class="item-weight" v-if="item.volume || item.weight">{{ item.volume || item.weight }}</span>
+                <span class="item-type">
+                    <img v-if="getTypeIcon(item.typeId)" :src="getTypeIcon(item.typeId)" alt="" class="type-icon-small" />
+                    {{ getTypeName(item.typeId) }}
+                </span>
+                <template v-if="getVolumes(item).length">
+                    <span class="item-weight" v-for="(volume, index) in getVolumes(item)" :key="index">
+                        {{ volume }}
+                    </span>
+                </template>
             </div>
             <div class="item-tags" v-if="item.tags?.length">
-                <span class="item-tag" v-for="tag in item.tags" :key="tag.id">{{ tag.name }}</span>
+                <span 
+                    class="item-tag" 
+                    v-for="tag in item.tags" 
+                    :key="tag.id"
+                    :style="getTagStyle(tag)"
+                >
+                    <img v-if="tag.icon" :src="tag.icon" alt="" class="tag-icon" />
+                    {{ tag.name }}
+                </span>
             </div>
             <div class="item-footer">
                 <div class="item-prices">
                     <span class="item-price" v-if="item.discountPrice">
-                        <span class="price-old">{{ item.price }} ₽</span>
+                        <span class="price-old">{{ formatPrice(item.price) }}</span>
                         <span class="price-new">{{ item.discountPrice }} ₽</span>
                     </span>
-                    <span class="item-price" v-else>{{ item.price }} ₽</span>
+                    <span class="item-price" v-else>{{ formatPrice(item.price) }}</span>
                 </div>
                 <span class="item-status" :class="{ 'item-status_active': item.active }">
                     {{ item.active ? 'Активна' : 'Неактивна' }}
@@ -38,6 +53,8 @@
 </template>
 
 <script setup>
+import { shouldUseWhiteText } from '@/helpers/tagColors'
+
 const props = defineProps({
     item: {
         type: Object,
@@ -54,6 +71,58 @@ defineEmits(['edit', 'delete'])
 const getTypeName = (typeId) => {
     const type = findById(typeId, props.types)
     return type?.name || ''
+}
+
+const getTypeIcon = (typeId) => {
+    const type = findById(typeId, props.types)
+    return type?.icon || null
+}
+
+const getVolumes = (item) => {
+    // Если volumes - массив, возвращаем его
+    if (item.volumes && Array.isArray(item.volumes) && item.volumes.length > 0) {
+        return item.volumes
+    }
+    // Для обратной совместимости: если есть volume или weight как строка
+    if (item.volume) {
+        return [item.volume]
+    }
+    if (item.weight) {
+        return [item.weight]
+    }
+    return []
+}
+
+const getTagStyle = (tag) => {
+    if (!tag.color) return {}
+    return {
+        backgroundColor: tag.color,
+        color: shouldUseWhiteText(tag.color) ? '#fff' : 'var(--text-color)'
+    }
+}
+
+const formatPrice = (price) => {
+    if (!price) return '0 ₽'
+    
+    // Если это объект с from и to
+    if (typeof price === 'object' && price !== null) {
+        if (price.from && price.to && price.from === price.to) {
+            // Фиксированная цена
+            return `${price.from} ₽`
+        } else if (price.from && !price.to) {
+            // Цена от
+            return `от ${price.from} ₽`
+        } else if (!price.from && price.to) {
+            // Цена до
+            return `до ${price.to} ₽`
+        } else if (price.from && price.to) {
+            // Диапазон цен
+            return `${price.from} - ${price.to} ₽`
+        }
+    }
+    
+    // Старый формат - просто число
+    return `${price} ₽`
 }
 </script>
 
@@ -117,12 +186,19 @@ const getTypeName = (typeId) => {
             margin-bottom: 8px
             flex-wrap: wrap
             .item-type
+                display: flex
+                align-items: center
+                gap: 6px
                 padding: 4px 10px
                 background-color: rgba(232, 69, 32, 0.1)
                 color: var(--accent-red)
                 border-radius: 12px
                 font-size: 11px
                 font-weight: 600
+                .type-icon-small
+                    width: 14px
+                    height: 14px
+                    object-fit: contain
             .item-weight
                 padding: 4px 10px
                 background-color: var(--second-bg)
@@ -135,11 +211,18 @@ const getTypeName = (typeId) => {
             gap: 6px
             margin-bottom: 12px
             .item-tag
+                display: inline-flex
+                align-items: center
+                gap: 6px
                 padding: 4px 8px
                 background-color: var(--second-bg)
                 color: var(--text-color)
                 border-radius: 12px
                 font-size: 11px
+                .tag-icon
+                    width: 12px
+                    height: 12px
+                    object-fit: contain
         .item-footer
             display: flex
             justify-content: space-between

@@ -19,7 +19,24 @@
 
             <div class="form-group">
                 <label class="form-label">Цена (₽) *</label>
-                <input type="number" class="input" v-model.number="formData.price" step="0.01" required />
+                <div class="price-selector">
+                    <div class="price-type-buttons">
+                        <button type="button" class="price-type-btn"
+                            :class="{ 'price-type-btn_active': priceType === 'from' }" @click="priceType = 'from'">
+                            От
+                        </button>
+                        <button type="button" class="price-type-btn"
+                            :class="{ 'price-type-btn_active': priceType === 'to' }" @click="priceType = 'to'">
+                            До
+                        </button>
+                        <button type="button" class="price-type-btn"
+                            :class="{ 'price-type-btn_active': priceType === 'fixed' }" @click="priceType = 'fixed'">
+                            Сброс
+                        </button>
+                    </div>
+                    <input type="number" class="input" v-model.number="currentPriceValue" step="0.01" required
+                        :placeholder="getPricePlaceholder()" />
+                </div>
             </div>
 
             <div class="form-group">
@@ -27,9 +44,15 @@
                 <input type="number" class="input" v-model.number="formData.discountPrice" step="0.01" />
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-group-full">
                 <label class="form-label">Объем/Вес</label>
-                <input type="text" class="input" v-model="formData.weight" placeholder="например: 250 мл" />
+                <div class="volumes-select">
+                    <span class="volume-select" v-for="volume in volumeOptions" :key="volume"
+                        :class="{ 'volume-select_active': selectedVolumes.includes(volume) }"
+                        @click="toggleVolume(volume)">
+                        {{ volume }}
+                    </span>
+                </div>
             </div>
 
             <div class="form-group">
@@ -46,7 +69,9 @@
                 <label class="form-label">Теги</label>
                 <div class="tags-select">
                     <span class="tag-select" v-for="tag in tags" :key="tag.id"
-                        :class="{ 'tag-select_active': formData.tagIds.includes(tag.id) }" @click="toggleTag(tag.id)">
+                        :class="{ 'tag-select_active': formData.tagIds.includes(tag.id) }" :style="getTagStyle(tag)"
+                        @click="toggleTag(tag.id)">
+                        <img v-if="tag.icon" :src="tag.icon" alt="" class="tag-icon" />
                         {{ tag.name }}
                     </span>
                 </div>
@@ -91,6 +116,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import Multiselect from '@vueform/multiselect'
+import { ALL_VOLUME_WEIGHT_OPTIONS } from '@/helpers/volumeOptions'
+import { shouldUseWhiteText } from '@/helpers/tagColors'
 
 const props = defineProps({
     editingItem: {
@@ -123,15 +150,26 @@ const typeSelectOptions = computed(() => {
     }))
 })
 
+// Опции для выбора объемов/весов - преобразуем в простой массив строк для Multiselect
+const volumeOptions = computed(() => {
+    return ALL_VOLUME_WEIGHT_OPTIONS.map(opt => opt.value)
+})
+
 const { $api } = useNuxtApp()
+
+// Отдельный ref для volumes для лучшей реактивности с Multiselect
+const selectedVolumes = ref([])
+
+// Тип цены: 'from', 'to', 'fixed'
+const priceType = ref('fixed')
 
 // Данные формы
 const formData = ref({
     name: '',
     description: '',
-    price: 0,
+    price: { from: null, to: null },
     discountPrice: null,
-    weight: '',
+    volumes: [],
     typeId: null,
     quantity: null,
     order: 0,
@@ -142,13 +180,52 @@ const formData = ref({
     imageThumbnail: null
 })
 
+// Текущее значение цены для инпута
+const currentPriceValue = ref(0)
+
+// Получение плейсхолдера для инпута цены
+const getPricePlaceholder = () => {
+    if (priceType.value === 'from') return 'Цена от...'
+    if (priceType.value === 'to') return 'Цена до...'
+    return 'Цена'
+}
+
+// Обновление цены при изменении типа или значения
+watch([priceType, currentPriceValue], () => {
+    const value = currentPriceValue.value || null
+
+    if (priceType.value === 'from') {
+        formData.value.price = { from: value, to: null }
+    } else if (priceType.value === 'to') {
+        formData.value.price = { from: null, to: value }
+    } else {
+        // Фиксированная цена - оба поля одинаковые
+        formData.value.price = { from: value, to: value }
+    }
+})
+
+// При изменении типа цены сохраняем текущее значение, если оно есть
+watch(priceType, (newType, oldType) => {
+    if (oldType !== undefined && currentPriceValue.value) {
+        // Значение уже есть, оно сохранится через watch выше
+    }
+})
+
+// Синхронизируем selectedVolumes с formData.volumes
+watch(selectedVolumes, (newVolumes) => {
+    formData.value.volumes = Array.isArray(newVolumes) ? [...newVolumes] : []
+}, { deep: true })
+
 const resetForm = () => {
+    selectedVolumes.value = []
+    priceType.value = 'fixed'
+    currentPriceValue.value = 0
     formData.value = {
         name: '',
         description: '',
-        price: 0,
+        price: { from: null, to: null },
         discountPrice: null,
-        weight: '',
+        volumes: [],
         typeId: null,
         quantity: null,
         order: 0,
@@ -163,12 +240,53 @@ const resetForm = () => {
 // Заполнение формы при редактировании
 watch(() => props.editingItem, (item) => {
     if (item) {
+        // Обрабатываем объемы: если это массив - используем его, если строка - преобразуем в массив
+        let volumes = []
+        if (item.volumes && Array.isArray(item.volumes)) {
+            volumes = item.volumes
+        } else if (item.volume) {
+            volumes = [item.volume]
+        } else if (item.weight) {
+            volumes = [item.weight]
+        }
+
+        // Обрабатываем цену: если это объект - используем его, если число - преобразуем
+        let price = { from: null, to: null }
+        if (item.price) {
+            if (typeof item.price === 'object' && item.price !== null) {
+                price = {
+                    from: item.price.from ?? null,
+                    to: item.price.to ?? null
+                }
+            } else {
+                // Старый формат - фиксированная цена
+                const priceValue = item.price
+                price = { from: priceValue, to: priceValue }
+            }
+        }
+
+        // Определяем тип цены
+        if (price.from && price.to && price.from === price.to) {
+            priceType.value = 'fixed'
+            currentPriceValue.value = price.from
+        } else if (price.from && !price.to) {
+            priceType.value = 'from'
+            currentPriceValue.value = price.from
+        } else if (!price.from && price.to) {
+            priceType.value = 'to'
+            currentPriceValue.value = price.to
+        } else {
+            priceType.value = 'fixed'
+            currentPriceValue.value = price.from || price.to || 0
+        }
+
+        selectedVolumes.value = volumes
         formData.value = {
             name: item.name,
             description: item.description || '',
-            price: item.price,
+            price: price,
             discountPrice: item.discountPrice || null,
-            weight: item.volume || item.weight || '',
+            volumes: volumes,
             typeId: item.types?.[0]?.id || item.typeId || null,
             quantity: item.quantity || null,
             order: item.order || 0,
@@ -191,6 +309,25 @@ const toggleTag = (tagId) => {
         formData.value.tagIds.splice(index, 1)
     } else {
         formData.value.tagIds.push(tagId)
+    }
+}
+
+const toggleVolume = (volume) => {
+    const index = selectedVolumes.value.indexOf(volume)
+    if (index > -1) {
+        selectedVolumes.value.splice(index, 1)
+    } else {
+        selectedVolumes.value.push(volume)
+    }
+    // Синхронизируем с formData
+    formData.value.volumes = [...selectedVolumes.value]
+}
+
+const getTagStyle = (tag) => {
+    if (!tag.color) return {}
+    return {
+        backgroundColor: tag.color,
+        color: shouldUseWhiteText(tag.color) ? '#fff' : 'var(--text-color)'
     }
 }
 
@@ -273,11 +410,40 @@ const handleSubmit = () => {
                     border-color: var(--accent-red)
                 &:hover
                     border-color: var(--accent-red)
-            .tags-select
+            .price-selector
+                display: flex
+                flex-direction: column
+                gap: 8px
+                .price-type-buttons
+                    display: flex
+                    gap: 8px
+                    .price-type-btn
+                        flex: 1
+                        padding: 8px 12px
+                        background-color: var(--second-bg)
+                        border: 1px solid var(--border-color)
+                        border-radius: 8px
+                        font-size: 13px
+                        font-weight: 500
+                        color: var(--text-color)
+                        cursor: pointer
+                        transition: all 0.2s ease
+                        &:hover
+                            border-color: var(--accent-red)
+                            background-color: rgba(232, 69, 32, 0.05)
+                        &_active
+                            background-color: var(--accent-red)
+                            border-color: var(--accent-red)
+                            color: #fff
+                            font-weight: 600
+            .tags-select, .volumes-select
                 display: flex
                 flex-wrap: wrap
                 gap: 8px
-                .tag-select
+                .tag-select, .volume-select
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
                     padding: 8px 14px
                     background-color: var(--second-bg)
                     border: 2px solid var(--border-color)
@@ -292,6 +458,10 @@ const handleSubmit = () => {
                         border-color: var(--accent-red)
                         color: var(--accent-red)
                         font-weight: 600
+                    .tag-icon
+                        width: 14px
+                        height: 14px
+                        object-fit: contain
             .image-upload
                 display: flex
                 flex-direction: column
