@@ -71,11 +71,20 @@ section
 .h1-wrapper
     display: grid
     grid-template-columns: auto 1fr
-    grid-gap: 10px
+    grid-gap: 16px
     align-items: center
+    margin-bottom: 15px
+    .go-back
+        width: 35px
+        height: 35px
+    .h1
+        font-size: 26px
+
 .page-padding
     padding: 20px 0
     padding-bottom: 60px
+    background-color: var(--main-bg)
+    min-height: 100vh
 
 #error-text
     color: var(--error-color)
@@ -184,33 +193,47 @@ section
 
 
 @media only screen and (min-width: $bp-tablet)
+    .page-padding
+        padding: 30px 0
+        padding-bottom: 60px
     .h1-wrapper
-        gap: 28px
+        grid-gap: 25px
+        margin-bottom: 25px
         .go-back
-            width: 45px
-            height: 45px
+            width: 35px
+            height: 35px
         .h1
-            font-size: 2.25rem
+            font-size: 32px
 
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .h1-wrapper
+        grid-gap: 16px
+        margin-bottom: 15px
         .go-back
-            display: none
+            width: 32px
+            height: 32px
         .h1
-            font-size: 2rem
+            font-size: 26px
 @media only screen and (min-width: $bp-pc)
     .content
         max-width: 1440px
+    .page-padding
+        padding-bottom: 60px
     .h1-wrapper
+        grid-gap: 16px
+        margin-bottom: 20px
+        .go-back
+            display: none
         .h1
-            font-size: 2.5rem
-    .empty
-        font-size: 18px
+            font-size: 38px
 
 @media only screen and (min-width: $bp-large)
     .content
         max-width: 1800px
         padding: 0 40px
+    .page-padding
+        padding: 50px 0
+        padding-bottom: 60px
     .h1-wrapper
         .h1
             font-size: 3rem

@@ -2,7 +2,7 @@
     <div class="checklist-page page-padding">
         <div class="content">
             <div class="header-section">
-                <div class="header-top">
+                <div class="h1-wrapper">
                     <ui-go-back />
                     <h1 class="h1">Чеклист</h1>
                 </div>
@@ -283,20 +283,8 @@ useHead({
 @use '@/assets/styles/datepicker' as *
 
 .checklist-page
-    background-color: var(--main-bg)
-    min-height: 100vh
 
     .header-section
-        margin-bottom: 24px
-        .header-top
-            display: flex
-            align-items: center
-            gap: 12px
-        .h1
-            font-size: 24px
-            font-weight: 700
-            color: var(--text-color)
-            margin: 0
 
     .page-layout
         display: grid
@@ -673,7 +661,6 @@ useHead({
 
 @media only screen and (min-width: $bp-pc)
     .checklist-page
-        padding: 40px 0
         .edit-panel
             &.edit-panel-open
                 width: 400px
@@ -682,10 +669,6 @@ useHead({
 
 @media only screen and (min-width: $bp-large)
     .checklist-page
-        padding: 60px 0
-        .header-section
-            .h1
-                font-size: 32px
         .date-selector
             .date-label
                 font-size: 18px

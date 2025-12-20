@@ -3,7 +3,7 @@
         <div class="page-content content">
             <!-- Header with title and period filters -->
             <div class="header-section">
-                <div class="header-top">
+                <div class="h1-wrapper">
                     <ui-go-back />
                     <h1 class="h1">Аналитика</h1>
                 </div>
@@ -309,9 +309,6 @@ useHead({
 
 .analysis
     overflow-y: auto
-    padding-bottom: 0 !important
-    background-color: var(--main-bg)
-    min-height: 100vh
 
     .page-content
         display: flex
@@ -321,16 +318,6 @@ useHead({
     // Header Section
     .header-section
         margin-bottom: 8px
-        .header-top
-            display: flex
-            align-items: center
-            gap: 12px
-            margin-bottom: 16px
-        .h1
-            font-size: 24px
-            font-weight: 700
-            color: var(--text-color)
-            margin: 0
 
     // Period Filters
     .period-filters
@@ -536,8 +523,6 @@ useHead({
         .page-content
             gap: 24px
         .header-section
-            .h1
-                font-size: 28px
             .period-filters
                 gap: 10px
                 .filter-btn
@@ -581,9 +566,6 @@ useHead({
     .analysis
         .page-content
             gap: 28px
-        .header-section
-            .h1
-                font-size: 32px
         .devices-section
             .devices-grid
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
@@ -650,8 +632,6 @@ useHead({
             max-width: 1800px
             gap: 40px
         .header-section
-            .h1
-                font-size: 36px
             .period-filters
                 gap: 12px
                 .filter-btn

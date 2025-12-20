@@ -2,7 +2,7 @@
     <div class="menu-page page-padding">
         <div class="content">
             <div class="header-section">
-                <div class="header-top">
+                <div class="h1-wrapper">
                     <ui-go-back />
                     <h1 class="h1">Меню</h1>
                 </div>
@@ -385,21 +385,8 @@ useHead({
 @use '@/assets/styles/adaptive' as *
 
 .menu-page
-    background-color: var(--main-bg)
-    min-height: 100vh
 
     .header-section
-        margin-bottom: 24px
-        .header-top
-            display: flex
-            align-items: center
-            gap: 12px
-            margin-bottom: 16px
-        .h1
-            font-size: 24px
-            font-weight: 700
-            color: var(--text-color)
-            margin: 0
         .header-actions
             display: flex
             gap: 12px
@@ -618,23 +605,16 @@ useHead({
         gap: 20px
     .empty
         text-align: center
-        padding: 60px 20px
         color: var(--text-secondary)
         font-size: 14px
 
 @media only screen and (min-width: $bp-tablet)
     .menu-page
-        .header-section
-            .h1
-                font-size: 28px
         .items-grid
             grid-template-columns: repeat(4, 1fr)
 
 @media only screen and (min-width: $bp-pc)
     .menu-page
-        .header-section
-            .h1
-                font-size: 32px
         .add-item-btn, .add-btn
             font-size: 16px
             padding: 12px 24px
@@ -668,9 +648,6 @@ useHead({
 
 @media only screen and (min-width: $bp-large)
     .menu-page
-        .header-section
-            .h1
-                font-size: 32px
         .items-grid
             grid-template-columns: repeat(4, 1fr)
 </style>

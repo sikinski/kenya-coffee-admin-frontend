@@ -2,7 +2,7 @@
     <div class="notes-page page-padding">
         <div class="content">
             <div class="header-section">
-                <div class="header-top">
+                <div class="h1-wrapper">
                     <ui-go-back />
                     <h1 class="h1">Заметки</h1>
                 </div>
@@ -254,17 +254,6 @@ useHead({
     min-height: 100vh
 
     .header-section
-        margin-bottom: 24px
-        .header-top
-            display: flex
-            align-items: center
-            gap: 12px
-            margin-bottom: 16px
-        .h1
-            font-size: 24px
-            font-weight: 700
-            color: var(--text-color)
-            margin: 0
         .add-new-btn
             display: flex
             align-items: center
@@ -625,8 +614,6 @@ useHead({
 @media only screen and (min-width: $bp-pc)
     .notes-page
         .header-section
-            .h1
-                font-size: 28px
             .add-new-btn
                 padding: 14px 28px
                 font-size: 16px
@@ -663,8 +650,6 @@ useHead({
 @media only screen and (min-width: $bp-large)
     .notes-page
         .header-section
-            .h1
-                font-size: 32px
             .add-new-btn
                 padding: 16px 32px
                 font-size: 17px

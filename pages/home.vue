@@ -34,17 +34,11 @@ useHead({
 <style lang="sass">
 @use '@/assets/styles/adaptive' as *
 .home-page
-    padding: 20px 0
     background-color: var(--main-bg)
     min-height: 100vh
 
     .header-section
         margin-bottom: 32px
-        .h1
-            font-size: 28px
-            font-weight: 700
-            color: var(--text-color)
-            margin-bottom: 16px
         .user-info
             display: flex
             align-items: center
@@ -130,8 +124,6 @@ useHead({
 @media only screen and (min-width: $bp-tablet)
     .home-page
         .header-section
-            .h1
-                font-size: 32px
             .user-info
                 padding: 14px 20px
                 .user-label
@@ -148,18 +140,11 @@ useHead({
 
 @media only screen and (min-width: $bp-tablet-landscape-up)
     .home-page
-        .header-section
-            .h1
-                font-size: 36px
         .nav-container
             display: none
 
 @media only screen and (min-width: $bp-pc)
     .home-page
-        padding: 40px 0
-        .header-section
-            .h1
-                font-size: 40px
         .logs-section
             .logs-card
                 padding: 40px
@@ -168,10 +153,7 @@ useHead({
 
 @media only screen and (min-width: $bp-large)
     .home-page
-        padding: 60px 0
         .header-section
-            .h1
-                font-size: 48px
             .user-info
                 padding: 16px 24px
                 .user-label
