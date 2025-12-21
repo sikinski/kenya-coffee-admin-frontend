@@ -16,6 +16,14 @@
             <img src="@/assets/images/icons/products.svg" alt="" class="icon" />
             <p class="name">Меню</p>
         </nuxt-link>
+        <nuxt-link class="wrapper" to="/contacts">
+            <img src="@/assets/images/icons/shop-location.svg" alt="" class="icon" />
+            <p class="name">Контакты</p>
+        </nuxt-link>
+        <nuxt-link class="wrapper" to="/faq">
+            <img src="@/assets/images/icons/add-info.svg" alt="" class="icon" />
+            <p class="name">FAQ</p>
+        </nuxt-link>
         <!-- <nuxt-link class="wrapper" to="/users">
             <img src="@/assets/images/icons/person.svg" alt="" class="icon" />
             <p class="name">Сменщики</p>
