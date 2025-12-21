@@ -24,10 +24,10 @@ RUN pnpm run build
 
 # 9. Настройки окружения
 ENV NUXT_HOST=0.0.0.0
-ENV NUXT_PORT=3001
+ENV NUXT_PORT=3000
 
 # 10. Открываем порт
-EXPOSE 3001
+EXPOSE 3000
 
 # 11. Команда запуска
 CMD ["node", ".output/server/index.mjs"]

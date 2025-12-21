@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   admin_frontend:
-    container_name: admin_frontend
+    container_name: kenya_coffee_admin
     build: .
     ports:
       - "3001:3000"
@@ -10,5 +10,7 @@ services:
     environment:
       NODE_ENV: production
       NUXT_LOG_LEVEL: error
-      HOST: 0.0.0.0   # чтобы Nuxt слушал все интерфейсы
-      PORT: 3000      # порт внутри контейнера
+      NUXT_HOST: 0.0.0.0
+      NUXT_PORT: 3000
+      BACKEND_ADDRESS: https://kenya-coffee.ru/backend
+      WS_ADDRESS: wss://kenya-coffee.ru/backend
