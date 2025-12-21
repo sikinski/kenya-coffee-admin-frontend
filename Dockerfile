@@ -16,8 +16,8 @@ RUN pnpm install
 # 6. Копируем весь остальной код проекта
 COPY . .
 
-# 7. Чистим возможные кеши перед билдом (по желанию)
-RUN rm -rf .nuxt .output node_modules/.vite
+# # 7. Чистим возможные кеши перед билдом (по желанию)
+# RUN rm -rf .nuxt .output node_modules/.vite
 
 # 8. Собираем Nuxt
 RUN pnpm run build
