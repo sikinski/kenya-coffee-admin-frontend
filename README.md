@@ -1,75 +1,14 @@
-# Nuxt Minimal Starter
+Пет-проект. Административная панель для сайта кофейни. 
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Реализовано:
+1. Аналитика (интеграция с AQSI; графики прибыли; диаграмы товаров; чеки)
+2. Чеклист на каждый день (редактируемый)
+3. Заметки с темами
+4. Меню (добавление позиций с подробной формой; категории товаров; тэги товаров; загрузка изображений, перетаскивание картинок)
 
-## Setup
+Планируется реализовать:
+1. Подборки (для детей / для худеющих и подобное)
+2. Видеоуроки для сотрудников
+3. ...
 
-Make sure to install dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Проект находится в стадии разработки.
